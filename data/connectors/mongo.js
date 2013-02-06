@@ -12,7 +12,7 @@ var util = require('util')
 // MongoDb connection parameters
 // todo: read from environment variables
 //
-var defaultConnectionUrl = 'mongodb://localhost:27017/nodeRolodexSample?w=1';
+var defaultConnectionUrl = 'mongodb://localhost:27017/socialtagg?w=1';
 var dbConnectionUrl = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || defaultConnectionUrl;
 
 //

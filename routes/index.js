@@ -28,3 +28,7 @@ exports.index = function(req, res){
   };
   
 };
+
+exports.originalHomepage = function(req, res) {
+  res.render('originalHomepage');
+}
