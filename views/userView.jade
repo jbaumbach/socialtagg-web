@@ -1,0 +1,24 @@
+//-
+//- The user detail page of the app.  The page is generated using a master template pattern.  
+//- See the "layout.jade" file for more details.
+//-
+extends layout
+
+block content
+  h2
+    | User Profile
+
+  .user-view
+    ul
+      li
+        .description Name
+        .value #{ user.name }
+      li
+        .description Address
+        .value #{ user.address }
+      li
+        .description Email
+        .value 
+          a(href="mailto:" + user.email) #{ user.email }
+
+    img(src=user.pictureUrl)
