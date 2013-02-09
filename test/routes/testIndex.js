@@ -14,12 +14,8 @@ describe('homepage', function() {
   it('should display some basic stuff', function(done) {
     request(app)
       .get('/')
-      .expect(/<header>.*<\/header>/)
-      // todo: fix these tests, they don't like newlines in the HTML
-      //.expect(/<div.*class="container"(.|[\r\n])<\/div>/gm)
-      //.expect(/<div.*class="main-content"(.|[\r\n])<\/div>/)
-      .expect(/<div.*class="sidebar".*<\/div>/)
-      .expect(/<footer>.*<\/footer>/) 
+      .expect(/<title>SocialTagg: Easily Create and Manage New Contacts<\/title>/)
+      .expect(/<input id="mc-embedded-subscribe" type="submit" value="Subscribe" name="subscribe" class="button">/) 
       .expect(200, done);
   });
 });

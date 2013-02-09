@@ -9,10 +9,13 @@ html
     title= title
       |  - SocialTagg
     link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='shortcut icon', href='/images/favicon.ico')
+
   body
     header
       h1 
-        a(href="/") SocialTagg
+        a(href="/") Social
+          span Tagg
     .container
       .main-content
         //-
@@ -34,4 +37,4 @@ html
       .sidebar
         block sidebar
     footer
-      p Built with Node.js, Express, Jade, Stylus, Nib, MongoDB, and Reddis.  Tested with Mocha and Supertest.  Load testing with Nodeload.
+      p Copyright (C) 2013 SocialTagg, LLC

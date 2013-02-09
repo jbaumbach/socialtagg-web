@@ -20,6 +20,9 @@
  
  */
 
+//
+// Return a new user
+//
 var User = function(values) {
   //
   // Explicitly initialize instance variables in the constructor.  All properties
@@ -31,7 +34,13 @@ var User = function(values) {
   this.name = values.name || '';
   this.address = values.address || '';
   this.email = values.email || '';
+  this.phone = values.phone || '',
   this.password = values.password || '';
+  this.pictureUrl = values.pictureUrl || '';
+  this.pictureBytes = values.pictureBytes || '';
+  this.pictureMimeType = values.pictureMimeType || '';
+  this.createDate = values.createDate || new Date();  // Milliseconds since 1970 UTC
+  this.website = values.website || '';
 }
 
 module.exports = User;

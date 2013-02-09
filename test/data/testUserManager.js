@@ -11,7 +11,7 @@
  */
 var assert = require('assert');
 var userManager = require('../../data/userManager');
-var db = require('../../data/connectors/mongo');
+//var db = require('../../data/connectors/mongo');
 var ApiUser = require('../../models/ApiUser');
 var User = require('../../models/User');
 
@@ -19,10 +19,17 @@ var User = require('../../models/User');
 // For the "existing user" test(s) to work, create this user in your interface so it 
 // saves to the database.  Then set the fields here, especially the user id.
 //
+/* MongoDB user 
 var existingUserId = '50f1ebc3dd71688aad448b62';
 var existingUserName = 'Thomas Anderson';
 var existingUserEmail = 'neo@thematrix.com';
 var existingUserPW = 'neo123';
+*/
+
+var existingUserId = '3d86497b-66c4-11e2-8b37-02e81ac5a17b';
+var existingUserName = 'Jeff Mock';
+var existingUserEmail = 'jeff@socialtagg.com';
+var existingUserPW = 'tbd';
 
 //
 // Delay to let db connection start.  This seems to be about right.  Any less, the tests will fail.
@@ -40,12 +47,12 @@ describe('userManager', function() {
   this.timeout(9000);
   
   //
-  // Tests should close the database connection when done so we don't run out of connections.
+  // MongoDB only: Tests should close the database connection when done so we don't run out of connections.
   // But don't blow out other tests that might be running.  To ponder: a better solution.
   //
   after(function() {
     setTimeout(function() {
-      db.close();
+      //db.close();
     }, 8000);
   })
   

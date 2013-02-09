@@ -16,7 +16,8 @@
     "connect-heroku-redis": "0.1.5",
     "nodeload": "0.4.0",
     "mocha": "1.7.4",
-    "supertest": "0.5.1"
+    "supertest": "0.5.1",
+    "usergrid": "0.10.4"
   },
   "engines": {
     "node": "0.8.14",

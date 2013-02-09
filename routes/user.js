@@ -59,49 +59,75 @@ exports.new = function(req, res) {
 exports.detail = function(req, res) {
   var sessionInfo = globalfunctions.getSessionInfo(req);
   var requestedUserId = req.params.id;
-  
-  userManager.getUser(sessionInfo.userId, function(user) {
+  var editMode = req.query['mode'] === 'edit';
+
+  userManager.getUser(requestedUserId, function (user) {
     if (user) {
-      if (sessionInfo.userId === requestedUserId) {
+      if (editMode) {
         //
-        // Must reenter password in this version of the site.
-        //
-        user.password = '';
-        
-        //
-        // This may or may not be an example of a "closure" in Javascript.  The 
-        // consensus seems to be that's when a function inside another function 
-        // uses local variables from the outside function.  This can cause 
-        // memory leaks in some circumstances, so be careful.
-        //
-        var renderPage = function(apiUser) {
+        // Edit the user's info
+        // 
+        if (sessionInfo.userId === requestedUserId) {
+          //
+          // Must reenter password in this version of the site.
+          //
+          user.password = '';
 
-          apiUser = apiUser || new ApiUser();
+          //
+          // This may or may not be an example of a "closure" in Javascript.  The 
+          // consensus seems to be that's when a function inside another function 
+          // uses local variables from the outside function.  This can cause 
+          // memory leaks in some circumstances, so be careful.
+          //
+          var renderPage = function (apiUser) {
 
-          var pageVars = {
-            title: 'Edit Profile',
-            user: user,
-            apiuser: apiUser
+            apiUser = apiUser || new ApiUser();
+
+            //
+            // todo: call a ".Sanitize()" method here to htmlencode the user info for display
+            //
+
+            var pageVars = {
+              title:'Edit Profile',
+              user:user,
+              apiuser:apiUser
+            }
+
+            res.render('userAddEdit', pageVars);
           }
 
-          res.render('userAddEdit', pageVars);
-        }
+          var action = req.param('action');
 
-        var action = req.param('action');
+          if (action === 'createapikey') {
+            userManager.upsertApiUser(new ApiUser({ associatedUserId:user.id }), renderPage);
+          } else {
+            userManager.getApiUserByUserId(sessionInfo.userId, renderPage);
+          }
 
-        if (action === 'createapikey') {
-          userManager.upsertApiUser(new ApiUser( { associatedUserId: user.id } ), renderPage);
         } else {
-          userManager.getApiUserByUserId(sessionInfo.userId, renderPage);
+          throw 'Editing other users not implemented';
         }
-        
       } else {
-        throw 'Viewing other users not implemented';
+        //
+        // View user's info mode
+        //
+        
+        // todo: call user.Sanitize() here.
+        
+        var pageVars = {
+          title: util.format('%s\'s Profile', user.name),
+          user: user
+        }
+      
+        res.render('userView', pageVars);
+        
       }
       
+
     } else {
       res.send(404, 'Sorry, that user is not found.');
-    };
+    }
+    ;
   });
 }
 

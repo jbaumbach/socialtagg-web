@@ -23,15 +23,21 @@ global-reset()
  * Store the main color and
  * background color as variables
  *
- * Colors below: http://colorschemedesigner.com/#3.22wf7rwVjiB
+ * Colors below: http://colorschemedesigner.com/TBD
  */
 
-main-color = #50708E
-background-color = #031B34
-text-color = white
-link-color = #50708E
-error-color = #DBB174
-error-color-contrast = #693104
+elements-background-color = #5E5E5E /* Darkish gray */
+elements-text-color = white       /* tbd  */
+elements-nonemphasis-color = #E9E9E9       // Light gray
+
+/* main-color = #50708E */
+
+background-color = #E9E9E9       // Light gray
+text-color = #484848            // Dark gray
+link-color = #50708E            // tbd
+error-color = red               // tbd
+error-color-contrast = red      // tbd
+emphasis-color = #2DBFFD        // blue
 
 a:link, a:visited 
   color link-color
@@ -56,18 +62,21 @@ header
   font-family 'Quicksand'
   padding 50px 10px
   a:link, a:visited 
-    color #fff
-  color #fff
-  font-size 25px
+    color elements-text-color
+  color elements-text-color
+  font-size 35px
   text-align center
+  span
+    color emphasis-color
 
   /*
-   * Note the use of the `main-color`
+   * Note the use of the `elements-background-color`
    * variable and the `darken` function
    */
-  background-color main-color
-  border-bottom 1px solid darken(main-color, 30%)
-  text-shadow 0px -1px 0px darken(main-color, 30%)
+  background-color elements-background-color
+  background linear-gradient(top, #929292, elements-background-color)
+  border-bottom 1px solid darken(elements-background-color, 30%)
+  text-shadow 0px -1px 0px darken(elements-background-color, 30%)
 
 .container
   width 500px
@@ -146,18 +155,37 @@ div.apisettings
     margin-bottom 5px
   width 500px
   .title
-    color main-color
+    color text-color
   .description
     font-size .8em
   .signature
     span
-      color main-color
+      color text-color
       font-family 'Courier'
   .tryit
     font-family 'Courier'
     font-size .8em
-    background error-color
-    color error-color-contrast
+    background elements-background-color
+    color emphasis-color
     padding 15px
     border-radius 5px
     border 1px solid #ccc
+
+.user-view
+  width 500px
+  ul
+    float left
+    width 400px
+  li
+    clear both
+    min-height 30px
+  .description
+    float left
+    width 90px
+  .value
+    color emphasis-color
+    float left
+    width 310px
+  img
+    width 90px
+    float right

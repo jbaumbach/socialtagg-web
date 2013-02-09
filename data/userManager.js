@@ -16,7 +16,9 @@
 // todo: use a factory pattern to allow dependency injection.  We just return 
 // mongo by default now.
 //  
-var db = require('./drivers/mongoUserManager')
+var
+  // db = require('./drivers/mongoUserManager')
+  db = require('./drivers/userGridUserManager')
   , globalFunctions = require('../common/globalfunctions')
   , thisModule = this
 ;
