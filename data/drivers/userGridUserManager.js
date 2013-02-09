@@ -14,9 +14,15 @@ var util = require('util')
 // Maps a User Grid user to our app's user
 //
 function UserFromUserGridUser(userGridUser) {
+  
+  // todo: really understand UG responses.  There's FB stuff in there.
+  
+  var name = userGridUser.get('name') ||
+    util.format("%s %s", userGridUser.get('first_name'), userGridUser.get('last_name'));
+  
   return new User({
     id: userGridUser.get('uuid'),
-    name: util.format("%s %s", userGridUser.get('first_name'), userGridUser.get('last_name')),
+    name: name,
     address: userGridUser.get('postal_address'),
     email: userGridUser.get('email'),
     phone: userGridUser.get('tel'),
