@@ -13,8 +13,8 @@
  */
 
 //
-// todo: use a factory pattern to allow dependency injection.  We just return 
-// mongo by default now.
+// todo: use a factory pattern to allow dependency injection.  We just hard
+// code the manager now.
 //  
 var
   // db = require('./drivers/mongoUserManager')

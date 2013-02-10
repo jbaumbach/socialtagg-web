@@ -13,17 +13,17 @@ form{padding:0 0 20px 0}
 header{font-family:'Quicksand';padding:50px 10px;color:#fff;font-size:35px;text-align:center;background-color:#5e5e5e;background:-webkit-gradient(linear, left top, left bottom, color-stop(0, #929292), color-stop(1, #5e5e5e));background:-webkit-linear-gradient(top, #929292 0%, #5e5e5e 100%);background:-moz-linear-gradient(top, #929292 0%, #5e5e5e 100%);background:-o-linear-gradient(top, #929292 0%, #5e5e5e 100%);background:-ms-linear-gradient(top, #929292 0%, #5e5e5e 100%);background:linear-gradient(top, #929292 0%, #5e5e5e 100%);border-bottom:1px solid #424242;text-shadow:0 -1px 0 #424242}
 header a:link,header a:visited{color:#fff}
 header span{color:#2dbffd}
-.container{width:500px;margin:50px auto;overflow:hidden}
-.main-content{float:left;width:300px;}
+.container{width:900px;margin:50px auto;overflow:hidden}
+.main-content{float:left;width:600px;}
 .main-content p{margin-bottom:20px}
 .main-content ul label{float:left;width:120px}
-.sidebar{float:left;width:200px;}
+.sidebar{float:left;width:300px;}
 .sidebar .widget{-webkit-border-radius:5px;border-radius:5px;border:1px solid #ccc;margin-left:20px;background-color:#e9e9e9;-webkit-box-shadow:inset 0 0 0 3px rgba(255,255,255,0.8),0 3px 0 -2px rgba(0,0,0,0.1);box-shadow:inset 0 0 0 3px rgba(255,255,255,0.8),0 3px 0 -2px rgba(0,0,0,0.1);}
 .sidebar .widget h1{font-family:'Quicksand';margin:13px 10px 4px;padding-bottom:10px;border-bottom:1px dotted #ddd;-webkit-border-radius:2px 2px 0 0;border-radius:2px 2px 0 0;margin-bottom:10px}
 .sidebar .widget p{font-size:13px;padding:0 10px;margin-bottom:10px}
 .error{color:#f00}
 p{line-height:1.6}
-footer{width:500px;margin:50px auto;border-top:1px dotted #ccc;padding-top:5px;font-size:13px}
+footer{width:80%;margin:50px auto;border-top:1px dotted #ccc;padding-top:5px;font-size:13px}
 div.apisettings{color:#f00;font-family:'Courier';font-size:.9em;width:500px;}
 div.apisettings span{color:#484848;display:inline-block;width:100px;font-family:'Georgia'}
 div.apisettings li{height:22px}
@@ -33,9 +33,15 @@ div.apisettings li{height:22px}
 .api-documentation .description{font-size:.8em}
 .api-documentation .signature span{color:#484848;font-family:'Courier'}
 .api-documentation .tryit{font-family:'Courier';font-size:.8em;background:#5e5e5e;color:#2dbffd;padding:15px;-webkit-border-radius:5px;border-radius:5px;border:1px solid #ccc}
-.user-view{width:500px;}
-.user-view ul{float:left;width:400px}
+.user-view{width:100%;}
+.user-view ul{width:80%}
 .user-view li{clear:both;min-height:30px}
-.user-view .description{float:left;width:90px}
-.user-view .value{color:#2dbffd;float:left;width:310px}
-.user-view img{width:90px;float:right}
+.user-view .description{float:left;width:75px}
+.user-view .value{color:#2dbffd;float:left}
+.user-view img{width:100px;margin:10px 0}
+@media screen and (max-width: 980px){.container{width:94%}
+.main-content{width:65%}
+.sidebar{width:30%}
+}@media screen and (max-width: 700px){.main-content,.sidebar{width:auto;float:none}
+}@media screen and (max-width: 480px){header{padding:25px 10px;font-size:40px}
+}

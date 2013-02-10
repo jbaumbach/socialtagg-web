@@ -9,6 +9,8 @@ block content
     | User Profile
 
   .user-view
+    img(src=user.pictureUrl)
+    
     ul
       li
         .description Name
@@ -21,4 +23,3 @@ block content
         .value 
           a(href="mailto:" + user.email) #{ user.email }
 
-    img(src=user.pictureUrl)

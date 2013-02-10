@@ -14,9 +14,6 @@ var util = require('util')
 // UserGrid connection parameters
 // todo: read from environment variables
 //
-//var defaultConnectionUrl = 'mongodb://localhost:27017/socialtagg?w=1';
-//var dbConnectionUrl = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || defaultConnectionUrl;
-
 
 //
 // Main export: the global database connection.  If we're not connected, throw 
@@ -34,11 +31,4 @@ module.exports = function() {
   });
 
   return client;
-}
-
-//
-// Close the connection
-//
-module.exports.close = function() {
-  throw('Not implemented');
 }

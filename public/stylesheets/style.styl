@@ -14,10 +14,15 @@
  */
 @import url('http://fonts.googleapis.com/css?family=Quicksand')
 
+
 /*
  * Nib provides a CSS reset
  */
 global-reset()
+
+
+// Debugging - add borders around elements
+debugging-borders = false
 
 /*
  * Store the main color and
@@ -39,6 +44,12 @@ error-color = red               // tbd
 error-color-contrast = red      // tbd
 emphasis-color = #2DBFFD        // blue
 
+
+debug($color = red)
+  if debugging-borders
+    border 1px $color solid
+
+
 a:link, a:visited 
   color link-color
   text-decoration none
@@ -58,6 +69,7 @@ h2
 form
   padding 0 0 20px 0
   
+
 header
   font-family 'Quicksand'
   padding 50px 10px
@@ -79,13 +91,14 @@ header
   text-shadow 0px -1px 0px darken(elements-background-color, 30%)
 
 .container
-  width 500px
+  width 900px
   margin 50px auto
   overflow hidden
+  
 
 .main-content
   float left
-  width 300px
+  width 600px
 
   p
     margin-bottom 20px
@@ -95,8 +108,9 @@ header
       width 120px
       
 .sidebar
+  debug(blue)
   float left
-  width 200px
+  width 300px
 
   .widget
 
@@ -131,7 +145,7 @@ p
   line-height 1.6
 
 footer
-  width 500px
+  width 80%
   margin 50px auto
   border-top 1px dotted #ccc
   padding-top 5px
@@ -172,20 +186,43 @@ div.apisettings
     border 1px solid #ccc
 
 .user-view
-  width 500px
+  width 100%
   ul
-    float left
-    width 400px
+    debug(orange)
+    width 80%
   li
     clear both
     min-height 30px
   .description
     float left
-    width 90px
+    width 75px
   .value
     color emphasis-color
     float left
-    width 310px
   img
-    width 90px
-    float right
+    debug(yellow)
+    width 100px
+    margin 10px 0
+    
+    
+// ====================================
+// Layout: Responsive
+//
+
+@media screen and (max-width: 980px)
+  .container
+    width 94%
+  .main-content
+    width 65%
+  .sidebar
+    width 30%
+ 
+@media screen and (max-width: 700px)
+  .main-content, .sidebar
+    width auto
+    float none
+
+@media screen and (max-width: 480px)
+  header
+    padding 25px 10px
+    font-size 40px
