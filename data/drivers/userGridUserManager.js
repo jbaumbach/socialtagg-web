@@ -1,7 +1,11 @@
 /*
 
- Implementation of the user manager functions using MongoDb.
+ Implementation of the user manager functions using Usergrid API.
+ 
+ Docs here:
 
+  https://github.com/apigee/usergrid-node-module
+ 
  */
 
 var util = require('util')
@@ -44,19 +48,15 @@ function UserGridUserFromUser(user) {
 
 
 //
-// Return a user object from the data store corresponding to the passed id
+// Return a user object from the data store corresponding to the passed options
 //
-exports.getUser = function(id, resultCallback) {
+function getUsergridUserFromOptions(options, resultCallback) {
   var result = undefined;
 
-  var options = {
-    type:'users',
-    uuid:id
-  }
-  
-  client().getEntity(options, function(err, existingUser) {
+  client().getEntity(options, function (err, existingUser) {
     if (err) {
       // Crap
+      
     } else {
       result = UserFromUserGridUser(existingUser);
     }
@@ -64,6 +64,26 @@ exports.getUser = function(id, resultCallback) {
     resultCallback(result);
 
   });
+}
+
+exports.getUser = function(id, resultCallback) {
+
+  var options = {
+    type:'users',
+    uuid:id
+  };
+
+  getUsergridUserFromOptions(options, resultCallback);
+};
+
+exports.getUserByUsername = function(username, resultCallback) {
+  
+  var options = {
+    type:'users',
+    username:username    // weird: username IS email?
+  };
+
+  getUsergridUserFromOptions(options, resultCallback);
 };
 
 //
@@ -80,14 +100,33 @@ exports.upsertUser = function(user, resultCallback) {
 };
 
 //
-// Validate the passed credentials and return the user if successful
+// Validate the passed credentials and return the user if successful.
+//
+// Note: as of this writing the email is used in Usergrid as the username,
+// so don't be confused by the code below.
 //
 exports.validateCredentials = function(email, password, resultCallback) {
 
-  throw('Not implemented!');
+  var result = undefined;
 
-  // eventually: resultCallback(user);
-
+  thisModule.getUserByUsername(email, function(user) {
+    
+    if (user) {
+      client().login(email, password, function(err) {
+        
+        if (err) {
+          // Crap
+        } else {
+          result = user;
+        }
+        
+        resultCallback(result);
+        
+      });
+    } else {
+      resultCallback(result);
+    }
+  });
 };
 
 //

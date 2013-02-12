@@ -20,7 +20,7 @@ var util = require('util')
 // an error.
 //
 module.exports = function() {
-  var client = new usergrid.client({
+  return new usergrid.client({
     orgName:'tagg',
     appName:'tagg',
     authType:usergrid.AUTH_CLIENT_ID,
@@ -29,6 +29,4 @@ module.exports = function() {
 
     logging: true  //optional - turn on logging, off by default
   });
-
-  return client;
-}
+};

@@ -27,6 +27,10 @@ exports.getUser = function(id, resultCallback) {
   db.getUser(id, resultCallback);
 }
 
+exports.getUserByUsername = function(email, resultCallback) {
+  db.getUserByUsername(email, resultCallback);
+}
+
 exports.upsertUser = function(user, resultCallback) {
   db.upsertUser(user, resultCallback);
 }

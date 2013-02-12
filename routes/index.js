@@ -3,30 +3,23 @@
  * GET home page.
  */
 
-var globalfunctions = require('./../common/globalfunctions');
-var userManager = require('./../data/userManager');
+var globalfunctions = require('./../common/globalfunctions')
+  , userManager = require('./../data/userManager')
+  , application = require('../common/application')
+  ;
 
 exports.index = function(req, res){
   
-  var pageVars = 
-  { 
-    title: 'Express',
-    user: {}
-  };
-  
-  var sessionInfo = globalfunctions.getSessionInfo(req);
-  
-  if (sessionInfo.userId) {
-     userManager.getUser(sessionInfo.userId, function(user) {
-       pageVars.user.id = sessionInfo.userId,
-       pageVars.user.name = user.name;
-       
-       res.render('index', pageVars);
-     });
-  } else {
+  application.getCurrentSessionUser(req, function(currentSessionUser) {
+
+    var pageVars =
+    {
+      title: 'SocalTagg',
+      currentSessionUser: currentSessionUser
+    };
+
     res.render('index', pageVars);
-  };
-  
+  });
 };
 
 exports.originalHomepage = function(req, res) {

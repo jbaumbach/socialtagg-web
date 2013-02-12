@@ -23,3 +23,10 @@ block content
         .value 
           a(href="mailto:" + user.email) #{ user.email }
 
+block sidebar
+  .widget
+    //-
+    //- This is an example of an include.  This is similar to "user controls" in .NET webforms.
+    //- It allows you to easily reuse common bits of code in different places.
+    //-
+    include includes/userWidget

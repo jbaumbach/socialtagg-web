@@ -43,5 +43,6 @@ div.apisettings li{height:22px}
 .main-content{width:65%}
 .sidebar{width:30%}
 }@media screen and (max-width: 700px){.main-content,.sidebar{width:auto;float:none}
+.sidebar .widget{margin:0}
 }@media screen and (max-width: 480px){header{padding:25px 10px;font-size:40px}
 }

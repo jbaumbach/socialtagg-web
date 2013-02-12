@@ -3,11 +3,13 @@
  * User - controllers
  */
 
-var userManager = require('./../data/userManager');
-var util = require('util');
-var globalfunctions = require('./../common/globalfunctions');
-var User = require('../models/User');
-var ApiUser = require('../models/ApiUser');
+var userManager = require('./../data/userManager')
+  , util = require('util')
+  , globalfunctions = require('./../common/globalfunctions')
+  , User = require('../models/User')
+  , ApiUser = require('../models/ApiUser')
+  , application = require('../common/application')
+  ;
 
 exports.loginForm = function(req, res) {
   var pageVars = {
@@ -18,8 +20,10 @@ exports.loginForm = function(req, res) {
 
 exports.login = function(req, res) {
   var email = req.body.email;
-  var password = globalfunctions.hashPassword(req.body.password);
-  
+
+  // only hash password if we're storing it oursevles: globalfunctions.hashPassword(req.body.password);
+  var password = req.body.password; 
+
   userManager.validateCredentials(email, password, function(user) {
     
     if (user) {
@@ -27,7 +31,7 @@ exports.login = function(req, res) {
       // User validated successfully.  
       //
       globalfunctions.loginUser(req, user.id);
-      res.redirect('/');
+      res.redirect(applicationHomepage);
     } else {
       //
       // Oops, something went wrong.  Login is a post, but doesn't affect the database, so 
@@ -36,7 +40,7 @@ exports.login = function(req, res) {
       //
       var delayMs = 0;
       var todoAfterAShortDelay = function() {
-        res.render('userLogin', { title: 'User Login', error: 'Incorrect email or password3' });
+        res.render('userLogin', { title: 'User Login', error: 'Incorrect email or password' });
       };
       setTimeout(todoAfterAShortDelay, delayMs);
     }
@@ -45,7 +49,7 @@ exports.login = function(req, res) {
 
 exports.logout = function(req, res) {
   globalfunctions.logoutUser(req);
-  res.redirect('/');
+  res.redirect(applicationHomepage);
 }
 
 exports.new = function(req, res) {
@@ -61,74 +65,80 @@ exports.detail = function(req, res) {
   var requestedUserId = req.params.id;
   var editMode = req.query['mode'] === 'edit';
 
-  userManager.getUser(requestedUserId, function (user) {
-    if (user) {
-      if (editMode) {
-        //
-        // Edit the user's info
-        // 
-        if (sessionInfo.userId === requestedUserId) {
-          //
-          // Must reenter password in this version of the site.
-          //
-          user.password = '';
+  application.getCurrentSessionUser(req, function(currentSessionUser) {
 
+    userManager.getUser(requestedUserId, function (user) {
+      if (user) {
+        if (editMode) {
           //
-          // This may or may not be an example of a "closure" in Javascript.  The 
-          // consensus seems to be that's when a function inside another function 
-          // uses local variables from the outside function.  This can cause 
-          // memory leaks in some circumstances, so be careful.
-          //
-          var renderPage = function (apiUser) {
-
-            apiUser = apiUser || new ApiUser();
+          // Edit the user's info
+          // 
+          if (sessionInfo.userId === requestedUserId) {
+            //
+            // Must reenter password in this version of the site.
+            //
+            user.password = '';
 
             //
-            // todo: call a ".Sanitize()" method here to htmlencode the user info for display
+            // This may or may not be an example of a "closure" in Javascript.  The 
+            // consensus seems to be that's when a function inside another function 
+            // uses local variables from the outside function.  This can cause 
+            // memory leaks in some circumstances, so be careful.
             //
+            var renderPage = function (apiUser) {
 
-            var pageVars = {
-              title:'Edit Profile',
-              user:user,
-              apiuser:apiUser
+              apiUser = apiUser || new ApiUser();
+
+              //
+              // todo: call a ".Sanitize()" method here to htmlencode the user info for display
+              //
+
+              var pageVars = {
+                title: 'Edit Profile',
+                user: user,
+                currentSessionUser: currentSessionUser,
+                apiuser: apiUser
+              }
+
+              res.render('userAddEdit', pageVars);
             }
 
-            res.render('userAddEdit', pageVars);
-          }
+            var action = req.param('action');
 
-          var action = req.param('action');
+            if (action === 'createapikey') {
+              userManager.upsertApiUser(new ApiUser({ associatedUserId:user.id }), renderPage);
+            } else {
+              userManager.getApiUserByUserId(sessionInfo.userId, renderPage);
+            }
 
-          if (action === 'createapikey') {
-            userManager.upsertApiUser(new ApiUser({ associatedUserId:user.id }), renderPage);
           } else {
-            userManager.getApiUserByUserId(sessionInfo.userId, renderPage);
+            throw 'Editing other users not implemented';
+          }
+        } else {
+          //
+          // View user's info
+          //
+
+          // todo: call user.Sanitize() here.
+
+          var pageVars = {
+            title: util.format('%s\'s Profile', user.name),
+            user: user,
+            currentSessionUser: currentSessionUser
           }
 
-        } else {
-          throw 'Editing other users not implemented';
-        }
-      } else {
-        //
-        // View user's info mode
-        //
-        
-        // todo: call user.Sanitize() here.
-        
-        var pageVars = {
-          title: util.format('%s\'s Profile', user.name),
-          user: user
-        }
-      
-        res.render('userView', pageVars);
-        
-      }
-      
+          res.render('userView', pageVars);
 
-    } else {
-      res.send(404, 'Sorry, that user is not found.');
-    }
-    ;
+        }
+
+
+      } else {
+        res.send(404, 'Sorry, that user is not found.');
+      }
+      ;
+    });
   });
+  
 }
 
 exports.upsert = function(req, res) {

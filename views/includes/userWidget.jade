@@ -2,13 +2,13 @@
 //- An include for showing login information.  This can be included on multiple pages, similar to user controls
 //- in .NET.
 //-
-- if (locals.user.id)
-  h1 #{ locals.user.name }'s Profile
+- if (currentSessionUser.id)
+  h1 #{ currentSessionUser.name }'s Profile
     p
-      a(href='/users/#{ locals.user.id }') Edit
-      |  | 
+      //- a(href='/users/#{ currentSessionUser.id }') Edit
+      //- |  | 
       a(href='/logout') Logout
 - else
-  h1 Profile
+  h1 Your Profile
   p
     a(href='/login') Please log in
