@@ -13,7 +13,13 @@ html
     
     //- Freeze the view in mobile devices.  They won't be able to zoom in.
     meta(name="viewport", content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no")
-  
+    
+    //- Import the website analytics 
+    //-
+    //- Side note: cool way to specify scripts to load from the controller:
+    //- http://stackoverflow.com/questions/5605392/node-js-with-express-importing-client-side-javascript-using-script-tags-in-jade
+    //-
+    include includes/analytics
   body
     header
       h1 
