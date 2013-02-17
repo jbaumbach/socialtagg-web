@@ -31,7 +31,7 @@ exports.getSessionInfo = function(req) {
   }
 
   return sessionInfo;
-}
+};
 
 //
 // Set the current session info object
@@ -42,7 +42,7 @@ exports.setSessionInfo = function(req, sessionInfo) {
   } catch(err) {
     throw 'Error setting session info - be sure redis is running: ' + err;    
   }
-}
+};
 
 //
 // Login a user.  Note: no validation is done.
@@ -54,14 +54,14 @@ exports.loginUser = function(req, userId) {
   var sessionInfo = this.getSessionInfo(req);
   sessionInfo.userId = userId;
   this.setSessionInfo(req, sessionInfo);
-}
+};
 
 //
 // Log out a user.
 //
 exports.logoutUser = function(req) {
   this.setSessionInfo(req, null);
-}
+};
 
 //
 // Hash a password.  Use a salt before hashing to make it harder for a hacker to get 
@@ -84,7 +84,7 @@ exports.hashPassword = function(password) {
   var result = crypto.createHash('sha256').update(salt + password).digest('hex');
 
   return result;
-}
+};
 
 exports.sha256Encode = function(stringToEncode) {
 
@@ -92,7 +92,7 @@ exports.sha256Encode = function(stringToEncode) {
   var result = crypto.createHash('sha256').update(stringToEncode).digest('hex');
 
   return result;
-}
+};
 
 exports.md5Encode = function(stringToEncode) {
 
@@ -100,7 +100,7 @@ exports.md5Encode = function(stringToEncode) {
   var result = crypto.createHash('md5').update(stringToEncode).digest('hex');
 
   return result;
-}
+};
 
 exports.generateUniqueCredentials = function(uniqueValue) {
 
@@ -111,4 +111,6 @@ exports.generateUniqueCredentials = function(uniqueValue) {
   result.password = thisModule.md5Encode(anotherUniqueVal);
   
   return result;
-}
+};
+
+

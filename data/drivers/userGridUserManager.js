@@ -24,15 +24,28 @@ function UserFromUserGridUser(userGridUser) {
   var name = userGridUser.get('name') ||
     util.format("%s %s", userGridUser.get('first_name'), userGridUser.get('last_name'));
   
+  var dateStr = 'n/a';
+  if (userGridUser.get('created')) {
+    dateStr = new Date(userGridUser.get('created')).toDateString();  
+  } 
+  
   return new User({
     id: userGridUser.get('uuid'),
+    userName: userGridUser.get('username'),
     name: name,
     address: userGridUser.get('postal_address'),
     email: userGridUser.get('email'),
     phone: userGridUser.get('tel'),
     pictureUrl: userGridUser.get('picture'),
     createDate: userGridUser.get('created'),
+    createDateStr: dateStr,
+    website: userGridUser.get('website'),
+    bio: userGridUser.get('bio'),
+    company: userGridUser.get('company'),
+    title: userGridUser.get('title'),
+    twitter: userGridUser.get('twitter'),
     website: userGridUser.get('website')
+    
   });
 }
 

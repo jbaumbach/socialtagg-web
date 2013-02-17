@@ -31,16 +31,41 @@ var User = function(values) {
   values = values || {};
 
   this.id = values.id || '';
+  this.userName = values.userName || '';
   this.name = values.name || '';
   this.address = values.address || '';
   this.email = values.email || '';
   this.phone = values.phone || '',
   this.password = values.password || '';
   this.pictureUrl = values.pictureUrl || '';
-  this.pictureBytes = values.pictureBytes || '';
+  this.pictureDataBytes = values.pictureDataBytes || '';
   this.pictureMimeType = values.pictureMimeType || '';
-  this.createDate = values.createDate || new Date();  // Milliseconds since 1970 UTC
+  this._createDate = values.createDate || new Date();  // Milliseconds since 1970 UTC
+  this.createDateStr = values.createDateStr || new Date(this._createDate).toDateString();
   this.website = values.website || '';
+  this.bio = values.bio || '';
+  this.company = values.company || '';
+  this.title = values.title || '';
+  this.twitter = values.twitter || '';
+
 }
+
+//
+// Properties w/getters and setters.
+//
+
+//
+// Define a setter for createDate so that we can automatically update
+// createDateStr as well.
+//
+Object.defineProperty(User.prototype, "createDate", {
+  set: function(newDate) {
+    this._createDate = newDate;
+    this.createDateStr = new Date(newDate).toDateString();
+  },
+  get: function() {
+    return this._createDate;
+  }
+});
 
 module.exports = User;

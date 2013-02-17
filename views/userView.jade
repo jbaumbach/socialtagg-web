@@ -22,6 +22,27 @@ block content
         .description Email
         .value 
           a(href="mailto:" + user.email) #{ user.email }
+      li
+        .description Join Date
+        .value #{ user.createDateStr }
+      li
+        .description Biography
+        .value #{ user.bio}
+      li
+        .description Company
+        .value #{ user.company }
+      li
+        .description Title
+        .value #{ user.title }
+      li
+        .description Twitter
+        .value #{ user.twitter }
+      li
+        .description Website
+        .value
+          a(href=user.website, target="_blank") #{ user.website }
+
+          
 
 block sidebar
   .widget

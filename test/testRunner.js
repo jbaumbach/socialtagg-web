@@ -24,16 +24,19 @@
 //var testFiles = ["./test/routes/testUser.js"];
 //var testFiles = ["./test/common/testAuthorization.js"];
 //var testFiles = ["./test/common/testGlobalFunctions.js"];
-// var testFiles = ["./test/data/testUserManager.js"];
-var testFiles = ["./test/common/testApplication.js"];
+//var testFiles = ["./test/data/testUserManager.js"];
+//var testFiles = ["./test/common/testApplication.js"];
+var testFiles = ["./test/models/testUser.js"];
 
 var Mocha = require('mocha');
 var mocha = new Mocha;
 
-mocha.reporter('spec').ui('tdd');  // 'tdd' -> Defines "suites"
+//mocha.reporter('spec').ui('tdd');  // 'tdd' -> Defines "suites"
+mocha.reporter('tap').ui('tdd');  // 'tdd' -> Defines "suites"
 
 for (var i =0;i<testFiles.length;i++){
     mocha.addFile(testFiles[i]);
+    console.log('Adding: ' + testFiles[i]);
 }
 
 var runner = mocha.run(function(){
