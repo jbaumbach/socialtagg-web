@@ -10,7 +10,9 @@
  */
   
 var request = require('supertest')
-  , myApp = require('../../app.js');
+  , myApp = require('../../app.js')
+  , util = require('util')
+  ;
 
 var app = myApp.app();
 
@@ -50,10 +52,13 @@ describe('login and user features', function() {
   // and this should fail).
   //
   it('should allow login of known user', function(done) {
+    var email = 'john.j.baumbach@gmail.com';
+    var password = 'Apigee11';
+    
     request(app)
       .post('/login')
       .set('Content-Type', 'application/x-www-form-urlencoded')
-      .send('email=neo@thematrix.com&password=neo123')
+      .send(util.format('email=%s&password=%s', email, password))
       .expect(302, done);
   });
 

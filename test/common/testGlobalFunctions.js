@@ -82,4 +82,23 @@ describe('globalFunctions', function() {
     assert.equal(expectedPWLength, res.password.length, 'PW not ' + expectedPWLength + ' chars in length');
     
   });
-})
+  
+  //
+  // Class Extensions
+  // 
+  it('should allow String class to truncate on a word boundary with other stuff', function() {
+    var str = 'this is a long string with some words';
+    
+    var truncated1 = str.truncate(12);
+    assert.equal(str.substr(0, 11), truncated1, 'didn\'t truncate string');
+    
+    var truncated2 = str.truncate(12, true);
+    assert.equal(str.substr(0, 9), truncated2, 'didn\'t truncate at word');
+    
+    var truncated3 = str.truncate(12, true, '...');
+    assert.equal(str.substr(0, 9) + '...', truncated3, 'didn\'t add extra stuff');
+    
+    var nonTruncated1 = str.truncate(500, true, '...');
+    assert.equal(str, nonTruncated1, 'shouldn\'t have changed anything');
+  });
+}) 

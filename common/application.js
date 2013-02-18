@@ -11,6 +11,8 @@ var util = require('util')
   , userManager = require('../data/userManager')
   , User = require('../models/User')
   , globalFunctions = require('./globalfunctions')
+  , check = require('validator').check
+  , sanitize = require('validator').sanitize
   ;
 
 //
@@ -34,4 +36,23 @@ exports.getCurrentSessionUser = function(req, callback) {
 
 exports.loginStatus = function() {
   throw ('Not implemented!');
+};
+
+exports.getSanitizedUser = function(rawUser) {
+  var sanitizedData = {
+    userName: sanitize(rawUser.userName).entityEncode(),
+    name: sanitize(rawUser.name).entityEncode().truncate(255, true, '...'),
+    address: sanitize(rawUser.address).entityEncode().truncate(255, true, '...'),
+    email: sanitize(rawUser.email).entityEncode(),
+    phone: sanitize(rawUser.phone).entityEncode(),
+    pictureUrl: rawUser.pictureUrl,
+    website: rawUser.website,
+    bio: sanitize(rawUser.bio).entityEncode().truncate(255, true, '...'),
+    company: sanitize(rawUser.company).entityEncode().truncate(255, true, '...'),
+    title: sanitize(rawUser.title).entityEncode().truncate(255, true, '...'),
+    twitter: sanitize(rawUser.twitter).entityEncode()
+  };
+  
+  return new User(sanitizedData);
+  
 };

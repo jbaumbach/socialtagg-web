@@ -119,11 +119,11 @@ exports.detail = function(req, res) {
           // View user's info
           //
 
-          // todo: call user.Sanitize() here.
+          var safeUser = application.getSanitizedUser(user);
 
           var pageVars = {
             title: util.format('%s\'s Profile', user.name),
-            user: user,
+            user: safeUser,
             currentSessionUser: currentSessionUser
           }
 

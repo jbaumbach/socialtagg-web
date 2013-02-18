@@ -114,3 +114,14 @@ exports.generateUniqueCredentials = function(uniqueValue) {
 };
 
 
+//
+// Class extensions
+//
+String.prototype.truncate = function(numberOfChars, useWordBoundary, stringToAddIfTruncated) {
+  
+  var addToEnd = stringToAddIfTruncated || ''; // '&hellip;'
+  var tooLong = this.length > numberOfChars;
+  var result = tooLong ? this.substr(0, numberOfChars-1) : this;
+  result = useWordBoundary && tooLong ? result.substr(0, result.lastIndexOf(' ')) : result;
+  return  tooLong ? result + addToEnd : result;
+};

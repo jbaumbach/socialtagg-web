@@ -86,7 +86,7 @@ describe('userManager', function() {
   //
   // This tests the full cycle of CRUD actions, and cleans up afterwards.
   //
-  it('should insert, get, update, validate, then delete a user', function(done) {
+  it.skip('should insert, get, update, validate, then delete a user', function(done) {
     var user = {
       name: 'Darth',
       address: 'Death Star',
@@ -139,7 +139,7 @@ describe('userManager', function() {
   //
   // This tests the full cycle of CRUD actions for an api user, and cleans up afterwards.
   //
-  it('should insert, get (two ways), then delete an api user', function (done) {
+  it.skip('should insert, get (two ways), then delete an api user', function (done) {
     var expectedPWLength = 32;
     var apiUser = new ApiUser();
 

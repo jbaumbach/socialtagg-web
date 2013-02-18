@@ -17,7 +17,8 @@
     "nodeload": "0.4.0",
     "mocha": "1.7.4",
     "supertest": "0.5.1",
-    "usergrid": "0.10.4"
+    "usergrid": "0.10.4",
+    "validator": "0.4.24"
   },
   "engines": {
     "node": "0.8.14",
