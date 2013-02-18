@@ -3,11 +3,12 @@
 //- in .NET.
 //-
 - if (currentSessionUser.id)
-  h1 #{ currentSessionUser.name }'s Profile
+  h1 #{ currentSessionUser.name } Logged In
     p
-      //- a(href='/users/#{ currentSessionUser.id }') Edit
-      //- |  | 
-      a(href='/logout') Logout
+      a(href='/users/#{ currentSessionUser.id }') Profile 
+      |  | 
+      a(href='/logout') Logout 
+
 - else
   h1 Your Profile
   p

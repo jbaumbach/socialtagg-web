@@ -4,14 +4,15 @@
   should be completely agnostic of your chosen database.  This allows you to swap in and out
   database technologies pretty easily without having to refactor your code.
   
-  At this time, however, using MongoDb requires a little bit of db-specific futzing to work.
+  At this time, however, using MongoDb requires a little bit of db-specific futzing for 
+  the tests to work.
   
   Todo: move the db object to an agnostic class that does the connecting/deconnecting/waiting.
 
  */
 var assert = require('assert');
 var userManager = require('../../data/userManager');
-//var db = require('../../data/connectors/mongo');
+//var db = require('../../data/connectors/mongo'); // uncomment this to use Mongo instead
 var ApiUser = require('../../models/ApiUser');
 var User = require('../../models/User');
 
@@ -171,6 +172,57 @@ describe('userManager', function() {
     })
   });
 
+  it('should get an existing user\'s contaggs', function(done) {
+    userManager.getUserContaggs(existingUserId, function (resultList) {
+      
+      assert.notEqual(resultList, undefined, 'didn\'t get results back');
+      assert.ok(resultList.length > 5, 'didn\'t seem to get all contaggs back');
+      
+      done();
+    });  
+  });
+
+
+  //
+  // Note: for the next few tests, we're not abstracting away the usergrid-specific 
+  // uuid to an id.  Eh, prolly ok in small doses, since it's not super useful to 
+  // create application models and mappers.  But this'll have to be updated if 
+  // the underlying data store changes.
+  //
+  
+  it('should populate user contaggs', function(done) {
+    var sampleContaggsList = [
+      { uuid: 'f32063c6-7409-11e2-96f4-02e81ac5a17b',  // Jeff M.
+        created: 1360574380162 }
+      , { uuid: '93b6a35c-67ce-11e2-8b37-02e81ac5a17b',  // Also Jeff M.
+        created: 1359969784321 }
+    ];
+    
+    userManager.populateUserContaggs(sampleContaggsList, function(result) {
+
+      assert.equal(sampleContaggsList.length, result.length, 'didn\'t return all results');
+      done();
+
+    });
+    
+  });
+  
+  it('should add a contagg', function(done) {
+    var userId = 'b66a00ee-73d3-11e2-95c4-02e81ae640dc'; // John B. / lavamantis
+    var user = new User({ id: userId });
+    var userIdToAdd = 'f32063c6-7409-11e2-96f4-02e81ac5a17b'; // Jeff M.
+    
+    userManager.addUserContagg(user, userIdToAdd, function(resultContagg) {
+      
+      assert.ok(resultContagg != undefined, 'didn\'t get anything back');
+      assert.equal(userId, resultContagg.get('uuid_user'), 'didn\'t get right user id back');
+      assert.equal(userIdToAdd, resultContagg.get('uuid_contagg'), 'didn\'t get right added id back');
+      
+      done();
+    });
+  });
+  
+  
   // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   // All new tests should go above this line
 });

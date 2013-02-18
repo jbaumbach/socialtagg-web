@@ -60,11 +60,15 @@ exports.new = function(req, res) {
   res.render('userAddEdit', pageVars);
 }
 
+//
+// Display a user's profile.
+//
 exports.detail = function(req, res) {
   var sessionInfo = globalfunctions.getSessionInfo(req);
   var requestedUserId = req.params.id;
   var editMode = req.query['mode'] === 'edit';
-
+  var requestedUserIsSessionUser = sessionInfo.userId === requestedUserId;
+  
   application.getCurrentSessionUser(req, function(currentSessionUser) {
 
     userManager.getUser(requestedUserId, function (user) {
@@ -73,7 +77,7 @@ exports.detail = function(req, res) {
           //
           // Edit the user's info
           // 
-          if (sessionInfo.userId === requestedUserId) {
+          if (requestedUserIsSessionUser) {
             //
             // Must reenter password in this version of the site.
             //
@@ -114,11 +118,11 @@ exports.detail = function(req, res) {
           } else {
             throw 'Editing other users not implemented';
           }
-        } else {
+        } else 
+        {
           //
           // View user's info
           //
-
           var safeUser = application.getSanitizedUser(user);
 
           var pageVars = {
@@ -127,15 +131,38 @@ exports.detail = function(req, res) {
             currentSessionUser: currentSessionUser
           }
 
-          res.render('userView', pageVars);
+          function renderIt() {
+            res.render('userView', pageVars);
+          }
 
+          if (requestedUserIsSessionUser) {
+            userManager.getUserContaggs(currentSessionUser.id, function(userContaggIdList) {
+              
+              if (userContaggIdList && userContaggIdList.length > 0) {
+                
+                var safeContaggs = [];
+                
+                userManager.populateUserContaggs(userContaggIdList, function(userContaggs) {
+                  
+                  userContaggs.forEach(function(userContagg) {
+                    safeContaggs.push(application.getSanitizedUser(userContagg));
+                  });
+                
+                  pageVars.contaggs = safeContaggs;
+                  
+                  renderIt();
+                });
+              } else {
+                renderIt();
+              }
+            });
+          } else {
+            renderIt();
+          }
         }
-
-
       } else {
         res.send(404, 'Sorry, that user is not found.');
       }
-      ;
     });
   });
   

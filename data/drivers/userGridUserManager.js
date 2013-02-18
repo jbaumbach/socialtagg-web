@@ -14,6 +14,12 @@ var util = require('util')
   , thisModule = this
   ;
 
+
+
+//********************************************************************************
+// User functions
+//********************************************************************************
+
 //
 // Maps a User Grid user to our app's user
 //
@@ -151,6 +157,115 @@ exports.deleteUser = function(id, resultCallback) {
 
   // eventually: resultCallback(err);
 };
+
+exports.getUserContaggs = function(id, resultCallback) {
+  var result = undefined;
+
+  var options = {
+    type: 'contaggs',
+    qs: { 
+      ql: util.format('select * where uuid_user = %s order by created DESC', id),
+      limit: '100'
+    }
+  };
+  
+  client().createCollection(options, function (err, resultContacts) {
+    if (err) {
+      // Crap
+
+    } else {
+      result = [];
+      
+      while (resultContacts.hasNextEntity()) {
+        var contagg = resultContacts.getNextEntity();
+        
+        var resultItem = {
+          uuid: contagg.get('uuid_contagg'),
+          created: contagg.get('created')
+        };
+        
+        result.push(resultItem);
+      }
+    }
+
+    resultCallback(result);
+
+  });
+};
+
+exports.populateUserContaggs = function(userContaggIdList, resultCallback) {
+  var resultUsers = undefined;
+  var currentResultCount = 0;
+  var expectedResultCount = userContaggIdList.length;
+  
+  //
+  // Join the results of the usergrid callbacks.  Node.js is single-threaded,
+  // so no worries about making code thread safe.
+  //
+  // http://stackoverflow.com/questions/4631774/coordinating-parallel-execution-in-node-js
+  //
+  function processResult(resultUser) {
+    resultUsers = resultUsers || [];
+    currentResultCount++;
+
+    console.log(util.format('(%d) found: ', currentResultCount, resultUser ? resultUser.name : 'undefined'));
+
+    if (resultUser) {
+      resultUsers.push(resultUser);
+    }
+
+    //
+    // If all the results are in, let's get outta here
+    //
+    // todo: figure out how to timeout this call if one or more usergrid callsbacks doesn't call back
+    //
+    if (currentResultCount == expectedResultCount) {
+      resultCallback(resultUsers);
+    }
+  }
+  
+  //
+  // Fire off API requests to usergrid in parallel.  Should be faster than calling
+  // the API one user at a time.
+  //
+  userContaggIdList.forEach(function(contagg) {
+    thisModule.getUser(contagg.uuid, processResult);
+  });
+}
+
+exports.addUserContagg = function(user, userIdToAdd, resultCallback) {
+
+  var result = undefined;
+  
+  var options = {
+    type: 'contaggs',
+    name: 'newContaggJB',
+    uuid_user: user.id,
+    uuid_contagg: userIdToAdd,
+    getOnExist: true    // Don't throw error if exists
+  };
+
+  client().createEntity(options, function (err, newContagg) {
+    if (err) {
+      // Crap
+
+    } else {
+      result = newContagg;
+    }
+
+    resultCallback(result);
+
+  });
+  
+  
+};
+
+
+
+
+//********************************************************************************
+// API user functions
+//********************************************************************************
 
 //
 // Get an API user by the passed selector

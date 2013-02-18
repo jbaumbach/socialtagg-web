@@ -42,7 +42,27 @@ block content
         .value
           a(href=user.website, target="_blank") #{ user.website }
 
-          
+  - if (locals.contaggs)
+    .user-contaggs
+      h2
+        | Con
+        span
+          | Taggs
+      //-
+      //- Output all the user's contaggs.  Each item is a valid and populated User class.
+      //-
+      ul.user-contaggs-main
+      each contaggUser in contaggs
+        li
+          ul.user-contaggs-items
+            li
+              img(src=contaggUser.pictureUrl)
+            li
+              .name
+                a(href=contaggUser.path) #{ contaggUser.name }
+            li
+              .company #{ contaggUser.company }
+
 
 block sidebar
   .widget

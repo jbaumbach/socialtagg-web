@@ -68,4 +68,20 @@ Object.defineProperty(User.prototype, "createDate", {
   }
 });
 
+//
+// The path is derived; build it on-demand.
+//
+Object.defineProperty(User.prototype, "path", {
+  get: function() {
+    var result = '#'; 
+    if (this.id) {
+      
+      // todo: update this when we have a urlmanager
+      
+      result = '/users/' + this.id;
+    }  
+    return result;
+  }  
+});
+
 module.exports = User;

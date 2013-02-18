@@ -86,7 +86,7 @@ describe('globalFunctions', function() {
   //
   // Class Extensions
   // 
-  it('should allow String class to truncate on a word boundary with other stuff', function() {
+  it('should allow String class to truncate on a word boundary and other stuff', function() {
     var str = 'this is a long string with some words';
     
     var truncated1 = str.truncate(12);

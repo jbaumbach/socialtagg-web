@@ -1,6 +1,8 @@
 /*
 
-  The user manager functions.  The purpose of this class is to decouple your business
+  The user manager functions.  
+  
+  The purpose of this class is to decouple your business
   logic from database logic.  This is beneficial because your future developers
   don't have to know or care what database is being used, and if you want to change
   databases in the future, you won't have to refactor your business logic.
@@ -23,25 +25,45 @@ var
   , thisModule = this
 ;
 
+//********************************************************************************
+// User functions
+//********************************************************************************
+
 exports.getUser = function(id, resultCallback) {
   db.getUser(id, resultCallback);
-}
+};
 
 exports.getUserByUsername = function(email, resultCallback) {
   db.getUserByUsername(email, resultCallback);
-}
+};
 
 exports.upsertUser = function(user, resultCallback) {
   db.upsertUser(user, resultCallback);
-}
+};
 
 exports.validateCredentials = function(email, password, resultCallback) {
   db.validateCredentials(email, password, resultCallback);
-}
+};
 
 exports.deleteUser = function(id, resultCallback) {
   db.deleteUser(id, resultCallback);
-}
+};
+
+exports.getUserContaggs = function(id, resultCallback) {
+  db.getUserContaggs(id, resultCallback);
+};
+
+exports.populateUserContaggs = function(userContaggIdList, resultCallback) {
+  db.populateUserContaggs(userContaggIdList, resultCallback);
+};
+
+exports.addUserContagg = function(user, userIdToAdd, resultCallback) {
+  db.addUserContagg(user, userIdToAdd, resultCallback);
+};
+
+//********************************************************************************
+// API user functions
+//********************************************************************************
 
 exports.getApiUser = function(apiKey, resultCallback) {
   db.getApiUser(apiKey, resultCallback);
