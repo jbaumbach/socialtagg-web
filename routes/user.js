@@ -128,7 +128,8 @@ exports.detail = function(req, res) {
           var pageVars = {
             title: util.format('%s\'s Profile', user.name),
             user: safeUser,
-            currentSessionUser: currentSessionUser
+            currentSessionUser: currentSessionUser,
+            showQrCode: requestedUserIsSessionUser
           }
 
           function renderIt() {

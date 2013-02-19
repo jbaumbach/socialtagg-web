@@ -39,11 +39,14 @@ div.apisettings li{height:22px}
 .user-view li{clear:both;min-height:30px}
 .user-view .description{float:left;width:90px}
 .user-view .value{color:#2dbffd;float:left}
-.user-view img{width:100px;margin:10px 0}
-.user-contaggs{margin:10px 0;}
+.user-view img{width:100px;margin:10px 0;padding-right:20px}
+.user-contaggs{zoom:1;margin:20px 0;}
+.user-contaggs:before,.user-contaggs:after{content:"";display:table}
+.user-contaggs:after{clear:both}
 .user-contaggs ul.user-contaggs-items li{float:left;}
 .user-contaggs ul.user-contaggs-items li img{padding:5px}
 .user-contaggs ul.user-contaggs-items li .name,.user-contaggs ul.user-contaggs-items li .company{padding:15px;width:130px}
+.qrCode{margin:20px 0}
 @media screen and (max-width: 980px){.container{width:94%}
 .main-content{width:65%}
 .sidebar{width:30%}

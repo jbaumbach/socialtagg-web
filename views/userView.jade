@@ -52,16 +52,21 @@ block content
       //- Output all the user's contaggs.  Each item is a valid and populated User class.
       //-
       ul.user-contaggs-main
-      each contaggUser in contaggs
-        li
-          ul.user-contaggs-items
-            li
-              img(src=contaggUser.pictureUrl)
-            li
-              .name
-                a(href=contaggUser.path) #{ contaggUser.name }
-            li
-              .company #{ contaggUser.company }
+        each contaggUser in contaggs
+          li
+            ul.user-contaggs-items
+              li
+                img(src=contaggUser.pictureUrl)
+              li
+                .name
+                  a(href=contaggUser.path) #{ contaggUser.name }
+              li
+                .company #{ contaggUser.company }
+
+  - if (locals.showQrCode)
+    .qrCode
+      h2 Your QRCode
+      img(src=user.qrCodeUrl)
 
 
 block sidebar

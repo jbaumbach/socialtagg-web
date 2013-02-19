@@ -20,6 +20,8 @@
  
  */
 
+var util = require('util');
+
 //
 // Return a new user
 //
@@ -78,8 +80,19 @@ Object.defineProperty(User.prototype, "path", {
       
       // todo: update this when we have a urlmanager
       
-      result = '/users/' + this.id;
+      result = 'http://www.socialtagg.com/users/' + this.id;
     }  
+    return result;
+  }  
+});
+
+//
+// The QR code is derived; build it on-demand.
+//
+Object.defineProperty(User.prototype, "qrCodeUrl", {
+  get: function() {
+    var urlEncodedPath = encodeURIComponent(this.path);
+    var result = util.format('http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl=%s', urlEncodedPath);
     return result;
   }  
 });
