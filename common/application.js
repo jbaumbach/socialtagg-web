@@ -68,7 +68,7 @@ exports.getSanitizedUser = function(rawUser) {
     address: sanitize(rawUser.address).entityEncode().truncate(255, true, '...'),
     email: sanitize(rawUser.email).entityEncode(),
     phone: sanitize(rawUser.phone).entityEncode(),
-    pictureUrl: rawUser.pictureUrl,
+    pictureUrl: rawUser.pictureUrl.removeScheme(),
     website: rawUser.website,
     bio: sanitize(rawUser.bio).entityEncode().truncate(255, true, '...'),
     company: sanitize(rawUser.company).entityEncode().truncate(255, true, '...'),

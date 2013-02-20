@@ -92,7 +92,7 @@ Object.defineProperty(User.prototype, "path", {
 Object.defineProperty(User.prototype, "qrCodeUrl", {
   get: function() {
     var urlEncodedPath = encodeURIComponent(this.path);
-    var result = util.format('http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl=%s', urlEncodedPath);
+    var result = util.format('//chart.apis.google.com/chart?cht=qr&chs=300x300&chl=%s', urlEncodedPath);
     return result;
   }  
 });

@@ -208,16 +208,19 @@ div.apisettings
     padding-right 20px
     
 .user-contaggs
-  clearfix();
   margin 20px 0
-  ul.user-contaggs-items
+  ul.user-contaggs-main
     li
-      float left
-      img
-        padding 5px 
-      .name, .company
-        padding 15px
-        width 130px
+      clearfix();
+    ul.user-contaggs-items
+      li
+        float left
+        img
+          padding 5px 
+          width 65px
+        .name, .company
+          width 130px
+          padding 10px 0 0 10px
         
 .qrCode
   margin 20px 0

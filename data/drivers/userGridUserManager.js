@@ -11,6 +11,7 @@
 var util = require('util')
   , client = require('./../connectors/userGrid')
   , User = require('../../models/User.js')
+  , globalFunctions = require('../../common/globalfunctions')
   , thisModule = this
   ;
 
@@ -50,7 +51,7 @@ function UserFromUserGridUser(userGridUser) {
     company: userGridUser.get('company'),
     title: userGridUser.get('title'),
     twitter: userGridUser.get('twitter'),
-    website: userGridUser.get('website')
+    website: userGridUser.get('url')
     
   });
 }
@@ -177,14 +178,22 @@ exports.getUserContaggs = function(id, resultCallback) {
       result = [];
       
       while (resultContacts.hasNextEntity()) {
+        
         var contagg = resultContacts.getNextEntity();
+        var contaggId = contagg.get('uuid_contagg'); 
         
-        var resultItem = {
-          uuid: contagg.get('uuid_contagg'),
-          created: contagg.get('created')
-        };
-        
-        result.push(resultItem);
+        //
+        // It seems like it's possible there can be duplicate contaggs in
+        // usergrid.  Let's enforce uniqueness.
+        //
+        if (!result.find('uuid', contaggId)) {
+          var resultItem = {
+            uuid: contaggId,
+            created: contagg.get('created')
+          };
+          
+          result.push(resultItem);
+        }
       }
     }
 
@@ -239,7 +248,13 @@ exports.addUserContagg = function(user, userIdToAdd, resultCallback) {
   
   var options = {
     type: 'contaggs',
-    name: 'newContaggJB',
+    //
+    // We have to put a unique id for the name.  The
+    // usergrid component needs it to retrieve the properties after the 
+    // entity is created.  It's like a primary key I think.
+    //
+    name: globalFunctions.md5Encode(user.id + userIdToAdd), 
+    
     uuid_user: user.id,
     uuid_contagg: userIdToAdd,
     getOnExist: true    // Don't throw error if exists

@@ -102,7 +102,7 @@ describe('application class', function() {
     assert.equal('12345 Yo Mama&lt;/ br&gt;', safeUser.address, 'user address not sanitized');
     assert.equal('hello@there.&lt;html&gt;com', safeUser.email, 'user email not sanitized');
     assert.equal('abcdef12345jklmn&lt;header&gt;', safeUser.phone, 'user phone not samitized');
-    assert.equal(unsafeVals.pictureUrl, safeUser.pictureUrl, 'pictureUrl not copied');
+    assert.equal(unsafeVals.pictureUrl.removeScheme(), safeUser.pictureUrl, 'pictureUrl not copied');
     assert.equal(unsafeVals.website, safeUser.website, 'website not copied');
     assert.equal('I love CSS attacks! &lt;script&gt;alert(&#39;hello!&#39;);&lt;/script&gt;', safeUser.bio, 'user bio not sanitized');
     assert.equal('my&lt;td&gt;company&lt;/td&gt;', safeUser.company, 'user company not sanitized');
@@ -114,12 +114,13 @@ describe('application class', function() {
   it('should return a user from good values', function() {
 
     var safeVals = {
+      id: 'blah',
       userName: 'Lavamantis',
       name: 'JohnnyB',
       address: '12345 Yo Mama',
       email: 'hello@there.com',
       phone: 'abcdef12345jklmn',
-      pictureUrl: 'http://www.socialtagg.com/mypicture.png',
+      pictureUrl: '//www.socialtagg.com/mypicture.png',
       website: 'http://www.socialtagg.com/myurl',
       bio: 'I love CSS attacks!',
       company: 'my company',

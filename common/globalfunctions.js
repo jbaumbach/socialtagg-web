@@ -114,8 +114,13 @@ exports.generateUniqueCredentials = function(uniqueValue) {
 };
 
 
-//
+//***********************************************
 // Class extensions
+//***********************************************
+
+//
+// Truncate a string to a number of chars, optionally breaking on a word, and
+// appending a value if the string was trimmed.
 //
 String.prototype.truncate = function(numberOfChars, useWordBoundary, stringToAddIfTruncated) {
   
@@ -124,4 +129,26 @@ String.prototype.truncate = function(numberOfChars, useWordBoundary, stringToAdd
   var result = tooLong ? this.substr(0, numberOfChars-1) : this;
   result = useWordBoundary && tooLong ? result.substr(0, result.lastIndexOf(' ')) : result;
   return  tooLong ? result + addToEnd : result;
+};
+
+//
+// Remove the 'http[s]:' portion of a string
+//
+String.prototype.removeScheme = function() {
+  return this.replace(/http[s]*:/, '');
+};
+
+//
+// Search an array of objects for an object having a specific value in a 
+// specific field.
+// 
+Array.prototype.find = function(field, value) {
+  var result = undefined;
+  this.some(function(object) {
+    if (object[field] === value) {
+      result = object;
+    }
+    return result != undefined;
+  });
+  return result;
 };

@@ -101,4 +101,35 @@ describe('globalFunctions', function() {
     var nonTruncated1 = str.truncate(500, true, '...');
     assert.equal(str, nonTruncated1, 'shouldn\'t have changed anything');
   });
+  
+  it('should remove scheme in urls', function() {
+    var naked = 'www.socialtagg.com';
+    var noScheme = '//' + naked;
+    var regularUrl = 'http:' + noScheme;
+    var secureUrl = 'https:' + noScheme;
+    var weirdUrl = 'www.urlwithhttpinit.com/morehttps';
+    var weirdUrlInt = '//' + weirdUrl;
+    var weirdUrl2 = 'http:' + weirdUrlInt;
+    
+    assert.equal(naked, naked.removeScheme(), 'didn\'t leave naked url alone');
+    assert.equal(noScheme, noScheme.removeScheme(), 'didn\'t leave schemeless urls alone');
+    assert.equal(noScheme, regularUrl.removeScheme(), 'didn\'t remove scheme from regular url');
+    assert.equal(noScheme, secureUrl.removeScheme(), 'didn\'t remove scheme from secure url');
+    assert.equal(weirdUrl, weirdUrl.removeScheme(), 'replaced too many https');
+    assert.equal(weirdUrlInt, weirdUrl2.removeScheme(), 'didn\'t understand extra http\'s');
+      
+  });
+  
+  it('should find a value in an array of objects', function() {
+    var vals = [
+      { id: 5, name: 'steve' },
+      { id: 10, name: 'jones' },
+      { id: 11, name: 'jason'}
+    ];
+    
+    assert.equal(vals.find('id', 10), vals[1], 'didn\'t find id of 10');
+    assert.equal(vals.find('id', 99), undefined, 'found object that does not exist');
+    assert.equal(vals.find('name', 'steve'), vals[0], 'steve is MIA');
+
+  });
 }) 

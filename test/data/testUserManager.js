@@ -200,7 +200,7 @@ describe('userManager', function() {
     
     userManager.populateUserContaggs(sampleContaggsList, function(result) {
 
-      assert.equal(sampleContaggsList.length, result.length, 'didn\'t return all results');
+      assert.equal(result.length, sampleContaggsList.length, 'didn\'t return all results');
       done();
 
     });
@@ -210,13 +210,14 @@ describe('userManager', function() {
   it('should add a contagg', function(done) {
     var userId = 'b66a00ee-73d3-11e2-95c4-02e81ae640dc'; // John B. / lavamantis
     var user = new User({ id: userId });
-    var userIdToAdd = 'f32063c6-7409-11e2-96f4-02e81ac5a17b'; // Jeff M.
+    //var userIdToAdd = 'f32063c6-7409-11e2-96f4-02e81ac5a17b'; // Jeff M.
+    var userIdToAdd = 'aabaf634-6eed-11e2-81cf-02e81ac5a17b'; // Karim
     
     userManager.addUserContagg(user, userIdToAdd, function(resultContagg) {
       
       assert.ok(resultContagg != undefined, 'didn\'t get anything back');
-      assert.equal(userId, resultContagg.get('uuid_user'), 'didn\'t get right user id back');
-      assert.equal(userIdToAdd, resultContagg.get('uuid_contagg'), 'didn\'t get right added id back');
+      assert.equal(resultContagg.get('uuid_user'), userId, 'didn\'t get right user id back');
+      assert.equal(resultContagg.get('uuid_contagg'), userIdToAdd, 'didn\'t get right added id back');
       
       done();
     });
