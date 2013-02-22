@@ -57,7 +57,7 @@ function prepareDoc(host, apiUser, docInfo) {
     // Insert the users credentials if we have them
     //
     // -H \'Accept: application/json\' 
-    tryit: util.format('curl -H \'Authorization: CustomAuth apikey=%s, hash=\'$(php -r \'echo hash("sha256","%s" . "%s" . time());\') %s%s', apiUser.apiKey, apiUser.apiKey, apiUser.password, host, docInfo.path)
+    tryit: util.format('curl -H \'Authorization: CustomAuth apikey=%s, hash=\'$(php -r \'echo hash("sha256","%s" . "%s" . time());\') "%s%s"', apiUser.apiKey, apiUser.apiKey, apiUser.password, host, docInfo.path)
   };
 }
 
