@@ -15,6 +15,7 @@ var ApiUser = function(values) {
   //
   this.associatedUserId = values.associatedUserId || '';
   
+  this.name = values.name || '';
   this.apiKey = values.apiKey || '';
   this.password = values.password || '';
   this.authorizedOperations = values.authorizedOperations || [];

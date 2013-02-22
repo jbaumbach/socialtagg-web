@@ -11,6 +11,7 @@
 var util = require('util')
   , client = require('./../connectors/userGrid')
   , User = require('../../models/User.js')
+  , ApiUser = require('../../models/ApiUser.js')
   , globalFunctions = require('../../common/globalfunctions')
   , thisModule = this
   ;
@@ -299,10 +300,31 @@ function getApiUserWithSelector(collection, findSelector, resultCallback) {
 //
 exports.getApiUser = function(apiKey, resultCallback) {
 
-  throw('Not implemented!');
-
-  // maybe:  getApiUserWithSelector(collection, findSelector, resultCallback);
-
+  // todo: implement this in user grid, collection "apiUsers".  These values are just
+  // copy/pasted from a sample record created there
+  
+  var result = undefined;
+  
+  if (apiKey === '63f54fd4-7cb2-11e2-b6ef-02e81ac5a17b') {
+    var vals = {
+      "id": apiKey,
+      "associatedUserId": "b66a00ee-73d3-11e2-95c4-02e81ae640dc", // John B.
+      "name": "SocialTagg Dev Shared API Account",
+      "apiKey": apiKey,
+      "password": "46ea0d5b246d2841744c26f72a86fc29",
+      "authorizedOperations": [
+        "userGet",
+        "userPostActionVerificationEmail"
+      ],
+      "inactiveDate": "",
+      "created": 1361511639758,
+      "modified": 1361511639758
+    }
+    
+    result = new ApiUser(vals);
+  }
+  
+  resultCallback(result);
 };
 
 //
@@ -310,10 +332,14 @@ exports.getApiUser = function(apiKey, resultCallback) {
 //
 exports.getApiUserByUserId = function(userId, resultCallback) {
 
-  throw('Not implemented!');
-
-  // maybe:  getApiUserWithSelector(collection, findSelector, resultCallback);
-
+  if (userId === 'b66a00ee-73d3-11e2-95c4-02e81ae640dc' // Lavamantis
+    || userId === '3d86497b-66c4-11e2-8b37-02e81ac5a17b' // jeff@socialtagg.com
+    || userId === 'aabaf634-6eed-11e2-81cf-02e81ac5a17b') { // karim FB account
+    
+    thisModule.getApiUser('63f54fd4-7cb2-11e2-b6ef-02e81ac5a17b', resultCallback);
+  } else {
+    resultCallback(undefined);
+  }
 };
 
 //

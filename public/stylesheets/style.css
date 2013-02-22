@@ -28,12 +28,14 @@ footer{width:80%;margin:50px auto;border-top:1px dotted #ccc;padding-top:5px;fon
 div.apisettings{color:#f00;font-family:'Courier';font-size:.9em;width:500px;}
 div.apisettings span{color:#484848;display:inline-block;width:100px;font-family:'Georgia'}
 div.apisettings li{height:22px}
-.api-documentation{width:500px;}
-.api-documentation p{margin-bottom:5px}
-.api-documentation .title{color:#484848}
-.api-documentation .description{font-size:.8em}
-.api-documentation .signature span{color:#484848;font-family:'Courier'}
-.api-documentation .tryit{font-family:'Courier';font-size:.8em;background:#5e5e5e;color:#2dbffd;padding:15px;-webkit-border-radius:5px;border-radius:5px;border:1px solid #ccc}
+.api-documentation{width:800px;}
+.api-documentation p{margin:0;line-height:1.2;padding-bottom:20px}
+.api-documentation .api-operation{border-top:1px dotted #2dbffd;padding:20px 0;}
+.api-documentation .api-operation p{margin-bottom:5px;padding:5px 0}
+.api-documentation .api-operation .title{color:#484848;font-weight:bold}
+.api-documentation .api-operation .description{font-size:.8em}
+.api-documentation .api-operation .signature span{color:#484848;font-family:'Courier'}
+.api-documentation .api-operation .tryit{font-family:'Courier';font-size:.8em;background:#5e5e5e;color:#2dbffd;padding:15px;-webkit-border-radius:5px;border-radius:5px;border:1px solid #ccc}
 .user-view{width:100%;}
 .user-view ul{width:80%}
 .user-view li{clear:both;min-height:30px}
