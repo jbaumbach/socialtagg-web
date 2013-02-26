@@ -40,7 +40,6 @@ describe('api - user functions', function() {
       .expect(404, done);
   });
   
-  
   it('should get a user ok', function(done) {
     request(app)
       .get('/apiv1/users/' + goodSampleUserId)
@@ -48,27 +47,79 @@ describe('api - user functions', function() {
       .expect(200, done);
   });
 
-   it('should not send an email to an unknown user', function(done) {
+   it('should bomb out if post and no action value', function(done) {
    request(app)
-     .post('/apiv1/users/' + badSampleUserId + '?action=verificationemail')
+     .post('/apiv1/users')
      .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
-     .expect(404, done);
+     .expect(/.*action.*missing/)
+     .expect(400, done);
    });
 
-  it('should not send an email to a known user w/o a verification code', function(done) {
+  //
+  // This is failing because Express prints out a stack trace.  To fix.
+  //
+  it.skip('should bomb out gracefully if malformed JSON', function(done) {
     request(app)
-      .post('/apiv1/users/' + goodSampleUserId + '?action=verificationemail')
+      .post('/apiv1/users')
       .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
+      .set('Content-Type', 'application/json')
+      .send('{ crappyjson }')
+      .expect(/.*action.*not allowed/)
+      .expect(400, done);
+  });
+
+  it('should bomb out if post and invalid action value', function(done) {
+    request(app)
+      .post('/apiv1/users')
+      .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
+      .set('Content-Type', 'application/json')
+      .send(JSON.stringify({ action: 'uggabugga' }))
+      .expect(/.*action.*not allowed/)
+      .expect(403, done);
+  });
+
+  it('should not send an email w/o a verification code', function(done) {
+    request(app)
+      .post('/apiv1/users')
+      .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
+      .set('Content-Type', 'application/json')
+      .send(JSON.stringify({ action: 'verificationemail' }))
+      .expect(/.*verificationcode.*missing/)
+      .expect(400, done);
+  });
+
+  it('should not send an email w/o an email address', function(done) {
+    request(app)
+      .post('/apiv1/users')
+      .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
+      .set('Content-Type', 'application/json')
+      .send(JSON.stringify({ action: 'verificationemail', verificationcode: '1234' }))
+      .expect(/.*useremail.*missing/)
+      .expect(400, done);
+  });
+
+  //
+  // Run this if you get the email validator from chriso working.
+  //
+  it.skip('should not send an email to invalid email address', function(done) {
+    request(app)
+      .post('/apiv1/users')
+      .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
+      .set('Content-Type', 'application/json')
+      .send(JSON.stringify({ action: 'verificationemail', verificationcode: '1234', useremail: 'lukeskywalker' }))
+      .expect(/.*useremail.*invalid/)
       .expect(400, done);
   });
 
   //
   // Don't want to send an email every time you run the tests.  Unskip this to test periodically.
   //
-  it.skip('should send an email to a known user with good verification code', function(done) {
+  it.skip('should send an email to a user with good info', function(done) {
     request(app)
-      .post('/apiv1/users/' + goodSampleUserId + '?action=verificationemail&verificationcode=' + goodVerificiationCode)
+      .post('/apiv1/users')
       .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
+      .set('Content-Type', 'application/json')
+      .send(JSON.stringify({ action: 'verificationemail', verificationcode: '1234', useremail: 'john.j.baumbach@gmail.com' }))
       .expect(200, done);
   });
 

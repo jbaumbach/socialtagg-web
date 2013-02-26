@@ -8,6 +8,9 @@ var globalfunctions = require('./../common/globalfunctions')
   , ApiUser = require('../models/ApiUser')
   ;
 
+//
+// Display the index page
+//
 exports.index = function(req, res) {
 
   var pageVars =
@@ -17,6 +20,9 @@ exports.index = function(req, res) {
 
   var sessionInfo = globalfunctions.getSessionInfo(req);
 
+  //
+  // Helper function to process operation output
+  //
   function finalRender(apiUser) {
     var apiUser = apiUser || new ApiUser({ apiKey:'yourkey', password:'yourpassword'});
 
@@ -38,6 +44,9 @@ exports.index = function(req, res) {
     res.render('apidocumentation', pageVars);
   }
 
+  //
+  // Procss operation output, optionally adding the current user credentials
+  //
   if (sessionInfo.userId) {
     userManager.getApiUserByUserId(sessionInfo.userId, function(apiUser) {
       finalRender(apiUser);
@@ -47,7 +56,20 @@ exports.index = function(req, res) {
   };
 };
 
+//
+// Helper function to create the output data that the view will render
+//
 function prepareDoc(host, apiUser, docInfo) {
+  var addtlCommand = '';
+  var addtlHeader = '';
+  var postBody = '';
+  
+  if (docInfo.postJson) {
+    addtlHeader = ' -H \'Content-Type: application/json\'';
+    postBody = util.format(' -d \'%s\'', docInfo.postJson);
+    addtlCommand = ' -X POST';
+  }
+
   return {
     title: docInfo.title,
     description: docInfo.description,
@@ -56,8 +78,9 @@ function prepareDoc(host, apiUser, docInfo) {
     //
     // Insert the users credentials if we have them
     //
-    // -H \'Accept: application/json\' 
-    tryit: util.format('curl -H \'Authorization: CustomAuth apikey=%s, hash=\'$(php -r \'echo hash("sha256","%s" . "%s" . time());\') "%s%s"', apiUser.apiKey, apiUser.apiKey, apiUser.password, host, docInfo.path)
+    //  
+    tryit: util.format('curl %s%s%s -H \'Authorization: CustomAuth apikey=%s, hash=\'$(php -r \'echo hash("sha256","%s" . "%s" . time());\') "%s%s"',
+      addtlCommand, addtlHeader, postBody, apiUser.apiKey, apiUser.apiKey, apiUser.password, host, docInfo.path)
   };
 }
 
@@ -67,8 +90,8 @@ function prepareDoc(host, apiUser, docInfo) {
 //******************************************************************
 
 // DRY alert: I feel that this can be integrated with an overall list of operations
-// contained somewhere, and the values can be used to populate the API routes, 
-// perform authorization, and generate the documentation.  Sweet!
+// contained somewhere else in the solution, and the values can be used to populate the API routes, 
+// perform authorization, and generate the documentation.  Maybe even unit tests?
 
 var userGet =  {
   title:'Get User Info',
@@ -78,6 +101,7 @@ var userGet =  {
 
 var userPostActionVerificationEmail = {
   title: 'Send Account Verification Email',
-  description: 'Sends the initial verification email to a new user.',
-  path: '/apiv1/users/{user_id}?action=verificationemail&verificationcode={verification_code}'
+  description: 'Note: this is a POST request. Sends the initial verification email to a new user.',
+  path: '/apiv1/users',
+  postJson: '{ "action": "verificationemail", "useremail": "the_user_email", "verificationcode": "the_user_verification_code" }'
 }
