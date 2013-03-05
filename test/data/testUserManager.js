@@ -223,7 +223,31 @@ describe('userManager', function() {
     });
   });
   
-  
+  it('should return 1 for setting user verification code for nonexistant email', function(done) {
+    
+    var code = '123456';
+    var badEmail = 'blah@blahblah.com';
+    
+    userManager.setUserVerificationCodeByEmail(code, badEmail, function(err, code) {
+      
+      assert.equal(err, 1, 'didn\'t get 1 back for bad email');
+      done();
+    });
+  });
+
+  it('should return 0 for setting user verification code for good email', function(done) {
+
+    var code = '123456';
+    var goodEmail = 'john.j.baumbach@gmail.com';
+
+    userManager.setUserVerificationCodeByEmail(code, goodEmail, function(err, code) {
+
+      assert.equal(err, 0, 'didn\'t get 0 back for bad email');
+      done();
+    });
+  });
+
+
   // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   // All new tests should go above this line
 });

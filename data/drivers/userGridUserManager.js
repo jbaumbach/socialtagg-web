@@ -166,6 +166,7 @@ exports.getUserContaggs = function(id, resultCallback) {
   var options = {
     type: 'contaggs',
     qs: { 
+      // Note - you must use SINGLE QUOTES around a string value to search for
       ql: util.format('select * where uuid_user = %s order by created DESC', id),
       limit: '100'
     }
@@ -272,10 +273,56 @@ exports.addUserContagg = function(user, userIdToAdd, resultCallback) {
     resultCallback(result);
 
   });
-  
-  
 };
 
+
+exports.setUserVerificationCodeByEmail = function(code, email, resultCallback) {
+  
+  var options = {
+    type: 'users',
+    qs: {
+      // Note - you must use SINGLE QUOTES around a string value to search for
+      ql: util.format('select * where email = \'%s\'', email),
+      limit: '100'
+    }
+  };
+
+  //
+  // Callback params: err  (0 = no error, 1 = user not found, 2 = db error)
+  //                  code (the verification code)
+  //
+  client().createCollection(options, function (err, existingUsers) {
+    if (err) {
+      // Crap
+      resultCallback(2);
+      
+    } else {
+      if (existingUsers.hasNextEntity()) {
+
+        var existingUser = existingUsers.getNextEntity();
+
+        existingUser.set('forgotPasswordValidationCode', code);
+        //existingUser.set('validate-password', 'removed');
+        
+        existingUser.save(function(err) {
+        
+          if (err) {
+            resultCallback(2);
+          } else {
+            resultCallback(0, code);
+          }
+        });
+      } else {
+        resultCallback(1);
+      }
+    }
+  });
+};
+
+
+exports.validateUserVerificationCodeByEmail = function(code, email, resultCallback) {
+  throw('Not implemented yet!');
+};
 
 
 

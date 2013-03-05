@@ -13,6 +13,7 @@ var util = require('util')
   , globalFunctions = require('./globalfunctions')
   , check = require('validator').check
   , sanitize = require('validator').sanitize
+  , thisModule = this
   ;
 
 //
@@ -60,6 +61,38 @@ exports.loginStatus = function(req) {
   }
 };
 
+//
+// Generate a random verification code 
+//
+exports.getForgotPasswordEmailVerificationCode = function() {
+  var temp = util.format('%d', new Date());
+  var length = 6;
+  var result = temp.substr(temp.length - length);
+
+  return result;
+}
+
+//
+// Generate a verification code, save it in database for user with passed
+// email address, and return it.
+//
+// Callback params: err  (0 = no error, 1 = user not found, 2 = db error)
+//                  code (the verification code)
+//
+exports.getAndSetVerificationCodeForUserByEmail = function(userEmail, callback) {
+  
+  var code = thisModule.getForgotPasswordEmailVerificationCode();
+
+  userManager.setUserVerificationCodeByEmail(code, userEmail, function(err) {
+    callback(err, code);
+  });
+};
+
+
+
+//
+// Sanitization functions
+//
 exports.getSanitizedUser = function(rawUser) {
   var sanitizedData = {
     id: rawUser.id,

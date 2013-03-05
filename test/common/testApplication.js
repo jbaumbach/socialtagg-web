@@ -150,7 +150,15 @@ describe('application class', function() {
     });
 
     assert.equal(Object.keys(safeVals).length, propertiesTested, 'did\'t test all the properties');
-
+  });
+  
+  it('should generate a random verification code of 6 numbers', function() {
+    
+    var res = application.getForgotPasswordEmailVerificationCode();
+    var length = 6;
+    
+    assert.equal(res.length, length, 'wasn\'t '+ length + 'digits');
+    assert.equal(/[0-9]{6}/.test(res), true, 'wasn\'t all numbers');
     
   });
 });

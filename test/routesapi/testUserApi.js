@@ -123,4 +123,34 @@ describe('api - user functions', function() {
       .expect(200, done);
   });
 
+  it('should not send a forgot password email whem email address is missing', function(done) {
+    request(app)
+      .post('/apiv1/users')
+      .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
+      .set('Content-Type', 'application/json')
+      .send(JSON.stringify({ action: 'forgotpasswordemail' }))
+      .expect(/.*parameter.*missing/)
+      .expect(400, done);
+  });
+
+  it('should not send a forgot password email to a bad email address', function(done) {
+    request(app)
+      .post('/apiv1/users')
+      .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
+      .set('Content-Type', 'application/json')
+      .send(JSON.stringify({ action: 'forgotpasswordemail', useremail: 'blahblah@blah.com' }))
+      .expect(/blahblah@blah.com/)
+      .expect(404, done);
+  });
+
+  it('should send a forgot password email to a good email address', function(done) {
+    request(app)
+      .post('/apiv1/users')
+      .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
+      .set('Content-Type', 'application/json')
+      .send(JSON.stringify({ action: 'forgotpasswordemail', useremail: 'john.j.baumbach@gmail.com' }))
+      .expect(200, done);
+  });
+
+
 });

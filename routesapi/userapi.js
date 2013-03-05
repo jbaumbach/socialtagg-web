@@ -7,6 +7,7 @@ var userManager = require('./../data/userManager')
   , globalfunctions = require('./../common/globalfunctions')
   , User = require('./../models/User')
   , check = require('validator').check
+  , application = require('./../common/application')
   , thisModule = this
   ;
 
@@ -178,16 +179,27 @@ function handleForgotPasswordEmailRequest(options, res) {
   if (!userEmail) {
     respond(res, 400, 'The \'useremail\' parameter is missing');
   } else {
-    var temp = util.format('%d', new Date());
-    var length = 6;
-    var verificationCode = temp.substr(temp.length - length);
-    
-    sendForgotPasswordEmail(userEmail, verificationCode, function (err, response) {
-      if (err) {
-        respond(res, 500, 'There was an error sending the email.');
-      } else {
-        respond(res, 200, response);
+    application.getAndSetVerificationCodeForUserByEmail(userEmail, function(err, code) {
+
+      switch (err) {
+        case 0:
+          sendForgotPasswordEmail(userEmail, code, function (err, response) {
+            if (err) {
+              respond(res, 500, 'There was an error sending the email.');
+            } else {
+              respond(res, 200, response);
+            }
+          });
+
+          break;
+        case 1:
+          respond(res, 404, util.format('The email addr \'%s\' was not found', userEmail));
+          break;
+        case 2:
+          respond(res, 500, 'Internal server error, please try again laterl')
+          break;
       }
+      
     });
   }
 }

@@ -61,6 +61,10 @@ exports.addUserContagg = function(user, userIdToAdd, resultCallback) {
   db.addUserContagg(user, userIdToAdd, resultCallback);
 };
 
+exports.setUserVerificationCodeByEmail = function(code, email, resultCallback) {
+  db.setUserVerificationCodeByEmail(code, email, resultCallback)  
+};
+
 //********************************************************************************
 // API user functions
 //********************************************************************************
