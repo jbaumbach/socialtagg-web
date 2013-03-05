@@ -32,7 +32,7 @@ exports.index = function(req, res){
 
     var pageVars =
     {
-      title: 'SocalTagg',
+      title: 'Home',
       currentSessionUser: currentSessionUser
     };
 

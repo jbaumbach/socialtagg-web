@@ -78,7 +78,7 @@ describe('api - user functions', function() {
       .expect(403, done);
   });
 
-  it('should not send an email w/o a verification code', function(done) {
+  it('should not send a verificationemail email w/o a verification code', function(done) {
     request(app)
       .post('/apiv1/users')
       .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
@@ -88,7 +88,7 @@ describe('api - user functions', function() {
       .expect(400, done);
   });
 
-  it('should not send an email w/o an email address', function(done) {
+  it('should not send a verificationemail email w/o an email address', function(done) {
     request(app)
       .post('/apiv1/users')
       .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
@@ -101,7 +101,7 @@ describe('api - user functions', function() {
   //
   // Run this if you get the email validator from chriso working.
   //
-  it.skip('should not send an email to invalid email address', function(done) {
+  it.skip('should not send a verificationemail email to invalid email address', function(done) {
     request(app)
       .post('/apiv1/users')
       .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
@@ -114,7 +114,7 @@ describe('api - user functions', function() {
   //
   // Don't want to send an email every time you run the tests.  Unskip this to test periodically.
   //
-  it.skip('should send an email to a user with good info', function(done) {
+  it.skip('should send a verificationemail email to a user with good info', function(done) {
     request(app)
       .post('/apiv1/users')
       .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))

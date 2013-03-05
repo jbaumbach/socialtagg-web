@@ -31,17 +31,18 @@ exports.index = function(req, res) {
     //
     //var host = 'http://localhost:3000';
     var host = 'http://www.socialtagg.com';
-    //
-    // List of all API operations here
-    //
-    pageVars.operations = [
-      prepareDoc(host, apiUser, userGet),
-      prepareDoc(host, apiUser, userPostActionVerificationEmail)
-    ];
-
-    pageVars.apiUser = apiUser;
     
+    //
+    // Convert API call values into displayable documentation values
+    //
+    pageVars.operations = [];
+    apiFunctions.forEach(function(apiFunction) {
+      pageVars.operations.push(prepareDoc(host, apiUser, apiFunction));
+    });
+    
+    pageVars.apiUser = apiUser;
     res.render('apidocumentation', pageVars);
+
   }
 
   //
@@ -78,7 +79,6 @@ function prepareDoc(host, apiUser, docInfo) {
     //
     // Insert the users credentials if we have them
     //
-    //  
     tryit: util.format('curl %s%s%s -H \'Authorization: CustomAuth apikey=%s, hash=\'$(php -r \'echo hash("sha256","%s" . "%s" . time());\') "%s%s"',
       addtlCommand, addtlHeader, postBody, apiUser.apiKey, apiUser.apiKey, apiUser.password, host, docInfo.path)
   };
@@ -93,15 +93,35 @@ function prepareDoc(host, apiUser, docInfo) {
 // contained somewhere else in the solution, and the values can be used to populate the API routes, 
 // perform authorization, and generate the documentation.  Maybe even unit tests?
 
-var userGet =  {
-  title:'Get User Info',
-  description:'Retrieves and returns a user from the database.',
-  path: '/apiv1/users/{user_id}'
-};
+var apiFunctions = [ 
+  {
+    title:'Get User Info',
+    description:'Retrieves and returns a user from the database.',
+    path: '/apiv1/users/{user_id}'
+  },
 
-var userPostActionVerificationEmail = {
-  title: 'Send Account Verification Email',
-  description: 'Note: this is a POST request. Sends the initial verification email to a new user.',
-  path: '/apiv1/users',
-  postJson: '{ "action": "verificationemail", "useremail": "the_user_email", "verificationcode": "the_user_verification_code" }'
-}
+  {
+    title: 'Send Account Verification Email',
+    description: 'Sends the initial verification email to a new user.',
+    path: '/apiv1/users',
+    postJson: '{ "action": "verificationemail", "useremail": "the_user_email", "verificationcode": "the_user_verification_code" }'
+  }
+  /*
+  ,
+  
+  {
+    title: 'Send Forgot Password Email',
+    description: 'Sends the forgot password email to a user.  The generated code should be supplied to the "reset password" API call',
+    path: '/apiv1/users',
+    postJson: '{ "action": "forgotpasswordemail", "useremail": "the_user_email" }'
+  },
+
+  {
+    title: 'Verify and Reset User Password',
+    description: 'Verifies the passed code, and if valid, sets the password to the passed password',
+    path: '/apiv1/users',
+    postJson: '{ "action": "resetpassword", "useremail": "the_user_email", "verificationcode": "the_verification_code", "newpassword": "the_new_password" }'
+  }
+   */
+
+];
