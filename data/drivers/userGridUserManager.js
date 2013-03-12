@@ -25,7 +25,7 @@ var util = require('util')
 //
 // Maps a User Grid user to our app's user
 //
-function UserFromUserGridUser(userGridUser) {
+function userFromUserGridUser(userGridUser) {
   
   // todo: really understand UG responses.  There's FB stuff in there.
   
@@ -71,7 +71,7 @@ function UserGridUserFromUser(user) {
 //
 // Return a user object from the data store corresponding to the passed options
 //
-function getUsergridUserFromOptions(options, resultCallback) {
+function getUserFromUserGridByOptions(options, resultCallback) {
   var result = undefined;
 
   client().getEntity(options, function (err, existingUser) {
@@ -79,13 +79,46 @@ function getUsergridUserFromOptions(options, resultCallback) {
       // Crap
       
     } else {
-      result = UserFromUserGridUser(existingUser);
+      result = userFromUserGridUser(existingUser);
     }
 
     resultCallback(result);
 
   });
 }
+
+//
+// Callback params: err  (0 = no error, 1 = user not found, 2 = db error)
+//                  userGridUser (the resulting userGridUser)
+//
+function getUserGridUserByEmail(email, resultCallback) {
+  var options = {
+    type: 'users',
+    qs: {
+      // Note - you must use SINGLE QUOTES around a string value to search for
+      ql: util.format('select * where email = \'%s\'', email),
+      limit: '100'
+    }
+  };
+
+  client().createCollection(options, function (err, existingUsers) {
+    if (err) {
+      // Crap
+      resultCallback(2);
+
+    } else {
+      if (existingUsers.hasNextEntity()) {
+
+        var existingUser = existingUsers.getNextEntity();
+        resultCallback(0, existingUser);
+        
+      } else {
+        resultCallback(1);
+      }
+    }
+  });
+  
+};
 
 exports.getUser = function(id, resultCallback) {
 
@@ -94,7 +127,7 @@ exports.getUser = function(id, resultCallback) {
     uuid:id
   };
 
-  getUsergridUserFromOptions(options, resultCallback);
+  getUserFromUserGridByOptions(options, resultCallback);
 };
 
 exports.getUserByUsername = function(username, resultCallback) {
@@ -104,7 +137,21 @@ exports.getUserByUsername = function(username, resultCallback) {
     username:username    // weird: username IS email?
   };
 
-  getUsergridUserFromOptions(options, resultCallback);
+  getUserFromUserGridByOptions(options, resultCallback);
+};
+
+exports.getUserByEmail = function(emailAddr, resultCallback) {
+  
+  var result = undefined;
+  
+  getUserGridUserByEmail(emailAddr, function(err, userGridUser) {
+    if (err === 0) {
+      result = userFromUserGridUser(userGridUser);
+    } 
+    
+    resultCallback(result);
+  });
+  
 };
 
 //
@@ -275,53 +322,67 @@ exports.addUserContagg = function(user, userIdToAdd, resultCallback) {
   });
 };
 
-
+//
+// Callback params: err  (0 = no error, 1 = user not found, 2 = db error)
+//                  code (the verification code)
+//
 exports.setUserVerificationCodeByEmail = function(code, email, resultCallback) {
   
-  var options = {
-    type: 'users',
-    qs: {
-      // Note - you must use SINGLE QUOTES around a string value to search for
-      ql: util.format('select * where email = \'%s\'', email),
-      limit: '100'
-    }
-  };
+  getUserGridUserByEmail(email, function(err, existingUser) {
+    if (err === 0) {
+      existingUser.set('forgotPasswordValidationCode', code);
 
-  //
-  // Callback params: err  (0 = no error, 1 = user not found, 2 = db error)
-  //                  code (the verification code)
-  //
-  client().createCollection(options, function (err, existingUsers) {
-    if (err) {
-      // Crap
-      resultCallback(2);
-      
+      existingUser.save(function(err) {
+
+        if (err) {
+          resultCallback(2);
+        } else {
+          resultCallback(0, code);
+        }
+      });
+
     } else {
-      if (existingUsers.hasNextEntity()) {
-
-        var existingUser = existingUsers.getNextEntity();
-
-        existingUser.set('forgotPasswordValidationCode', code);
-        //existingUser.set('validate-password', 'removed');
-        
-        existingUser.save(function(err) {
-        
-          if (err) {
-            resultCallback(2);
-          } else {
-            resultCallback(0, code);
-          }
-        });
-      } else {
-        resultCallback(1);
-      }
+      resultCallback(err, code);
     }
   });
 };
 
 
-exports.validateUserVerificationCodeByEmail = function(code, email, resultCallback) {
-  throw('Not implemented yet!');
+//
+// Callback params: err  (0 = no error, 1 = user not found, 2 = db error, 3 = bad verification code)
+//
+exports.setUserPasswordWithVerificationCodeByEmail = function(email, originalCode, newPw, resultCallback) {
+
+  getUserGridUserByEmail(email, function(err, existingUser) {
+    if (err === 0) {
+      var currentDbCode = existingUser.get('forgotPasswordValidationCode');
+      
+      if (currentDbCode == originalCode) {
+
+        //
+        // Clear existing verification code
+        //
+        existingUser.set('forgotPasswordValidationCode', '');
+        existingUser.set('validate-password', 'what the hell, man?  don\'t expose passwords!');
+
+        existingUser.set('password', newPw);
+
+        existingUser.save(function(err) {
+
+          if (err) {
+            resultCallback(2);
+          } else {
+            resultCallback(0);
+          }
+        });
+
+      } else {
+        resultCallback(3);
+      }
+    } else {
+      resultCallback(err);
+    }
+  });
 };
 
 

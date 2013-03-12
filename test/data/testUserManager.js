@@ -10,11 +10,12 @@
   Todo: move the db object to an agnostic class that does the connecting/deconnecting/waiting.
 
  */
-var assert = require('assert');
-var userManager = require('../../data/userManager');
-//var db = require('../../data/connectors/mongo'); // uncomment this to use Mongo instead
-var ApiUser = require('../../models/ApiUser');
-var User = require('../../models/User');
+var assert = require('assert')
+  , userManager = require('../../data/userManager')
+  , ApiUser = require('../../models/ApiUser')
+  , User = require('../../models/User')
+  , util = require('util')
+;
 
 //
 // For the "existing user" test(s) to work, create this user in your interface so it 
@@ -32,6 +33,12 @@ var existingUserName = 'Jeff Mock';
 var existingUserEmail = 'jeff@socialtagg.com';
 var existingUserPW = 'tbd';
 
+var changeableUserEmail = 'blah@blah.com';
+var changeableUserName = 'John\'s Test User - Dont Modify';
+var changeablePw = 'yodayoda';  // util.format('%d', new Date());
+var verificationCode = '343434';
+
+  
 //
 // Delay to let db connection start.  This seems to be about right.  Any less, the tests will fail.
 //
@@ -237,16 +244,70 @@ describe('userManager', function() {
 
   it('should return 0 for setting user verification code for good email', function(done) {
 
-    var code = '123456';
-    var goodEmail = 'john.j.baumbach@gmail.com';
-
-    userManager.setUserVerificationCodeByEmail(code, goodEmail, function(err, code) {
+    userManager.setUserVerificationCodeByEmail(verificationCode, changeableUserEmail, function(err, validationCode) {
 
       assert.equal(err, 0, 'didn\'t get 0 back for bad email');
       done();
     });
   });
 
+  it('should get user by email', function(done) {
+    userManager.getUserByEmail(changeableUserEmail, function(resultUser) {
+      
+      assert.equal(resultUser.name, changeableUserName, 'didn\'t get name back');
+      
+      done();
+    }); 
+  })
+
+  it('should return 1 for setting user pw for nonexistant email', function(done) {
+
+    var badEmail = 'blah@blahblah.com';
+    var newPw = 'yoda';
+    
+    userManager.setUserPasswordWithVerificationCodeByEmail(badEmail, verificationCode, newPw, function(err) {
+
+      assert.equal(err, 1, 'didn\'t get 1 back for bad email');
+      done();
+    });
+  });
+
+  it('should return 3 for setting user pw for bad verification code', function(done) {
+
+    var code = '123456';
+    var newPw = 'yoda';
+
+    userManager.setUserPasswordWithVerificationCodeByEmail(changeableUserEmail, code, newPw, function(err) {
+
+      // test user password: hello (looks like the account has insufficient permissions; to research)
+      // http://apigee.com/docs/usergrid/content/authentication-and-access-usergrid
+      
+      assert.equal(err, 3, 'didn\'t get 3 back for bad verification code');
+      done();
+    });
+  });
+
+  console.log('setting changeablePw account PW to: ' + changeablePw);
+
+  //
+  // Note: not working because the PW isn't changing on usergrid side.  Prolly permissions?
+  // Need to fix.
+  //
+  it('should set new password properly', function(done) {
+
+    userManager.setUserPasswordWithVerificationCodeByEmail(changeableUserEmail, verificationCode, changeablePw, function(err) {
+
+      assert.equal(err, 0, 'didn\'t get 0 back for good info');
+
+      userManager.validateCredentials('jbtestuser', changeablePw, function(user) {
+        assert.ok(user != undefined, 'didn\'t validate new credentials');
+        assert.equal(user.name, changeableUserName, 'didn\'t validate credentials properly');
+        done();
+      })
+    });
+  });
+
+  
 
   // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   // All new tests should go above this line

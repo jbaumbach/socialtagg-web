@@ -89,7 +89,6 @@ exports.getAndSetVerificationCodeForUserByEmail = function(userEmail, callback) 
 };
 
 
-
 //
 // Sanitization functions
 //

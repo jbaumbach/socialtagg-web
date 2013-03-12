@@ -9,11 +9,13 @@ var request = require('supertest')
   , myApp = require('../../app.js')
   , util = require('util')
   , globalFunctions = require('../../common/globalfunctions')
-  ;
+  , assert = require('assert')
+;
 
 var app = myApp.app();
 
 var goodSampleUserId = 'b66a00ee-73d3-11e2-95c4-02e81ae640dc'; // John B.
+var goodSampleUserEmail = 'john.j.baumbach@gmail.com';
 var badSampleUserId = 'uggabugga';
 
 var goodApiKey = '63f54fd4-7cb2-11e2-b6ef-02e81ac5a17b';  // Created in usergrid (and hard coded for now)
@@ -25,13 +27,24 @@ var authHeaderValue = function(apiKey, apiPW) {
   return util.format('CustomAuth apikey=%s, hash=%s', apiKey, hashVal);
 };
 
-var goodVerificiationCode = '6414';
+var changeableUserEmail = 'blah@blah.com';
+var changeableUserName = 'John\'s Test User - Dont Modify';
+var changeablePw = 'yodayoda';  // util.format('%d', new Date());
+var verificationCode = '343434';
+
+
+//**********************************************************************************************
+var skipActualEmailSending = true;
+//**********************************************************************************************
+
 
 describe('api - user functions', function() {
 
   this.timeout(90000);
 
-  
+  //
+  // Black-box functional tests - calls endpoints from a client
+  //
   it('should get 404 for unknown user and explain the bad id', function(done) {
     request(app)
       .get('/apiv1/users/' + badSampleUserId)
@@ -44,10 +57,26 @@ describe('api - user functions', function() {
     request(app)
       .get('/apiv1/users/' + goodSampleUserId)
       .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
-      .expect(200, done);
+      .expect(200, done)
   });
 
-   it('should bomb out if post and no action value', function(done) {
+  it('should get a user ok and return valid JSON', function(done) {
+    request(app)
+      .get('/apiv1/users/' + goodSampleUserId)
+      .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
+      .expect(200)
+      .end(function(err, res) {
+
+        //
+        // The body is automatically parsed into an object for us
+        //
+        var responseObject = res.body;
+        assert.equal(responseObject.email, goodSampleUserEmail, 'didn\'t get correct email back');
+        done();
+      });
+  });
+
+  it('should bomb out if post and no action value', function(done) {
    request(app)
      .post('/apiv1/users')
      .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
@@ -111,18 +140,6 @@ describe('api - user functions', function() {
       .expect(400, done);
   });
 
-  //
-  // Don't want to send an email every time you run the tests.  Unskip this to test periodically.
-  //
-  it.skip('should send a verificationemail email to a user with good info', function(done) {
-    request(app)
-      .post('/apiv1/users')
-      .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
-      .set('Content-Type', 'application/json')
-      .send(JSON.stringify({ action: 'verificationemail', verificationcode: '1234', useremail: 'john.j.baumbach@gmail.com' }))
-      .expect(200, done);
-  });
-
   it('should not send a forgot password email whem email address is missing', function(done) {
     request(app)
       .post('/apiv1/users')
@@ -143,14 +160,93 @@ describe('api - user functions', function() {
       .expect(404, done);
   });
 
-  it('should send a forgot password email to a good email address', function(done) {
+  it('should have err msg resetting password if missing POST params', function(done) {
     request(app)
       .post('/apiv1/users')
       .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
       .set('Content-Type', 'application/json')
-      .send(JSON.stringify({ action: 'forgotpasswordemail', useremail: 'john.j.baumbach@gmail.com' }))
+      .send(JSON.stringify({ action: 'resetpassword' }))
+      .expect(/.*useremail.*missing/)
+      .expect(400, done);
+  });
+
+  //
+  // This will only work if the user in the db has the same validation code.  Not usually
+  // a useful test automation-wise.  But can be run sometimes if you manually set the code
+  // in usergrid (or create a new test user that has a consistent code)
+  //
+  it.skip('should reset password ok with good params', function(done) {
+    request(app)
+      .post('/apiv1/users')
+      .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
+      .set('Content-Type', 'application/json')
+      .send(JSON.stringify({ 
+        action: 'resetpassword', 
+        useremail: changeableUserEmail, 
+        originalcode: verificationCode, 
+        newpassword: changeablePw
+      }))
+      .expect(/.*useremail.*missing/)
       .expect(200, done);
   });
 
+  //
+  // This will only work if the user in the db has the same validation code.  Not usually
+  // a useful test automation-wise.  But can be run sometimes if you manually set the code
+  // in usergrid (or create a new test user that has a consistent code)
+  //
+  it('should return 404 for reset password with bad verification code', function(done) {
+    request(app)
+      .post('/apiv1/users')
+      .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
+      .set('Content-Type', 'application/json')
+      .send(JSON.stringify({
+        action: 'resetpassword',
+        useremail: changeableUserEmail,
+        originalcode: verificationCode,
+        newpassword: changeablePw
+      }))
+      .expect(/verification code/)
+      .expect(404, done);
+  });
 
+  //
+  // Don't want to send an email every time you run the tests.  Unskip this to test periodically.
+  //
+  if (!skipActualEmailSending) {
+    
+    it.skip('should send a verificationemail email to a user with good info', function(done) {
+      request(app)
+        .post('/apiv1/users')
+        .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
+        .set('Content-Type', 'application/json')
+        .send(JSON.stringify({ action: 'verificationemail', verificationcode: '1234', useremail: 'john.j.baumbach@gmail.com' }))
+        .expect(200)
+        .end(function(err, res) {
+  
+          //
+          // The body string needs to be parsed into a json object since it was chunked manually by the email 
+          // sender, rather than retrieved by the supertest request extension.
+          //
+          var responseObject = JSON.parse(res.body);
+          assert.equal(responseObject[0].status, "sent", 'didn\'t send properly');
+          done();
+        });
+    });
+  
+    it('should send a forgot password email to a good email address', function(done) {
+      request(app)
+        .post('/apiv1/users')
+        .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
+        .set('Content-Type', 'application/json')
+        .send(JSON.stringify({ action: 'forgotpasswordemail', useremail: 'john.j.baumbach@gmail.com' }))
+        .expect(200)
+        .end(function(err, res) {
+          var responseObject = JSON.parse(res.body);
+          assert.equal(responseObject[0].status, "sent", 'didn\'t send properly');
+          done();
+        });
+    });
+  }
+  
 });

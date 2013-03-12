@@ -37,6 +37,10 @@ exports.getUserByUsername = function(email, resultCallback) {
   db.getUserByUsername(email, resultCallback);
 };
 
+exports.getUserByEmail = function(emailAddr, resultCallback) {
+  db.getUserByEmail(emailAddr, resultCallback);
+}
+
 exports.upsertUser = function(user, resultCallback) {
   db.upsertUser(user, resultCallback);
 };
@@ -63,6 +67,10 @@ exports.addUserContagg = function(user, userIdToAdd, resultCallback) {
 
 exports.setUserVerificationCodeByEmail = function(code, email, resultCallback) {
   db.setUserVerificationCodeByEmail(code, email, resultCallback)  
+};
+
+exports.setUserPasswordWithVerificationCodeByEmail = function(email, originalCode, newPw, resultCallback) {
+  db.setUserPasswordWithVerificationCodeByEmail(email, originalCode, newPw, resultCallback);
 };
 
 //********************************************************************************

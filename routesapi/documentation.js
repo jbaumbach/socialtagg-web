@@ -112,14 +112,12 @@ var apiFunctions = [
     description: 'Sends the forgot password email to a user.  The generated code should be supplied to the "reset password" API call',
     path: '/apiv1/users',
     postJson: '{ "action": "forgotpasswordemail", "useremail": "the_user_email" }'
-  }
-  /*,
+  },
 
   {
     title: 'Verify and Reset User Password',
     description: 'Verifies the passed code, and if valid, sets the password to the passed password',
     path: '/apiv1/users',
-    postJson: '{ "action": "resetpassword", "useremail": "the_user_email", "verificationcode": "the_verification_code", "newpassword": "the_new_password" }'
+    postJson: '{ "action": "resetpassword", "useremail": "the_user_email", "originalcode": "the_verification_code", "newpassword": "the_new_password" }'
   }
-  */
 ];

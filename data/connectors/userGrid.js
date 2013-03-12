@@ -21,11 +21,19 @@ var util = require('util')
 //
 module.exports = function() {
   return new usergrid.client({
-    orgName:'tagg',
-    appName:'tagg',
+    orgName: 'tagg',
+    appName: 'tagg',
+    
+    /*
+     } else if (this.authType === AUTH_APP_USER) {
+     qs['access_token'] = self.getToken();
+     */
     authType:usergrid.AUTH_CLIENT_ID,
-    clientId:'YXA6lOxfCdkIEeGvrRIxOwHVwQ',
-    clientSecret:'YXA62r4rQiF8JcZZmLSW9z10GC6dbxY',
+    
+    // Find below credentials here: https://apigee.com/usergrid/#tagg/tagg/organization
+    
+    clientId: 'b3U6dEm4a9j5EeGvrRIxOwHVwQ',  //'YXA6lOxfCdkIEeGvrRIxOwHVwQ',
+    clientSecret:'b3U6z-d4_iF8UbxNt9aqNqtzHDSBV9s',  //'YXA62r4rQiF8JcZZmLSW9z10GC6dbxY',
 
     logging: true  //optional - turn on logging, off by default
   });

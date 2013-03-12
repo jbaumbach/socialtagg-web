@@ -8,136 +8,86 @@ var userManager = require('./../data/userManager')
   , User = require('./../models/User')
   , check = require('validator').check
   , application = require('./../common/application')
+  , email = require('./../common/email')
   , thisModule = this
   ;
 
-
-//*****************************************************************************
-// Private functions
-//*****************************************************************************
+var fromEmail = 'support@socialtagg.com';
+var fromName = 'SocialTagg Support Team';
 
 
-function respond(res, responseCode, response) {
+
+exports.respond = function(res, responseCode, response) {
   res.format({
     json: function() { 
       //
       //   The objects dumped include internal variables too, might want to sanitize them.
       //
-      res.json(responseCode, JSON.stringify(response)); 
+      res.json(responseCode, response);
     }
   });
-}
-
-//
-// Send an email via Mandrill
-//
-function sendEmail(postData, resultCallback) {
-
-  var https = require('https');
-  var response = '';
-
-  var options = {
-    hostname: 'mandrillapp.com',
-    port: 443,
-    path: '/api/1.0/messages/send.json',
-    method: 'POST'
-  };
-
-  var req = https.request(options, function(apiRes) {
-    apiRes.on('data', function(data) {
-      response += data;
-    });
-
-    apiRes.on('end', function() {
-      console.log('Mandrill response: ' + util.inspect(response));
-
-      resultCallback(false, response);
-    });
-  });
-
-  req.write(JSON.stringify(postData));
-
-  req.on('error', function(e) {
-    console.log('Error sending email: ' + e);
-    resultCallback(true, 'error');
-  });
-
-  //
-  // It's not super clear, but I believe this kicks off the request
-  //
-  req.end();
-
 }
 
 //
 // Various templates for emails to send
 //
 
-function sendVerificationEmail(emailAddr, verificationCode, resultCallback) {
-  //
-  // Todo: make this a template on Mandrill's side, and use variables from config file
-  //
-  var postData = {
-    "key" : "d45dd60c-7dc4-4b1b-8857-86c791e068c1",
-    "message" : {
-      "subject" : "Welcome to SocialTagg!",
-        "text" : util.format("Hello %s!\n\nWelcome to SocialTagg!\n\nYour " +
-          "verification code is %s. Please enter this code on the verification screen " +
-          "in the mobile app to gain access to the app.\n\nSincerely,\nSocialTagg Team",
-          emailAddr, verificationCode),
-        "from_email" : "support@socialtagg.com",
-        "preserve_recipients" : false,
-        "from_name" : "SocialTagg Support Team",
-        "to" : [
-        {
-          "email" : emailAddr
-        }
-      ],
-      "html" : util.format("<body>Hello %s!<br \/><br \/>Welcome to SocialTagg!<br \/>" +
-        "<br \/>Your verification code is %s. Please enter this code on the " +
-        "verification screen in the mobile app to gain access to the app.<br \/>" +
-        "<br \/>Sincerely,<br \/>SocialTagg Team<\/body>", emailAddr, verificationCode)
-    } 
-  }
+exports.sendVerificationEmail = function(emailAddr, verificationCode, resultCallback) {
 
-  sendEmail(postData, resultCallback);
+  var params = {
+    subject : "Welcome to SocialTagg!",
+    plainTextBody : util.format("Hello %s!\n\nWelcome to SocialTagg!\n\nYour " +
+      "verification code is %s. Please enter this code on the verification screen " +
+      "in the mobile app to gain access to the app.\n\nSincerely,\nSocialTagg Team",
+      emailAddr, verificationCode),
+    toEmail : emailAddr,
+    fromEmail : fromEmail,
+    fromName: fromName,
+
+    templateName : "socialtagg-create-account",
+    mergeVars : [
+      {
+        "name" : "verification_code",
+        "content" : verificationCode
+      },
+      {
+        "name" : "email",
+        "content" : emailAddr
+      }
+    ]
+  };
+
+  email.sendGenericEmail(params, resultCallback);
 }
 
-function sendForgotPasswordEmail(emailAddr, verificationCode, resultCallback) {
-  //
-  // Todo: make this a template on Mandrill's side, and use variables from config file
-  //
-  var postData = {
-    "key" : "d45dd60c-7dc4-4b1b-8857-86c791e068c1",
-    "message" : {
-      "subject" : "Reset SocialTagg Password",
-      "text" : util.format("Hello %s,\n\nA reset password request has been made for " +
-        "this email address.\n\nYour " +
-        "verification code is %s. Please enter this code on the forgot password screen " +
-        "in the mobile app to reset your password.\n\nSincerely,\nSocialTagg Team",
-        emailAddr, verificationCode),
-      "from_email" : "support@socialtagg.com",
-      "preserve_recipients" : false,
-      "from_name" : "SocialTagg Support Team",
-      "to" : [
-        {
-          "email" : emailAddr
-        }
-      ],
-      "html" : util.format("<body>Hello %s,<br \/><br \/>A reset password request has been made for<br \/>" +
-        "<br \/>this email address. Your verification code is %s. Please enter this code on the " +
-        "forgot password screen in the mobile app to reset your password.<br \/>" +
-        "<br \/>Sincerely,<br \/>SocialTagg Team<\/body>", emailAddr, verificationCode)
-    }
-  }
 
-  sendEmail(postData, resultCallback);
+exports.sendForgotPasswordEmail = function(emailAddr, verificationCode, resultCallback) {
+  
+  var params = {
+    subject : "Reset SocialTagg Password",
+    plainTextBody : util.format("Hello %s,\r\n\r\nA reset password request has been made for " +
+      "this email address.\r\nYour " +
+      "verification code is %s. Please enter this code on the forgot password screen " +
+      "in the mobile app to reset your password.\r\n\r\nSincerely,\r\nSocialTagg Team",
+      emailAddr, verificationCode),
+    toEmail : emailAddr,
+    fromEmail : fromEmail,
+    fromName: fromName,
+
+    htmlBody : util.format("<body>Hello %s,<br \/><br \/>A reset password request has been made for<br \/>" +
+      "this email address. Your verification code is %s. Please enter this code on the " +
+      "forgot password screen in the mobile app to reset your password.<br \/>" +
+      "<br \/>Sincerely,<br \/>SocialTagg Team<\/body>", emailAddr, verificationCode)
+
+  };
+
+  email.sendGenericEmail(params, resultCallback);
 }
 
 //
 // Validate parameters for the calls
 //
-function handleUserVerificationEmailRequest(options, res) {
+exports.handleUserVerificationEmailRequest = function(options, res) {
   /* todo: try to use this library if Chris O. responds to JB's question
    //
    // Response if there are any invalid parameters
@@ -155,48 +105,45 @@ function handleUserVerificationEmailRequest(options, res) {
   var userEmail = options.useremail;
 
   if (!verificationCode) {
-    respond(res, 400, 'The \'verificationcode\' parameter is missing');
+    thisModule.respond(res, 400, 'The \'verificationcode\' parameter is missing');
   } else if (!userEmail) {
-    respond(res, 400, 'The \'useremail\' parameter is missing');
+    thisModule.respond(res, 400, 'The \'useremail\' parameter is missing');
   } else {
-    sendVerificationEmail(userEmail, verificationCode, function (err, response) {
+    thisModule.sendVerificationEmail(userEmail, verificationCode, function (err, response) {
       if (err) {
-        respond(res, 500, 'There was an error sending the email.');
+        thisModule.respond(res, 500, 'There was an error sending the email.');
       } else {
-        respond(res, 200, response);
+        thisModule.respond(res, 200, response);
       }
     });
   }
 }
 
 
-function handleForgotPasswordEmailRequest(options, res) {
+exports.handleForgotPasswordEmailRequest = function(options, res) {
 
-  //todo: test this
-  
   var userEmail = options.useremail;
 
   if (!userEmail) {
-    respond(res, 400, 'The \'useremail\' parameter is missing');
+    thisModule.respond(res, 400, 'The \'useremail\' parameter is missing');
   } else {
     application.getAndSetVerificationCodeForUserByEmail(userEmail, function(err, code) {
 
       switch (err) {
         case 0:
-          sendForgotPasswordEmail(userEmail, code, function (err, response) {
+          thisModule.sendForgotPasswordEmail(userEmail, code, function (err, response) {
             if (err) {
-              respond(res, 500, 'There was an error sending the email.');
+              thisModule.respond(res, 500, 'There was an error sending the email.');
             } else {
-              respond(res, 200, response);
+              thisModule.respond(res, 200, response);
             }
           });
-
           break;
         case 1:
-          respond(res, 404, util.format('The email addr \'%s\' was not found', userEmail));
+          thisModule.respond(res, 404, util.format('The email addr \'%s\' was not found', userEmail));
           break;
         case 2:
-          respond(res, 500, 'Internal server error, please try again laterl')
+          thisModule.respond(res, 500, 'Internal server error, please try again laterl')
           break;
       }
       
@@ -204,17 +151,49 @@ function handleForgotPasswordEmailRequest(options, res) {
   }
 }
 
+//
+// We need POSTed by JSON:
+//
+//  useremail: email address of user
+//  originalcode: original code set in reset pw call
+//  newpassword: new password to set
+//
+exports.handleResetPasswordRequest = function(options, res) {
 
-function handleResetPasswordRequest(options, res) {
+  var userEmail = options.useremail;
+  var originalCode = options.originalcode;
+  var newPass = options.newpassword;
+  
+  if (!userEmail) {
+    thisModule.respond(res, 400, 'The \'useremail\' parameter is missing');
+  }
+  else if (!originalCode) {
+    thisModule.respond(res, 400, 'The \'originalcode\' parameter is missing');
+  }
+  else if (!newPass) {
+    thisModule.respond(res, 400, 'The \'newpassword\' parameter is missing');
+  } else {
+    userManager.setUserPasswordWithVerificationCodeByEmail(userEmail, originalCode, newPass, function(err) {
 
-  throw ('Not implemented!');
-
+      switch (err) {
+        case 0:
+          thisModule.respond(res, 200, 'Password updated successfully');
+          break;
+        case 1:
+          thisModule.respond(res, 404, util.format('The email addr \'%s\' was not found', userEmail));
+          break;
+        case 2:
+          thisModule.respond(res, 500, 'Internal server error, please try again laterl')
+          break;
+        case 3:
+          thisModule.respond(res, 404, 'The verification code was incorrect');
+          break;
+      }
+    });
+  }
 }
 
 
-//
-// Public functions
-//
 
 exports.list = function(req, res) {
   
@@ -227,9 +206,9 @@ exports.detail = function(req, res) {
 
   userManager.getUser(requestedUserId, function(user) {
     if (user) {
-      respond(res, 200, user);
+      thisModule.respond(res, 200, user);
     } else {
-      respond(res, 404, util.format('user id \'%s\' not found', requestedUserId));
+      thisModule.respond(res, 404, util.format('user id \'%s\' not found', requestedUserId));
     }
   });
 };
@@ -250,15 +229,15 @@ exports.usersPost = function(req, res) {
   //
   if (actionMode) {
     if (actionMode === 'verificationemail') {
-      handleUserVerificationEmailRequest(options, res);
+      thisModule.handleUserVerificationEmailRequest(options, res);
     } else if (actionMode === 'forgotpasswordemail') {
-      handleForgotPasswordEmailRequest(options, res);
+      thisModule.handleForgotPasswordEmailRequest(options, res);
     } else if (actionMode === 'resetpassword') {
-      handleResetPasswordRequest(options, res);
+      thisModule.handleResetPasswordRequest(options, res);
     } else {
-      respond(res, 403, util.format('\'action\' value of \'%s\' is not allowed', actionMode)); 
+      thisModule.respond(res, 403, util.format('\'action\' value of \'%s\' is not allowed', actionMode)); 
     }
   } else {
-    respond(res, 400, 'The \'action\' parameter is missing. The request cannot be fulfilled.  Sorry.');
+    thisModule.respond(res, 400, 'The \'action\' parameter is missing. The request cannot be fulfilled.  Sorry.');
   }
 };
