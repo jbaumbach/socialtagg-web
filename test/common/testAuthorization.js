@@ -103,6 +103,54 @@ describe('api authorization', function() {
     
   });
 
+  it('should successfully validate a client with uppercase tendencies', function() {
+
+    var calledNext = false;
+    var sampleApiKey = '012345';
+    var samplePw = 'hello';
+
+    var req = {};
+    req.header = function(headerVal) {
+      assert.equal('Authorization', headerVal, 'other headers being requested - need to update this test?');
+
+      //
+      // Demo of the proper way to set the 'Authorization' header in Node.js - useful for some sample 
+      // code to put in your online documentation.
+      //
+      var correctHash = globalFunctions.sha256Encode(sampleApiKey + samplePw + Math.floor(new Date() / 1000));
+      correctHash = correctHash.toUpperCase()
+      return util.format('customauth apikey=%s,hash=%s', sampleApiKey, correctHash);
+    };
+
+    var res = {};
+    res.format = function(e) {
+      assert.equal(undefined, e, 'the function wrote to the response - either a failure or the test needs updating');
+    };
+
+    //
+    // Make sure the user manager requests the correct api key, then return a good sample
+    // user.
+    //
+    userManager.getApiUser = function(apiKey, resultCallback) {
+
+      assert.equal(sampleApiKey, apiKey, 'api key not properly extracted from header');
+      var apiUser = new ApiUser( { apiKey: sampleApiKey, password: samplePw } );
+
+      resultCallback(apiUser);
+    };
+
+    //
+    // Execute our one and only test.
+    //
+    auth.authorize(req, res, function() { calledNext = true; });
+
+    //
+    // Make sure we called "next()" ok.
+    //
+    assert.equal(true, calledNext, 'never got around to calling next()');
+
+  });
+
   it('should bomb out on invalid timestamp', function() {
 
     var calledNext = false;

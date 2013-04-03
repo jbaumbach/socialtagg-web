@@ -47,7 +47,7 @@ exports.loginStatus = function(req) {
   
   if (!(sessionInfo && sessionInfo.userId)) {
     // 
-    // todo: implement uuid in cookie
+    // todo: implement username in cookie if user selects "remember me".  Right now there is no cookie!
     //
     var cookied = false;
     
@@ -102,7 +102,7 @@ exports.getSanitizedUser = function(rawUser) {
     phone: sanitize(rawUser.phone).entityEncode(),
     pictureUrl: rawUser.pictureUrl.removeScheme(),
     website: rawUser.website,
-    bio: sanitize(rawUser.bio).entityEncode().truncate(255, true, '...'),
+    bio: sanitize(rawUser.bio).entityEncode().truncate(500, true, '...'),
     company: sanitize(rawUser.company).entityEncode().truncate(255, true, '...'),
     title: sanitize(rawUser.title).entityEncode().truncate(255, true, '...'),
     twitter: sanitize(rawUser.twitter).entityEncode()
@@ -111,3 +111,19 @@ exports.getSanitizedUser = function(rawUser) {
   return new User(sanitizedData);
   
 };
+
+//
+// Get common links.  Todo: parse a common 'routes' class shared with other classes
+//
+exports.links = function() {
+  return {
+    home: '/',
+    features: '/features',
+    developers: '/developers',
+    contact: '/contactus',
+    login: '/login',
+    facebook: 'http://facebook.com/socialtagg',
+    twitter: 'http://twitter.com/socialtagg',
+    linkedin: 'http://linkedin.com/company/2693505'
+  }
+}

@@ -12,7 +12,7 @@ describe('generated main stylesheet', function() {
 
   this.timeout(9000);
 
-  it('should have Stylus global-reset functionality', function(done) {
+  it.skip('should have Stylus global-reset functionality', function(done) {
     request(app)
       .get('/stylesheets/style.css')
       .expect(/body.?\{line-height.?:.?1;/)
@@ -22,7 +22,7 @@ describe('generated main stylesheet', function() {
   
   // 
   
-  it('should have Nib adding vendor-specific hacks for us', function(done) {
+  it.skip('should have Nib adding vendor-specific hacks for us', function(done) {
     request(app)
       .get('/stylesheets/style.css')
       .expect(/-webkit-border-radius.?:.?[0-9]?px.?;/)

@@ -40,6 +40,13 @@ exports.sendMandrillEmail = function(postData, options, resultCallback) {
     apiRes.on('end', function() {
       console.log('Mandrill response: (' + apiPath + ') ' + util.inspect(response));
 
+      //
+      // Sometimes this happens:
+      //
+      // [{"email":"john.j.baumbach@gmail.com","status":"rejected","_id":"a956dca43ef34864b4f64aa6c5a66e36"}]
+      //
+      // todo: handle the above?
+      //
       resultCallback(false, response);
     });
   });
@@ -93,7 +100,7 @@ exports.buildMandrillPostDataFromParams = function(params, options) {
     //
     // There may be a bug here, Mandrill isn't understanding the HTML for some reason.
     //
-    postData.html = params.htmlBody;
+    postData.message.html = params.htmlBody;
   }
 
   return postData;
@@ -106,6 +113,8 @@ exports.buildMandrillPostDataFromParams = function(params, options) {
 //    subject
 //    plainTextBody
 //    toEmail (single email only is supported at this time)
+//    fromEmail
+//    fromName
 //
 //  If non-template:
 //    htmlBody
@@ -114,11 +123,25 @@ exports.buildMandrillPostDataFromParams = function(params, options) {
 //    templateName (sets inline_css to 'true')
 //    mergeVars[]  (variables to stick in the pre-made template on Mandrill)
 //
+// callback: function(err, info) {}
+//
 exports.sendGenericEmail = function(params, resultCallback) {
 
-  var options = {};
-  var postData = thisModule.buildMandrillPostDataFromParams(params, options);
-
-  thisModule.sendMandrillEmail(postData, options, resultCallback);
+  var validData = params &&
+    params.subject &&
+    params.plainTextBody &&
+    params.toEmail &&
+    params.fromEmail &&
+    params.fromName;
+  
+  if (validData) {
+    var options = {};
+    var postData = thisModule.buildMandrillPostDataFromParams(params, options);
+  
+    thisModule.sendMandrillEmail(postData, options, resultCallback);
+  }
+  else {
+    resultCallback(true, [{ status: 'Missing required parameters' }]);
+  }
 }
 

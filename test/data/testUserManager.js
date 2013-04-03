@@ -35,7 +35,7 @@ var existingUserPW = 'tbd';
 
 var changeableUserEmail = 'blah@blah.com';
 var changeableUserName = 'John\'s Test User - Dont Modify';
-var changeablePw = 'yodayoda';  // util.format('%d', new Date());
+var changeablePw = util.format('%d', new Date());
 var verificationCode = '343434';
 
   

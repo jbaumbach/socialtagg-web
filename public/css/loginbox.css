@@ -1,0 +1,170 @@
+
+
+#loginbox {
+  display: none;
+  color:#838383; font:13px "Droid Sans", Arial, Helvetica, sans-serif;
+  width: 350px; 
+}
+
+#loginbox .button, #loginbox input[type="button"] {
+  padding: 0;  
+}
+
+#loginbox h1,#loginbox h2,#loginbox h3,#loginbox h4,#loginbox h5,#loginbox h6{ font-weight:bold; font-family: 'Droid Sans', sans-serif;  color:#434853;  text-shadow:0px 1px 0px #fff; letter-spacing: -0.5px;  }
+#loginbox h1{ font-size:20px; color: #2d932b; padding: 0 0 0 0; border-bottom: 1px solid #e0e0e0;}
+#loginbox h2{ font-size:24px;}
+#loginbox h3{ font-size:17px;}
+#loginbox h4{ font-size:14px;}
+#loginbox h5{ font-size:12px;}
+#loginbox h6{ font-size:10px;}
+
+#loginbox input, #loginbox textarea { font-family:tahoma, arial; font-size:12px; color:#57595d;}
+
+
+#loginbox a{ text-decoration:none;}
+#loginbox p{ line-height:20px;}
+
+/*
+#loginbox #box_bg {
+  border: 1px solid #d5d5d5;
+  background: #f9f9f9;
+  width: 380px; display: block;
+  margin: 100px auto 0 auto;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  box-shadow:  0px 0px 2px #dadada, inset 0px -3px 0px #e6e6e6;
+}
+*/
+
+#loginbox .social {padding: 13px 0 0 0; height: 75px;}
+#loginbox .blue {color: #2b83b6;}
+
+/** Buttons **/
+#loginbox .twitter {background: url(../images/loginbox/twitter_btn.png) no-repeat; height: 32px; width: 157px; display: block; float: left; margin-top: 10px;}
+#loginbox .twitter:hover {background: url(../images/loginbox/twitter_btn.png) no-repeat; background-position: 0 -32px;}
+#loginbox .twitter:active {margin-top: 11px}
+#loginbox .btn_1 {padding: 8px 0 0 35px; text-shadow: -1px -1px 0px #0083b3; color:#fff; font-weight: bold; font-size: 12px; height: 32px; display: block;}
+
+#loginbox .fb {background: url(../images/loginbox/fb_btn.png) no-repeat; height: 32px; width: 157px; display: block; float: right; margin-top: 10px;}
+#loginbox .fb:hover {background: url(../images/loginbox/fb_btn.png) no-repeat; background-position: 0 -32px;}
+#loginbox .fb:active {margin-top: 11px}
+#loginbox .btn_2 {padding: 8px 0 0 31px; text-shadow: -1px -1px 0px #366c96; color:#fff; font-weight: bold; font-size: 12px; height: 32px; display: block;}
+
+#loginbox .button {-webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; display: inline-block; float: right; margin-top: 18px;}
+#loginbox .button a {padding: 9px 26px 8px 26px; color:#fff; font-weight: bold; font-size: 14px; display: block;}
+
+#loginbox .button.green {
+  background-image: linear-gradient(bottom, #2D922B 0%, #58BD56 100%);
+  background-image: -o-linear-gradient(bottom, #2D922B 0%, #58BD56 100%);
+  background-image: -moz-linear-gradient(bottom, #2D922B 0%, #58BD56 100%);
+  background-image: -webkit-linear-gradient(bottom, #2D922B 0%, #58BD56 100%);
+  background-image: -ms-linear-gradient(bottom, #2D922B 0%, #58BD56 100%);
+  background-image: -webkit-gradient(linear,left bottom,left top,color-stop(0, #2D922B),color-stop(1, #58BD56));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#58BD56, endColorstr=#2D922B)";
+  border: 1px solid #309230;
+  border-bottom: 2px solid #166d16;
+  box-shadow: inset 0px 1px 0px #a1daa0;
+  text-shadow: -1px -1px 0px #369135;
+  background-color: #49ac47;
+}
+
+#loginbox .button.green:hover {background: #49ac47;}
+#loginbox .button.green:active {margin-top: 19px;}
+
+#loginbox .button.blue {
+  background-image: linear-gradient(bottom, #1F7FB6 0%, #4EABE0 100%);
+  background-image: -o-linear-gradient(bottom, #1F7FB6 0%, #4EABE0 100%);
+  background-image: -moz-linear-gradient(bottom, #1F7FB6 0%, #4EABE0 100%);
+  background-image: -webkit-linear-gradient(bottom, #1F7FB6 0%, #4EABE0 100%);
+  background-image: -ms-linear-gradient(bottom, #1F7FB6 0%, #4EABE0 100%);
+  background-image: -webkit-gradient(linear,left bottom,left top,color-stop(0, #1F7FB6),color-stop(1, #4EABE0));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4EABE0, endColorstr=#1F7FB6)";
+  border: 1px solid #2a76a2; border-bottom: 2px solid #215f82;
+  box-shadow: inset 0px 1px 0px #9cd0ee;
+  text-shadow: -1px -1px 0px #246c95;
+  background-color: #3897cd;
+}
+
+#loginbox .button.blue:hover {background: #3897cd;}
+#loginbox .button.blue:active {margin-top: 19px;}
+
+/** Login Fields **/
+#loginbox #login {padding: 13px 0 0 0; border-top: 1px solid #e0e0e0;}
+
+#loginbox .login {
+  font-size: 14px;
+  color: #8e8d8d;
+  font-family: "Droid Sans";
+  padding: 11px 15px 10px 50px;
+  background-color: #fdfdfd;
+  width: 255px;
+  display: block;
+  border:1px solid #d8d8d8;
+  margin: 13px 0 -3px 0;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  box-shadow: inset 2px 2px 4px #f1f1f1;
+}
+
+#loginbox .user {background: url(../images/loginbox/user.png) no-repeat;}
+#loginbox .user.error {background: url(../images/loginbox/user_error.png) no-repeat; border:1px solid #f19d9d; background-color: #ffe0e0; box-shadow: inset 0px 0px 0px #fff ; color: #d95e5e;}
+
+#loginbox .password {background: url(../images/loginbox/password.png) no-repeat;}
+#loginbox .password.error {background: url(../images/loginbox/password_error.png) no-repeat; border:1px solid #f19d9d; background-color: #ffe0e0; box-shadow: inset 0px 0px 0px #fff ; color: #d95e5e;}
+
+/** Register Fields **/
+#loginbox .register {
+  font-size: 14px;
+  color: #8e8d8d;
+  font-family: "Droid Sans";
+  padding: 11px 15px 10px 15px;
+  background-color: #fdfdfd;
+  width: 290px;
+  display: block;
+  border:1px solid #d8d8d8;
+  margin: 13px 0 -3px 0;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  box-shadow: inset 2px 2px 4px #f1f1f1;
+}
+
+#loginbox .register.error {border:1px solid #f19d9d; background-color: #ffe0e0; box-shadow: inset 0px 0px 0px #fff ; color: #d95e5e;}
+
+/**  Custom Checkbox **/
+#loginbox .checkbox {margin: 15px 0 15px 0;}
+#loginbox .checkbox li {list-style: none; height: 15px;}
+
+#loginbox .checkbox li:not(#foo) > fieldset > div > span > input[type='checkbox'] {
+  opacity: 0;
+  float: left;
+  width: 15px;
+}
+
+#loginbox .checkbox li:not(#foo) > fieldset > div > span > input[type='checkbox'] + label {
+  margin: 0;
+  clear: none;
+  padding: 0 0 0 22px;
+  cursor: pointer;
+  background: url(../images/loginbox/check.png) no-repeat;
+  height: 15px; display: block;
+}
+
+#loginbox .checkbox li:not(#foo) > fieldset > div > span > input[type='checkbox']:checked + label {
+  background: url(../images/loginbox/check.png) no-repeat;
+  height: 15px; display: block;
+  background-position: 0 -15px;
+}
+
+/** Text Under Box**/
+#loginbox #bottom_text {
+  margin: 12px auto; width: 300px; display: block; 
+  text-align: center; text-shadow: 1px 1px 0px #fff; line-height: 19px;
+  padding: 30px 0 0 0;
+}
+#loginbox #bottom_text a {color: #2d932b; font-weight: bold; padding: 0 8px 0 0; background: url(../images/loginbox/bullet.png) no-repeat 100% 50%;}
+#loginbox #bottom_text a:hover {color: #878787; -webkit-transition:all 0.2s linear; -moz-transition:all 0.2s linear; -o-transition:all 0.3s linear; -transition:all 0.2s linear}
+#loginbox #blue {color:#2b83b6 !important;}
+#loginbox #blue:hover {color: #878787 !important;}

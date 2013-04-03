@@ -129,6 +129,7 @@ exports.detail = function(req, res) {
             title: util.format('%s\'s Profile', user.name),
             user: safeUser,
             currentSessionUser: currentSessionUser,
+            links: application.links(),
             showQrCode: requestedUserIsSessionUser
           }
 

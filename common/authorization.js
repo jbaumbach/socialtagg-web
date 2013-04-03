@@ -56,8 +56,8 @@ var globalFunctions = require('./globalfunctions')
 //
 exports.getValsFromAuthHeader = function(headerString) {
 
-  var result = headerString.match(/ *CustomAuth *apikey=(.*) *, *hash=(.*) */);
-
+  var result = headerString.match(/ *CustomAuth *apikey=(.*) *, *hash=(.*) */i);
+  
   return result;
 }
 
@@ -98,7 +98,7 @@ exports.authorizationComplete = function(error, req, res, next) {
     //
     res.format({
       json:function () {
-        res.json(error.httpResponseCode, JSON.stringify(error.Message))
+        res.json(error.httpResponseCode, error.Message);
       }
     });
 
@@ -137,7 +137,7 @@ exports.authorize = function(req, res, next) {
   
   if (!error) {
 
-    var userVals = thisModule.getValsFromAuthHeader(authHeader);
+    var userVals = thisModule.getValsFromAuthHeader(authHeader.toLowerCase());
     
     if (!userVals || !userVals[1] || !userVals[2]) {
       error = {

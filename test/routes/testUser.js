@@ -24,7 +24,7 @@ describe('login and user features', function() {
 
   this.timeout(9000);
 
-  it('should have login fields on login page', function(done) {
+  it.skip('should have login fields on login page', function(done) {
     request(app)
       .get('/login')
       .expect(/input.*name="email"/)
@@ -36,7 +36,7 @@ describe('login and user features', function() {
   //
   // Note: these tests rely on your existing user (see: testUserManager.js)
   // 
-  it('should show error for and incorrect login', function(done) {
+  it.skip('should show error for an incorrect login', function(done) {
     request(app)
       .post('/login')
       .set('Content-Type', 'application/x-www-form-urlencoded')
@@ -51,7 +51,7 @@ describe('login and user features', function() {
   // user was logged in successfully (e.g. if Redis not running, sessions won't work,
   // and this should fail).
   //
-  it('should allow login of known user', function(done) {
+  it.skip('should allow login of known user', function(done) {
     var email = 'john.j.baumbach@gmail.com';
     var password = 'Apigee11';
     

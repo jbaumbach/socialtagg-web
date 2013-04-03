@@ -18,7 +18,7 @@ var goodSampleUserId = 'b66a00ee-73d3-11e2-95c4-02e81ae640dc'; // John B.
 var goodSampleUserEmail = 'john.j.baumbach@gmail.com';
 var badSampleUserId = 'uggabugga';
 
-var goodApiKey = '63f54fd4-7cb2-11e2-b6ef-02e81ac5a17b';  // Created in usergrid (and hard coded for now)
+var goodApiKey = '63f54fd4-7cb2-11e2-b6ef-02e81ac5a17b';
 var goodApiPW = '46ea0d5b246d2841744c26f72a86fc29';
 
 var authHeaderName = 'Authorization';
@@ -175,7 +175,7 @@ describe('api - user functions', function() {
   // a useful test automation-wise.  But can be run sometimes if you manually set the code
   // in usergrid (or create a new test user that has a consistent code)
   //
-  it.skip('should reset password ok with good params', function(done) {
+  it.skip('should reset password with valid and existing verification code', function(done) {
     request(app)
       .post('/apiv1/users')
       .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
@@ -195,7 +195,7 @@ describe('api - user functions', function() {
   // a useful test automation-wise.  But can be run sometimes if you manually set the code
   // in usergrid (or create a new test user that has a consistent code)
   //
-  it('should return 404 for reset password with bad verification code', function(done) {
+  it.skip('should return 404 for reset password with bad verification code', function(done) {
     request(app)
       .post('/apiv1/users')
       .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))

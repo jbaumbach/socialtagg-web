@@ -120,6 +120,22 @@ function getUserGridUserByEmail(email, resultCallback) {
   
 };
 
+//
+// Callback params: err  (true if error)
+//
+function setUserGridUserPassword(existingUser, newPw, resultCallback) {
+  var options = {
+    method:'PUT',
+    endpoint:'users/' + existingUser.get('username') + '/password',
+    body:{ newpassword: newPw }
+  };
+
+  client().request(options, function (err, data) {
+    resultCallback(err);
+  });
+};
+
+
 exports.getUser = function(id, resultCallback) {
 
   var options = {
@@ -356,19 +372,22 @@ exports.setUserPasswordWithVerificationCodeByEmail = function(email, originalCod
   getUserGridUserByEmail(email, function(err, existingUser) {
     if (err === 0) {
       var currentDbCode = existingUser.get('forgotPasswordValidationCode');
-      
+
       if (currentDbCode == originalCode) {
 
         //
         // Clear existing verification code
         //
-        existingUser.set('forgotPasswordValidationCode', '');
-        existingUser.set('validate-password', 'what the hell, man?  don\'t expose passwords!');
+        // todo: put this in a separate collection in UG, not the user record in /users
+        // 
+        // existingUser.set('forgotPasswordValidationCode', '');
+        //existingUser.set('validate-password', 'what the hell, UG?  don\'t expose passwords!');
 
-        existingUser.set('password', newPw);
+        //existingUser.set('password', newPw);
 
-        existingUser.save(function(err) {
+        //existingUser.save(function(err) {
 
+        setUserGridUserPassword(existingUser, newPw, function(err) {
           if (err) {
             resultCallback(2);
           } else {
@@ -384,7 +403,6 @@ exports.setUserPasswordWithVerificationCodeByEmail = function(email, originalCod
     }
   });
 };
-
 
 
 //********************************************************************************

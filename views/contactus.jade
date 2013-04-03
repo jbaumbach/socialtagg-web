@@ -1,0 +1,86 @@
+extends layout
+  
+block content
+
+  // Content
+    | ================================================== 
+  // 960 Container 
+  .container
+    .sixteen.columns
+      // Page Title 
+      #page-title
+        h2 Contact
+        #bolded-line
+      // Page Title / End 
+  // 960 Container / End 
+
+  // 960 Container Start 
+  .container
+    // Text 
+    .sixteen.columns
+      p
+        | We create beautiful, usable, professional websites using best practice accessibility and the latest W3C web standards guidelines, resulting in semantic and seo friendly XHTML and CSS. If you’re interested in our services, please send us a message through the form below.
+      br
+    // Contact Form 
+    .twelve.columns
+      .headline.no-margin
+        h4 Contact Form
+      .form-spacer
+      // Success Message 
+      .success-message
+        .notification.success.closeable
+          p
+            span Success!
+            | Your message has been sent.
+      // Form 
+      #contact-form
+        form(method='post', action='/contactus')
+          .field
+            label Name:
+            input.text(type='text', name='name')
+          .field
+            label
+              | Email:
+              span *
+            input.text(type='text', name='email')
+          .field
+            label
+              | Message:
+              span *
+            textarea.text.textarea(name='message')
+          .field
+            input#send(type='button', value='Send Message')
+            .loading
+    // Contact Details 
+    .four.columns.google-map
+      .headline.no-margin
+        h4 Our Location
+      
+      // Google Maps 
+      #googlemaps.google-map.google-map-full(style='height: 250px;')
+      script(src='http://maps.google.com/maps/api/js?sensor=true')
+      script(src='js/jquery.gmap.min.js')
+      script(type='text/javascript')
+        jQuery('#googlemaps').gMap({
+        maptype: 'ROADMAP',
+        scrollwheel: false,
+        zoom: 13,
+        markers: [
+        {
+        address: 'Santa Monica, California, United States', // Your Adress Here
+        html: '',
+        popup: false,
+        }
+        ],
+        });
+  //- Contact Details 
+    .four.columns
+      .headline.low-margin
+        h4 Social
+      #social.tooltips
+        a.facebook(href='#', rel='tooltip', title='Facebook') Facebook
+        a.evernote(href='#', rel='tooltip', title='Evernote') Evernote
+        a.linkedin(href='#', rel='tooltip', title='LinkedIn') LinkedIn
+        a.googleplus(href='#', rel='tooltip', title='Google Plus') Google Plus
+        a.vimeo(href='#', rel='tooltip', title='Vimeo') Vimeo
+  // End 960 Container 

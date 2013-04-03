@@ -1,22 +1,17 @@
-//-
-//- The homepage of the app.  The page is generated using a master template pattern.  
-//- See the "layout.jade" file for more details.
-//-
 extends layout
-
-//- "layout" has "content" and "sidebar" blocks that should be defined here
+  
 block content
-  - if (!currentSessionUser.id)
-    p Welcome to #{title}.
-    p Log in or create an account to see your contaggs.
-  - else
-    p Greetings #{ currentSessionUser.name }
-
-
-block sidebar
-  .widget
-    //-
-    //- This is an example of an include.  This is similar to "user controls" in .NET webforms.
-    //- It allows you to easily reuse common bits of code in different places.
-    //-
-    include includes/userWidget
+  
+  //-********** Flexslider (scrolling images) Control
+  include includes/flexslider
+  
+  //-********** Icon boxes (multiple columns) Control
+  include includes/iconBox
+  
+  //-********** Porfolio list Control
+  //-include includes/portfolio
+  
+  //-********** Horizontal Icons Control
+  //-include includes/horizontalIcons
+      
+  

@@ -28,7 +28,7 @@ describe('common - email functions', function() {
     assert.equal(res.message.to[0].email, params.toEmail, 'didn\'t set email properly');
     assert.equal(res.message.from_email, params.fromEmail, 'didn\'t get from email properly');
     assert.equal(res.message.from_name, params.fromName, 'didn\'t set from name properly');
-    assert.equal(res.html, params.htmlBody, 'didn\'t set html body properly');
+    assert.equal(res.message.html, params.htmlBody, 'didn\'t set html body properly');
   });
 
   it('should build Mandrill post data from params with template', function() {

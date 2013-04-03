@@ -4,6 +4,7 @@
 
 var globalfunctions = require('./../common/globalfunctions')
   , userManager = require('./../data/userManager')
+  , application = require('../common/application')
   , util = require('util')
   , ApiUser = require('../models/ApiUser')
   ;
@@ -15,7 +16,8 @@ exports.index = function(req, res) {
 
   var pageVars =
   {
-    title: 'API Documentation'
+    title: 'API Documentation',
+    links: application.links()
   };
 
   var sessionInfo = globalfunctions.getSessionInfo(req);

@@ -1,78 +1,49 @@
-//-
-//- The user detail page of the app.  The page is generated using a master template pattern.  
-//- See the "layout.jade" file for more details.
-//-
 extends layout
 
 block content
-  h2
-    | User Profile
 
-  .user-view
-    img(src=user.pictureUrl)
-    
-    ul
-      li
-        .description Name
-        .value #{ user.name }
-      li
-        .description Address
-        .value #{ user.address }
-      li
-        .description Email
-        .value 
-          a(href="mailto:" + user.email) #{ user.email }
-      li
-        .description Join Date
-        .value #{ user.createDateStr }
-      li
-        .description Biography
-        .value #{ user.bio}
-      li
-        .description Company
-        .value #{ user.company }
-      li
-        .description Title
-        .value #{ user.title }
-      li
-        .description Twitter
-        .value #{ user.twitter }
-      li
-        .description Website
-        .value
-          a(href=user.website, target="_blank") #{ user.website }
+  .container
+    .sixteen.columns
+      #page-title
+        h2 #{ user.name }
+        #bolded-line
+ 
+  .container.user-view
+    .four.columns
+      img(src=user.pictureUrl).user-image
+    .twelve.columns
+      .headline.no-margin 
+        h3 Bio
+      p #{ user.bio}
 
-  - if (locals.contaggs)
-    .user-contaggs
-      h2
-        | Con
-        span
-          | Taggs
-      //-
-      //- Output all the user's contaggs.  Each item is a valid and populated User class.
-      //-
-      ul.user-contaggs-main
-        each contaggUser in contaggs
-          li
-            ul.user-contaggs-items
-              li
-                img(src=contaggUser.pictureUrl)
-              li
-                .name
-                  a(href=contaggUser.path) #{ contaggUser.name }
-              li
-                .company #{ contaggUser.company }
+  .container.user-view
+    .one-third.column
+      .headline.no-margin
+        h3 Company
+      p #{ user.company }
+    .one-third.column
+      .headline.no-margin
+        h3 Title
+      p #{ user.title }
+    .one-third.column
+      .headline.no-margin
+        h3 Website
+      p
+        a(href=user.website, target="_blank") #{ user.website }
 
-  - if (locals.showQrCode)
-    .qrCode
-      h2 Your QRCode
-      img(src=user.qrCodeUrl)
-
-
-block sidebar
-  .widget
-    //-
-    //- This is an example of an include.  This is similar to "user controls" in .NET webforms.
-    //- It allows you to easily reuse common bits of code in different places.
-    //-
-    include includes/userWidget
+  .container.user-view
+    .six.columns
+      .headline.no-margin
+        h3 Address
+      p #{ user.address }
+    .six.columns
+      .headline.no-margin
+        h3 Email
+      p
+        a(href="mailto:" + user.email) #{ user.email }
+    .four.columns
+      .headline.no-margin
+        h3 Twitter
+      p #{ user.twitter }
+        
+        

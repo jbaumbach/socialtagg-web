@@ -28,18 +28,13 @@ exports.index = function(req, res){
     
   } else {
     
-    currentSessionUser = {};
-
     var pageVars =
     {
       title: 'Home',
-      currentSessionUser: currentSessionUser
+      currentSessionUser: {},
+      links: application.links()
     };
 
     res.render('index', pageVars);
   }
 };
-
-exports.originalHomepage = function(req, res) {
-  res.render('originalHomepage');
-}
