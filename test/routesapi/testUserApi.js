@@ -10,6 +10,7 @@ var request = require('supertest')
   , util = require('util')
   , globalFunctions = require('../../common/globalfunctions')
   , assert = require('assert')
+  , userManager = require('../../data/userManager')
 ;
 
 var app = myApp.app();
@@ -34,7 +35,7 @@ var verificationCode = '343434';
 
 
 //**********************************************************************************************
-var skipActualEmailSending = true;
+var skipActualEmailSending = false;
 //**********************************************************************************************
 
 
@@ -210,7 +211,62 @@ describe('api - user functions', function() {
       .expect(404, done);
   });
 
+  it('should bomb sending updated profile email if no uuid passed ', function(done) {
+    request(app)
+      .post('/apiv1/users')
+      .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
+      .set('Content-Type', 'application/json')
+      .send(JSON.stringify({
+        action: 'updatedprofileemail'
+      }))
+      .expect(/useruuid.*missing/)
+      .expect(400, done);
+  });
+
+  it('should bomb sending updated profile email if bad uuid passed', function(done) {
+    request(app)
+      .post('/apiv1/users')
+      .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
+      .set('Content-Type', 'application/json')
+      .send(JSON.stringify({
+        action: 'updatedprofileemail',
+        useruuid: badSampleUserId
+      }))
+      .expect(/user id.*not found/)
+      .expect(404, done);
+  });
+
+  it('should bomb sending updated profile email on user with no email address', function(done) {
+    
+    var origGetUserFunc = userManager.getUser;
+    
+    //
+    // Mock up "getUser" function, always return a user but one w/o a valid email
+    //
+    userManager.getUser = function(userUuid, callback) {
+      var result = { name: 'Han Solo' };  //, email: '' };  // both with "email" parameter and without work
+      callback(result);
+    };
+    
+    request(app)
+      .post('/apiv1/users')
+      .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
+      .set('Content-Type', 'application/json')
+      .send(JSON.stringify({
+        action: 'updatedprofileemail',
+        useruuid: badSampleUserId
+      }))
+      .expect(/user was found.*no email/)
+      .expect(400, function() {
+        userManager.getUser = origGetUserFunc;
+        done();
+      });
+    
+  });
+
+
   //
+  // These tests also test Mandrill.  Prolly could refactor/mock to add true unit tests.
   // Don't want to send an email every time you run the tests.  Unskip this to test periodically.
   //
   if (!skipActualEmailSending) {
@@ -234,7 +290,7 @@ describe('api - user functions', function() {
         });
     });
   
-    it('should send a forgot password email to a good email address', function(done) {
+    it.skip('should send a forgot password email to a good email address', function(done) {
       request(app)
         .post('/apiv1/users')
         .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
@@ -247,6 +303,24 @@ describe('api - user functions', function() {
           done();
         });
     });
+
+    it('should send updated profile email to good user', function(done) {
+      request(app)
+        .post('/apiv1/users')
+        .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
+        .set('Content-Type', 'application/json')
+        .send(JSON.stringify({
+          action: 'updatedprofileemail',
+          useruuid: goodSampleUserEmail
+        }))
+        .expect(200)
+        .end(function(err, res) {
+          var responseObject = JSON.parse(res.body);
+          assert.equal(responseObject[0].status, "sent", 'didn\'t send properly');
+          done();
+        });
+    });
+
   }
   
 });

@@ -85,6 +85,85 @@ exports.sendForgotPasswordEmail = function(emailAddr, verificationCode, resultCa
 }
 
 //
+// Send the update profile email to a user
+//
+exports.sendUpdateProfileEmail = function(user, resultCallback) {
+  
+  var params = {
+    subject : "SocialTagg Profile Updated!",
+    plainTextBody : util.format("Hi %s!\n\nThank you for updating your SocialTagg " +
+      "profile!\n\nYou can access your updated badge on the \"Badge\" screen " +
+      "within the SocialTagg app.\n\nSincerely,\nSocialTagg Team",
+      user.name),
+    toEmail : user.email,
+    fromEmail : fromEmail,
+    fromName: fromName,
+
+    templateName : "socialtagg-profile",
+    mergeVars : [
+      {
+        "name" : "twitter",
+        "content" : user.twitter
+      },
+      {
+        "name" : "title",
+        "content" : user.title
+      },
+      {
+        "name" : "url",
+        "content" : user.website
+      },
+      {
+        "name" : "badge_image_url",
+        "content" : user.qrCodeUrl
+      },
+      {
+        "name" : "bio",
+        "content" : user.bio
+      },
+      {
+        "name" : "postal_address",
+        "content" : user.address
+      }, // todo: implement separate first and last names
+      {
+        "name" : "last_name",
+        "content" : user.name
+      },
+      {
+        "name" : "email",
+        "content" : user.email
+      },
+      {
+        "name" : "company",
+        "content" : user.company
+      },
+      {
+        "name" : "picture",
+        "content" : user.pictureUrl
+      },
+      {
+        "name" : "tel",
+        "content" : user.phone
+      }, // todo: implement separate first and last names
+      {
+        "name" : "first_name",
+        "content" : user.name
+      }
+      /* todo: implement user avatars in User class 
+      ,
+      {
+        "name" : "uuid_avatar_image",
+        "content" : user.name
+      }
+      */
+    ]
+  };
+
+  email.sendGenericEmail(params, resultCallback);
+  
+}
+
+//
 // Validate parameters for the calls
 //
 exports.handleUserVerificationEmailRequest = function(options, res) {
@@ -193,6 +272,50 @@ exports.handleResetPasswordRequest = function(options, res) {
   }
 }
 
+//
+// We need POSTed by JSON:
+//
+//  useruuid: the user's uuid
+//
+exports.handleUpdateProfileEmailRequest = function(options, res) {
+
+  var userUuid = options.useruuid;
+
+  if (!userUuid) {
+    thisModule.respond(res, 400, 'The \'useruuid\' parameter is missing');
+  } else {
+
+    userManager.getUser(userUuid, function(user) {
+      if (user) {
+
+        //
+        // We have a valid user.  
+        //
+        if (!user.email || user.email.length == 0) {
+          thisModule.respond(res, 400, 'The user was found but has no email address');
+        } else {
+          
+          //
+          // Houston, the eagle has landed.
+          //
+          thisModule.sendUpdateProfileEmail(user, function(err, response) {
+            if (err) {
+              thisModule.respond(res, 500, 'There was an error sending the email.');
+            } else {
+              thisModule.respond(res, 200, response);
+            }
+          }); 
+        }
+        
+      } else {
+        thisModule.respond(res, 404, util.format('user id \'%s\' not found', userUuid));
+      }
+    });
+
+  }
+}
+
+
 
 
 exports.list = function(req, res) {
@@ -219,7 +342,6 @@ exports.usersPost = function(req, res) {
   //
   // Otherwise, a jackass sending a huge json file can bring the server to a standstill.
   //
-
   var options = req.body; 
   
   var actionMode = options.action || undefined;
@@ -234,9 +356,11 @@ exports.usersPost = function(req, res) {
       thisModule.handleForgotPasswordEmailRequest(options, res);
     } else if (actionMode === 'resetpassword') {
       thisModule.handleResetPasswordRequest(options, res);
+    } else if (actionMode === 'updatedprofileemail') {
+      thisModule.handleUpdateProfileEmailRequest(options, res);
     } else {
       thisModule.respond(res, 403, util.format('\'action\' value of \'%s\' is not allowed', actionMode)); 
-    }
+    } 
   } else {
     thisModule.respond(res, 400, 'The \'action\' parameter is missing. The request cannot be fulfilled.  Sorry.');
   }

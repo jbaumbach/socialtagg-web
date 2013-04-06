@@ -31,6 +31,11 @@ describe('contact us page', function() {
 
   it('should not accept no input', function() {
     var req = {};
+    
+    //
+    // We assume that our code will call the function "send" on the "res" object.  That's
+    // where we'll do our assertin'.  The assumption itself is tested in other tests.
+    // 
     var res = {
       send: function(code, obj) {
         assert.equal(code, 401, 'didn\'t send 401 http status code');
@@ -59,11 +64,14 @@ describe('contact us page', function() {
     var req = { body: { email: 'blah@blah.com', message: 'Yo, my message' } };
     var res = {
       send: function(code, obj) {
-        assert.equal(code, 500, 'didn\'t send 401 http status code');
+        assert.equal(code, 500, 'didn\'t send back a 500 http status code');
         assert.equal(obj.status, 500, 'didn\'t send JSON response correctly');
       }
     };
 
+    //
+    // Let's mock out this function to return what we want.
+    //
     email.sendGenericEmail = function(params, callback) {
         callback(true, { msg: 'yup, had error'});
     };

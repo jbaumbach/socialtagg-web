@@ -121,5 +121,12 @@ var apiFunctions = [
     description: 'Verifies the passed code, and if valid, sets the password to the passed password',
     path: '/apiv1/users',
     postJson: '{ "action": "resetpassword", "useremail": "the_user_email", "originalcode": "the_verification_code", "newpassword": "the_new_password" }'
+  },
+
+  {
+    title: 'Send Updated Profile Email',
+    description: 'Sends an email to the user confirming a profile update and includes profile data',
+    path: '/apiv1/users',
+    postJson: '{ "action": "updatedprofileemail", "useruuid" : "the_user_uuid" }'
   }
 ];
