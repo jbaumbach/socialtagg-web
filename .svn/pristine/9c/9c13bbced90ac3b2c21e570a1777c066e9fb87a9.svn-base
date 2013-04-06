@@ -1,0 +1,76 @@
+// Header
+  | ================================================== 
+// 960 Container 
+.container.ie-dropdown-fix
+  // Header 
+  #header
+    // Logo 
+    .eight.columns
+      #logo
+        a(href='/')
+          img(src='/images/weblogo.png', alt='logo')
+        #tagline Connecting people at events
+        .clear
+    // Social / Contact 
+    .eight.columns
+      // Social Icons 
+      ul.social-icons
+        li.facebook
+          a(href='#{ links.facebook }') Facebook
+        li.twitter
+          a(href='#{ links.twitter }') Twitter
+        li.linkedin
+          a(href='#{ links.linkedin }') LinkedIn
+      .clear
+      // Contact Details 
+      #contact-details
+        ul
+          li
+            i.mini-ico-envelope
+            a(href='mailto:support@socialtagg.com') support@socialtagg.com
+        //- Uncomment this when the login is implemented
+          li
+            i.mini-ico-user
+            a#login(href='#loginbox') Login
+  // Header / End 
+  // Navigation 
+  .sixteen.columns
+    #navigation
+      ul#nav
+        li
+          a(href='#{ links.home }') Home
+        //-li
+          a(href='#{ links.features }') Features
+        //-
+          ul
+            li
+              a(href='full_width.html') Full Width
+            li
+              a(href='about.html') About Us
+            li
+              a(href='services.html') Services
+            li
+              a(href='pricing_tables.html') Pricing Tables
+            li
+              a(href='#') Page Templates
+              ul
+                li
+                  a(href='sidebar_right.html') Sidebar Right
+                li
+                  a(href='sidebar_left.html') Sidebar Left
+                li
+                  a(href='blog_post.html') Single Post
+                li
+                  a(href='single_project.html') Single Project
+          li
+            a(href='#{ links.developers }') Developers
+        li
+          a(href='#{ links.contact }') Contact
+  
+  //- Search Form 
+      .search-form
+        form(method='get', action='#')
+          input.search-text-box(type='text')
+    .clear
+  // Navigation / End 
+// 960 Container / End 

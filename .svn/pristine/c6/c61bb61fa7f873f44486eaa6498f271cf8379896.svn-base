@@ -1,0 +1,126 @@
+#style-switcher
+  h2
+    | Style Switcher
+    a(href='#')
+  div
+    h3 Predefined Colors
+    ul#color1.colors
+      li
+        a.green(href='#', title='Green')
+      li
+        a.blue(href='#', title='Blue')
+      li
+        a.orange(href='#', title='Orange')
+      li
+        a.navy(href='#', title='Navy')
+      li
+        a.yellow(href='#', title='Yellow')
+      li
+        a.peach(href='#', title='Peach')
+      li
+        a.beige(href='#', title='Beige')
+      li
+        a.purple(href='#', title='Purple')
+      li
+        a.red(href='#', title='Red')
+      li
+        a.pink(href='#', title='Pink')
+      li
+        a.celadon(href='#', title='Celadon')
+      li
+        a.brown(href='#', title='Brown')
+      li
+        a.cherry(href='#', title='Cherry')
+      li
+        a.gray(href='#', title='Gray')
+      li
+        a.dark(href='#', title='Dark')
+      li
+        a.cyan(href='#', title='Cyan')
+      li
+        a.olive(href='#', title='Olive')
+      li
+        a.dirty-green(href='#', title='Dirty Green')
+    h3 Layout Style
+    .layout-style
+      select#layout-switcher
+        option(value='css/boxed') Boxed
+        option(value='css/wide') Wide
+    h3 Background Image
+    ul#bg.colors.bg
+      li
+        a.bg1(href='#')
+      li
+        a.bg2(href='#')
+      li
+        a.bg3(href='#')
+      li
+        a.bg4(href='#')
+      li
+        a.bg5(href='#')
+      li
+        a.bg6(href='#')
+      li
+        a.bg7(href='#')
+      li
+        a.bg8(href='#')
+      li
+        a.bg9(href='#')
+      li
+        a.bg10(href='#')
+      li
+        a.bg11(href='#')
+      li
+        a.bg12(href='#')
+      li
+        a.bg13(href='#')
+      li
+        a.bg14(href='#')
+      li
+        a.bg15(href='#')
+      li
+        a.bg16(href='#')
+      li
+        a.bg17(href='#')
+      li
+        a.bg18(href='#')
+    h3 Background Color
+    ul#bgsolid.colors.bgsolid
+      li
+        a.green-bg(href='#', title='Green')
+      li
+        a.blue-bg(href='#', title='Blue')
+      li
+        a.orange-bg(href='#', title='Orange')
+      li
+        a.navy-bg(href='#', title='Navy')
+      li
+        a.yellow-bg(href='#', title='Yellow')
+      li
+        a.peach-bg(href='#', title='Peach')
+      li
+        a.beige-bg(href='#', title='Beige')
+      li
+        a.purple-bg(href='#', title='Purple')
+      li
+        a.red-bg(href='#', title='Red')
+      li
+        a.pink-bg(href='#', title='Pink')
+      li
+        a.celadon-bg(href='#', title='Celadon')
+      li
+        a.brown-bg(href='#', title='Brown')
+      li
+        a.cherry-bg(href='#', title='Cherry')
+      li
+        a.gray-bg(href='#', title='Gray')
+      li
+        a.dark-bg(href='#', title='Dark')
+      li
+        a.cyan-bg(href='#', title='Cyan')
+      li
+        a.olive-bg(href='#', title='Olive')
+      li
+        a.dirty-green-bg(href='#', title='Dirty Green')
+  #reset
+    a.button.color.green.boxed(href='#') Reset
