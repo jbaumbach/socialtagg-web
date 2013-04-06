@@ -1,4 +1,0 @@
-// Styles Switcher
-  | ================================================== 
-link(rel='stylesheet', type='text/css', href='css/switcher.css')
-script(src='js/switcher.js')
