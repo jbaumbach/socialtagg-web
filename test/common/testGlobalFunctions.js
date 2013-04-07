@@ -132,4 +132,10 @@ describe('globalFunctions', function() {
     assert.equal(vals.find('name', 'steve'), vals[0], 'steve is MIA');
 
   });
+  
+  it('should split a name into first name and last name', function() {
+    var r1 = globalFunctions.splitNames('steve jones');
+    assert.equal(r1.firstName, 'steve', 'didn\'t get "steve" back');
+    assert.equal(r1.lastName, 'jones', 'didn\'t get "jones" back');
+  });
 }) 

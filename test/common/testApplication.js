@@ -111,12 +111,14 @@ describe('application class', function() {
     
   });
 
-  it('should return a user from good values', function() {
+  it('should return a complete sanitized user from good values', function() {
 
     var safeVals = {
       id: 'blah',
       userName: 'Lavamantis',
       name: 'JohnnyB',
+      firstName: 'time',
+      lastName: 'warner',
       address: '12345 Yo Mama',
       email: 'hello@there.com',
       phone: 'abcdef12345jklmn',
@@ -145,7 +147,7 @@ describe('application class', function() {
       var propValue = safeVals[propName];
       var actualValue = eval("newSafeUser." + propName);
 
-      assert.equal(propValue, actualValue, 'didn\'t get back our property for ' + propName);
+      assert.equal(actualValue, propValue, 'didn\'t get back our property for ' + propName);
       propertiesTested++;
     });
 

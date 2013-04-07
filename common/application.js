@@ -97,6 +97,8 @@ exports.getSanitizedUser = function(rawUser) {
     id: rawUser.id,
     userName: sanitize(rawUser.userName).entityEncode(),
     name: sanitize(rawUser.name).entityEncode().truncate(255, true, '...'),
+    firstName: sanitize(rawUser.firstName).entityEncode().truncate(255, true, '...'),
+    lastName: sanitize(rawUser.lastName).entityEncode().truncate(255, true, '...'),
     address: sanitize(rawUser.address).entityEncode().truncate(255, true, '...'),
     email: sanitize(rawUser.email).entityEncode(),
     phone: sanitize(rawUser.phone).entityEncode(),

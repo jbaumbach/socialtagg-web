@@ -113,6 +113,19 @@ exports.generateUniqueCredentials = function(uniqueValue) {
   return result;
 };
 
+//
+// Splits a name and returns an object with firstName and lastName properties, or undefined if error.
+//
+exports.splitNames = function(fullName) {
+  var result = undefined;
+  var nameArray = fullName.split(' ');
+
+  if (nameArray && nameArray.length >= 2) {
+    result = { firstName: nameArray[0].trim(), lastName: nameArray[nameArray.length - 1].trim() };
+  }
+ 
+  return result;
+}
 
 //***********************************************
 // Class extensions

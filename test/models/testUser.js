@@ -26,6 +26,8 @@ describe('User model', function() {
     var initData = { 
       id: 'blah', 
       name: 'fred', 
+      firstName: 'steve',
+      lastName: 'jones',
       email: 'hello@there.com',
       address: '1234 hello St.',
       phone: '(805) 123-4566',
@@ -38,7 +40,8 @@ describe('User model', function() {
       bio: 'Amateur hacker',
       company: 'SocialTagg',
       title: 'Chief Hacking Officer',
-      twitter: 'neverusedtwitteritslame'
+      twitter: 'neverusedtwitteritslame',
+      avatarId: '01234abcde'
     };
     
     var testUser = new User(initData);
@@ -58,7 +61,7 @@ describe('User model', function() {
       var propValue = initData[propName];
       var actualValue = eval("testUser." + propName);
       
-      assert.equal(propValue, actualValue, 'didn\'t get back our property for ' + propName);
+      assert.equal(propValue, actualValue, 'didn\'t get back our property for: ' + propName);
       propertiesTested++;
     });
     
@@ -92,4 +95,35 @@ describe('User model', function() {
     
   });
   
+  it('should get full name when first and last are set in constructor', function() {
+    var testUser = new User( { firstName: 'Han', lastName: 'Solo'} );
+    assert.equal(testUser.name, 'Han Solo', 'didn\'t get "Han Solo" back');
+  });
+  
+  it('should get full name when first and last are set by property', function() {
+    var testUser = new User();
+    testUser.firstName = 'Boba';
+    testUser.lastName = 'Fett';
+    assert.equal(testUser.name, 'Boba Fett', 'didn\'t get "Boba Fett" back');
+  });
+  
+  it('should be able to override first and last names explicitly', function() {
+    var testUser = new User( { firstName: 'Luke', lastName: 'Skywalker'} );
+    testUser.name = 'Darth Vader';
+    assert.equal(testUser.name, 'Darth Vader', 'didn\'t get "Darth Vader" back');
+  }); 
+  
+  it('should ignore empty string as full name and return first and last names as full name', function() {
+    var testUser = new User();
+    testUser.name = '';
+    testUser.firstName = 'Boba';
+    testUser.lastName = 'Fett';
+    assert.equal(testUser.name, 'Boba Fett', 'didn\'t get "Boba Fett" back');
+  });
+  
+  it('should make half-hearted attempt to get first and last names from a full name in constructor', function() {
+    var testUser = new User( { name: 'hello there' } );
+    assert.equal(testUser.firstName, 'hello', 'didn\'t get firstname back');
+    assert.equal(testUser.lastName, 'there', 'didn\'t get lastname back');
+  });
 });

@@ -78,6 +78,18 @@ describe('userManager', function() {
     setTimeout(function() {
       userManager.getUser(existingUserId, function(resultUser) {
         assert.equal(resultUser.name, existingUserName, 'User name incorrect');
+        
+        //
+        // Verify we got everything ok
+        //
+        assert.equal(resultUser.firstName, 'Jeff', 'didn\'t get firstname property');
+        assert.equal(resultUser.lastName, 'Mock', 'didn\'t get lastName property');
+        assert.equal(resultUser.company, 'SocialTagg LLC', 'didn\'t get company property');
+        assert.equal(resultUser.address, 'Redondo Beach, CA', 'didn\'t get address property');
+        assert.equal(resultUser.twitter, '@jmock77', 'didn\'t get twitter property');
+        assert.equal(resultUser.title, 'VP Engineering', 'didn\'t get title property');
+        assert.equal(resultUser.website, 'http://socialtagg.com', 'didn\'t get website property');
+        
         done();
       });
     }, connectionWaitTimeMs);
@@ -278,22 +290,13 @@ describe('userManager', function() {
     var newPw = 'yoda';
 
     userManager.setUserPasswordWithVerificationCodeByEmail(changeableUserEmail, code, newPw, function(err) {
-
-      // test user password: hello (looks like the account has insufficient permissions; to research)
-      // http://apigee.com/docs/usergrid/content/authentication-and-access-usergrid
-      
       assert.equal(err, 3, 'didn\'t get 3 back for bad verification code');
       done();
     });
   });
 
-  console.log('setting changeablePw account PW to: ' + changeablePw);
-
-  //
-  // Note: not working because the PW isn't changing on usergrid side.  Prolly permissions?
-  // Need to fix.
-  //
   it('should set new password properly', function(done) {
+    // console.log('setting changeablePw account PW to: ' + changeablePw);
 
     userManager.setUserPasswordWithVerificationCodeByEmail(changeableUserEmail, verificationCode, changeablePw, function(err) {
 

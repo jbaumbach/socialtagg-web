@@ -94,7 +94,7 @@ exports.sendUpdateProfileEmail = function(user, resultCallback) {
     plainTextBody : util.format("Hi %s!\n\nThank you for updating your SocialTagg " +
       "profile!\n\nYou can access your updated badge on the \"Badge\" screen " +
       "within the SocialTagg app.\n\nSincerely,\nSocialTagg Team",
-      user.name),
+      user.firstName),
     toEmail : user.email,
     fromEmail : fromEmail,
     fromName: fromName,
@@ -124,10 +124,10 @@ exports.sendUpdateProfileEmail = function(user, resultCallback) {
       {
         "name" : "postal_address",
         "content" : user.address
-      }, // todo: implement separate first and last names
+      },
       {
         "name" : "last_name",
-        "content" : user.name
+        "content" : user.lastName
       },
       {
         "name" : "email",
@@ -144,23 +144,19 @@ exports.sendUpdateProfileEmail = function(user, resultCallback) {
       {
         "name" : "tel",
         "content" : user.phone
-      }, // todo: implement separate first and last names
+      },
       {
         "name" : "first_name",
-        "content" : user.name
-      }
-      /* todo: implement user avatars in User class 
-      ,
+        "content" : user.firstName
+      },
       {
         "name" : "uuid_avatar_image",
-        "content" : user.name
+        "content" : user.avatarId
       }
-      */
     ]
   };
-
-  email.sendGenericEmail(params, resultCallback);
   
+  email.sendGenericEmail(params, resultCallback);
 }
 
 //
@@ -314,8 +310,6 @@ exports.handleUpdateProfileEmailRequest = function(options, res) {
 
   }
 }
-
-
 
 
 exports.list = function(req, res) {

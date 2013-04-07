@@ -29,9 +29,6 @@ function userFromUserGridUser(userGridUser) {
   
   // todo: really understand UG responses.  There's FB stuff in there.
   
-  var name = userGridUser.get('name') ||
-    util.format("%s %s", userGridUser.get('first_name'), userGridUser.get('last_name'));
-  
   var dateStr = 'n/a';
   if (userGridUser.get('created')) {
     dateStr = new Date(userGridUser.get('created')).toDateString();  
@@ -40,20 +37,21 @@ function userFromUserGridUser(userGridUser) {
   return new User({
     id: userGridUser.get('uuid'),
     userName: userGridUser.get('username'),
-    name: name,
+    name: userGridUser.get('name'),
+    firstName: userGridUser.get('first_name'),
+    lastName: userGridUser.get('last_name'),
     address: userGridUser.get('postal_address'),
     email: userGridUser.get('email'),
     phone: userGridUser.get('tel'),
     pictureUrl: userGridUser.get('picture'),
     createDate: userGridUser.get('created'),
     createDateStr: dateStr,
-    website: userGridUser.get('website'),
+    website: userGridUser.get('website') || userGridUser.get('url'),
     bio: userGridUser.get('bio'),
     company: userGridUser.get('company'),
     title: userGridUser.get('title'),
     twitter: userGridUser.get('twitter'),
-    website: userGridUser.get('url')
-    
+    avatarId: userGridUser.get('uuid_avatar_image')
   });
 }
 

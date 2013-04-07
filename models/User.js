@@ -20,7 +20,8 @@
  
  */
 
-var util = require('util');
+var util = require('util')
+  , globalFunctions = require('../common/globalfunctions');
 
 //
 // Return a new user
@@ -34,10 +35,13 @@ var User = function(values) {
 
   this.id = values.id || '';
   this.userName = values.userName || '';
-  this.name = values.name || '';
+  this.firstName = values.firstName || '';
+  this.lastName = values.lastName || '';
+  this._name = undefined;
+  this.name = values.name || '';    // Call property setter after name components are declared 
   this.address = values.address || '';
   this.email = values.email || '';
-  this.phone = values.phone || '',
+  this.phone = values.phone || '';
   this.password = values.password || '';
   this.pictureUrl = values.pictureUrl || '';
   this.pictureDataBytes = values.pictureDataBytes || '';
@@ -49,7 +53,7 @@ var User = function(values) {
   this.company = values.company || '';
   this.title = values.title || '';
   this.twitter = values.twitter || '';
-
+  this.avatarId = values.avatarId;
 }
 
 //
@@ -95,6 +99,27 @@ Object.defineProperty(User.prototype, "qrCodeUrl", {
     var result = util.format('http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl=%s', urlEncodedPath);
     return result;
   }  
+});
+
+//
+// The full name built from the individual name components
+//
+Object.defineProperty(User.prototype, "name", {
+  get: function() {
+    var result = this._name || util.format('%s %s', this.firstName, this.lastName);
+    return result;
+  },
+  set: function(fullName) {
+    //
+    // Attempt to split the name into sub components.  This is not recommended, but useful for testing.
+    //
+    var names = globalFunctions.splitNames(fullName);
+    if (names) {
+      this.firstName = names.firstName;
+      this.lastName = names.lastName;
+    } 
+    this._name = fullName;
+  }
 });
 
 module.exports = User;
