@@ -1,13 +1,11 @@
-## Node.js Scaffolding
+## SocialTagg Node.js Website
 
-  Hello, and welcome!  This repository is a full-stack node.js sample application that demonstrates an 
-  architecture for building a complete production
-  website with node.js.  It features an architectural demonstration of these features:
+  This is the source code of the SocialTagg website.  It includes these general features:
 
    * Built with Node.js and Express
    * REST API with authentication scheme
    * Fully commented for people coming from a Microsoft .NET/RDBMS background
-   * Data layer demonstrating connecting to and storing data in MongoDb
+   * Data layer demonstrating connecting to and storing data in UserGrid and/or MongoDb
    * Data layer decoupled from application layer for easily changing databases
    * Defined classes (well, Javascript's version of a class) for application object models
    * User account create/edit, demonstrating password hashing and salting
@@ -45,3 +43,27 @@
 
     $ node loadtest.js
 
+## Day to day SVN and Heroku operations
+
+   The SocialTagg website uses Assembla+SVN for general source control operations, and Heroku uses GIT for
+   deployment to the production website.
+   
+   This is a bit of a headache since you have not one but two source control systems using your code at the same
+   time.  Here are the general things you need to do:
+   
+   * Get the source from Assembla+SVN.  We're using 1.7+.  This should create a local .svn directory.
+   * By default, Mac comes with SVN 1.6.  You need to update your local SVN so that command line operations will work.  This is a pain in the @ss
+    since brew doesn't update it properly.  I used brew first since it installs a bunch of dependencies (especially "neon"), then
+    when it fails d/l the source directly from Apache and manually build it.  This is a good guide, if you use brew you can start
+    with step #3: http://blog.countableset.ch/2013/01/10/compile-svn-for-osx/
+   * When the step above is done, you'll probably have two SVN versions installed (1.6 and 1.7).  Follow the instructions
+    here about getting the right one to run in your terminal: http://superuser.com/questions/455214/where-is-svn-on-os-x-mountain-lion
+   * Be sure to ignore the .git and .idea directories in SVN.  Here's a guide to do that: http://stackoverflow.com/questions/116074/how-to-ignore-a-directory-with-svn
+   * There's a .gitignore file in SVN.  It ignores all the SVN files by default, so you should be good there.
+   * Tell Webstorm (the preferred Node.js editor) to use SVN for source control ("CMD-,", then "Project Properties", "Source Control").  
+   * Deploy to production easily with the bash script:
+   
+    $ ./deploy-to-heroku.sh
+    
+    
+    

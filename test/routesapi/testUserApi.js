@@ -35,7 +35,7 @@ var verificationCode = '343434';
 
 
 //**********************************************************************************************
-var skipActualEmailSending = false;
+var skipActualEmailSending = true;
 //**********************************************************************************************
 
 
@@ -304,7 +304,7 @@ describe('api - user functions', function() {
         });
     });
 
-    it('should send updated profile email to good user', function(done) {
+    it.skip('should send updated profile email to good user', function(done) {
       request(app)
         .post('/apiv1/users')
         .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
