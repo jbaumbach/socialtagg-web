@@ -24,15 +24,14 @@ block content
       //-
       each operation in operations
         .api-operation
-          h3(class="title")= operation.title
-          p(class="description")= operation.description
-          p(class="signature") Signature: 
-            span #{ operation.signature }
-          p Try it:
-          p(class="tryit")
-            | #{ operation.tryit }
+          span.acc-trigger
+            a(href="#") #{ operation.title }
+          .acc-container
+            .content
+              p(class="description")= operation.description
+              p(class="signature") Signature: 
+                span #{ operation.signature }
+              p Try it:
+              p(class="tryit")
+                | #{ operation.tryit }
         
-      //- if (apiUser.id.length === 0)
-        p (
-          a(href="/login") Login 
-          | to have the key values populated for you)

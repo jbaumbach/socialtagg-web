@@ -4016,6 +4016,20 @@ table.standard-table tr:hover td {background-color: #fafafa;}
   margin: 0 12px 10px 0;
 }
 
+.api-operation .tryit {
+  background: none repeat scroll 0 0 #5E5E5E;
+  border: 1px solid #CCCCCC;
+  border-radius: 7px;
+  color: #2DBFFD;
+  font-family: 'Courier';
+  font-size: 1.1em;
+  padding: 10px;
+  line-height: 1.5em;
+}
+
+.api-operation .signature span {
+  font-weight: bold;
+}
 
 /* =================================================================== */
 /* Media Queries
