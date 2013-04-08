@@ -43,7 +43,7 @@
 
     $ node loadtest.js
 
-## Day to day SVN and Heroku operations
+## Day to day Assembla and Heroku operations
 
    The SocialTagg website uses Assembla+SVN for general source control operations, and Heroku uses GIT for
    deployment to the production website.
@@ -66,4 +66,8 @@
     $ ./deploy-to-heroku.sh
     
     
+## Misc Info
+
+  The HTML template used by SocialTagg's website is here: http://vasterad.com/themes/centum/shortcodes.html
+  
     

@@ -1,49 +1,55 @@
 extends layout
 
 block content
-
-  .container
-    .sixteen.columns
-      #page-title
-        h2 #{ user.name }
-        #bolded-line
+  //-
+    .container
+      .sixteen.columns
+        #page-title
+          h2 #{ user.name }
+          #bolded-line
  
   .container.user-view
     .four.columns
       img(src=user.pictureUrl).user-image
     .twelve.columns
-      .headline.no-margin 
-        h3 Bio
-      p #{ user.bio}
-
-  .container.user-view
-    .one-third.column
-      .headline.no-margin
-        h3 Company
-      p #{ user.company }
-    .one-third.column
-      .headline.no-margin
-        h3 Title
+      h2 #{ user.name }
       p #{ user.title }
-    .one-third.column
-      .headline.no-margin
-        h3 Website
-      p
-        a(href=user.website, target="_blank") #{ user.website }
+      p #{ user.company }
 
   .container.user-view
-    .six.columns
+    .sixteen.columns
       .headline.no-margin
-        h3 Address
-      p #{ user.address }
-    .six.columns
+        h3 Contact Information
+      - if (user.website && user.website.length > 0)
+        p
+          i.ico-globe
+          b
+            a(href=user.website, target="_blank") #{ user.website }
+      - if (user.address && user.address.length > 0)
+        p
+          i.ico-google-maps
+          b #{ user.address }
+      - if (user.email && user.email.length > 0)
+        p
+          i.ico-envelope
+          b
+            a(href="mailto:" + user.email) #{ user.email }
+      - if (user.twitter && user.twitter.length > 0)
+        p
+          i.twitter.social
+          b #{ user.twitter }
+
+  - if (user.bio && user.bio.length > 0)
+    .container.user-view
+      .sixteen.columns
+        .headline.no-margin
+          h3 Bio
+        p
+          //- Unescape this value with the "!".  Jade escapes everything by default.
+          #!{ user.bio }
+
+  .container.user-view
+    .sixteen.columns
       .headline.no-margin
-        h3 Email
-      p
-        a(href="mailto:" + user.email) #{ user.email }
-    .four.columns
-      .headline.no-margin
-        h3 Twitter
-      p #{ user.twitter }
-        
-        
+        h3 Badge
+      img(src=user.qrCodeUrl)

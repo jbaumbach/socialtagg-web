@@ -120,6 +120,14 @@ describe('globalFunctions', function() {
       
   });
   
+  it('should htmlize some values in a string', function() {
+    var source = 'this\r\nis on multiple\r\n\nlines';
+    var newSource = source.htmlize();
+    
+    assert.equal(newSource.match(/<br>/g).length, 3, 'didn\'t replace all \\n\'s with <br>s');
+  });
+  
+  
   it('should find a value in an array of objects', function() {
     var vals = [
       { id: 5, name: 'steve' },

@@ -3986,8 +3986,29 @@ table.standard-table tr:hover td {background-color: #fafafa;}
 .user-view img.user-image {
   max-width: 150px;
   max-height: 150px;
+  padding-bottom: 10px;
 }
 
+.user-view {
+  padding: 20px 0 5px;
+}
+
+.user-view p {
+  margin: 0;
+}
+
+.user-view b {
+  margin-top: 19px;
+  position: absolute;
+}
+
+.user-view i.social {
+  background-position: 0 -38px;
+  display: inline-block;
+  height: 28px;
+  width: 28px;
+  margin: 16px 10px;
+}
 /*
 / Begin MailChimp Signup Form */
 #mce-EMAIL {

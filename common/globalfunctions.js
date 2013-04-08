@@ -152,6 +152,14 @@ String.prototype.removeScheme = function() {
 };
 
 //
+// Replace some plaintext items with HTML equivalents, such as "\n" -> "<br>"
+//
+String.prototype.htmlize = function() {
+  var result = this.replace(/\n/g, '<br>');
+  return result;
+};
+
+//
 // Search an array of objects for an object having a specific value in a 
 // specific field.
 // 
