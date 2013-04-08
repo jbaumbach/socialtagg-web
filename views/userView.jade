@@ -20,6 +20,10 @@ block content
     .sixteen.columns
       .headline.no-margin
         h3 Contact Information
+      - if (user.phone && user.phone.length > 0)
+        p
+          i.ico-phone
+          b #{ user.phone }
       - if (user.website && user.website.length > 0)
         p
           i.ico-globe
