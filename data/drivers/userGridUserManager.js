@@ -13,6 +13,7 @@ var util = require('util')
   , User = require('../../models/User.js')
   , ApiUser = require('../../models/ApiUser.js')
   , globalFunctions = require('../../common/globalfunctions')
+  , application = require('../../common/application')
   , thisModule = this
   ;
 
@@ -43,7 +44,7 @@ function userFromUserGridUser(userGridUser) {
     address: userGridUser.get('postal_address'),
     email: userGridUser.get('email'),
     phone: userGridUser.get('tel'),
-    pictureUrl: userGridUser.get('picture'),
+    pictureUrl: application.processImageUrlForLargerSize(userGridUser.get('picture')),
     createDate: userGridUser.get('created'),
     createDateStr: dateStr,
     website: userGridUser.get('website') || userGridUser.get('url'),

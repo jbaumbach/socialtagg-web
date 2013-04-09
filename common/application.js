@@ -128,4 +128,23 @@ exports.links = function() {
     twitter: 'http://twitter.com/socialtagg',
     linkedin: 'http://linkedin.com/company/2693505'
   }
-}
+};
+
+//
+// Process an image url, doing stuff like adding parameter for getting a large
+// image from facebook
+//
+exports.processImageUrlForLargerSize = function(url) {
+  
+  var result = url;
+  if (result) {
+    if (result.match(/facebook.com/i)) {
+      var delim = '?';
+      if (result.match(/\?/)) {
+        delim = '&';
+      }
+      result = result + delim + 'type=large';
+    }
+  }
+  return result;
+};

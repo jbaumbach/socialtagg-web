@@ -163,5 +163,41 @@ describe('application class', function() {
     assert.equal(/[0-9]{6}/.test(res), true, 'wasn\'t all numbers');
     
   });
+  
+  it('should add facebook parameter to request a large image when processing facebook image url', function() {
+    var url = 'http://graph.facebook.com/783990326/picture';
+    var updatedUrl = application.processImageUrlForLargerSize(url);
+
+    var hasParam = updatedUrl.match('/facebook.com.*\?.*type=large/i');
+    assert.equal(hasParam, null, 'didn\'t add parameters');
+  });
+
+  
+  it('should add facebook parameter with correct delimiter to request a large image when processing facebook image url', function() {
+    var url = 'http://graph.facebook.com/783990326/picture?john=cool';
+    var updatedUrl = application.processImageUrlForLargerSize(url);
+
+    var hasParam = updatedUrl.match('/facebook.com.*\?.*&type=large/i');
+    // console.log('got hasParam: ' + hasParam + ', also got back: ' + updatedUrl);
+    assert.equal(hasParam, null, 'didn\'t add right delimiter');
+  });
+
+  
+  it('should not add facebook parameter to request a large image when processing non-facebook image url', function() {
+    var url = 'http://graph.google.com/783990326/picture';
+    var updatedUrl = application.processImageUrlForLargerSize(url);
+
+    assert.equal(updatedUrl, url, 'shouldn\'t have added parameter');
+  });
+
+  it('should not crap out on null when procssing an image url', function() {
+    var url;
+    var updatedUrl = application.processImageUrlForLargerSize(url);
+
+    var isOk = (updatedUrl === undefined || updatedUrl === null);
+    assert.ok(isOk, 'didn\'t get back what we put in');
+  });
+
+
 });
   
