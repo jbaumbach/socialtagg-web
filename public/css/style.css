@@ -4031,6 +4031,22 @@ table.standard-table tr:hover td {background-color: #fafafa;}
   font-weight: bold;
 }
 
+/* Features page */
+.feature-page {
+  clear: both;
+}
+.feature-page .content img {
+  float:left;
+  width: 220px;
+  padding: 10px;
+}
+.feature-page .content p {
+  display: inline-block;
+  font-size: 1.6em;
+}
+.feature-page .content p.with-image {
+  margin-top: 30px;
+}
 /* =================================================================== */
 /* Media Queries
 ====================================================================== */

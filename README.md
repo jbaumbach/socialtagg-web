@@ -64,10 +64,27 @@
    * Deploy to production easily with the bash script:
    
     $ ./deploy-to-heroku.sh
+    $ heroku ps     # Gets status
+    $ heroku logs   # See what broke, if anything
     
+## Third-party Components
+
+  In the open source world, new updates are released often.  To list your versions:
+  
+    $ npm list
+  
+  To install/update components (all the dependencies in package.json):
+  
+    $ npm update
     
+  Be sure to run all the tests after updating your components.  Something may have broken.
+
 ## Misc Info
 
   The HTML template used by SocialTagg's website is here: http://vasterad.com/themes/centum/shortcodes.html
   
-    
+  (Not tested) If multiple heroku accounts, install this: https://github.com/ddollar/heroku-accounts
+  
+    $ heroku accounts
+    $ heroku accounts:set tagg
+
