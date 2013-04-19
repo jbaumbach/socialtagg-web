@@ -9,8 +9,6 @@ var app = myApp.app();
 
 describe('features page', function() {
 
-  this.timeout(9000);
-
   it('should display some features', function(done) {
     request(app)
       .get('/features')
