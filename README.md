@@ -66,6 +66,8 @@
     $ ./deploy-to-heroku.sh
     $ heroku ps     # Gets status
     $ heroku logs   # See what broke, if anything
+    $ heroku releases # See the release history for your site
+    $ heroku rollback [release] # Rollback to most recent release or specified release (e.g. v43)
     
 ## Third-party Components
 

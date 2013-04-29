@@ -4031,7 +4031,7 @@ table.standard-table tr:hover td {background-color: #fafafa;}
   font-weight: bold;
 }
 
-/* Features page */
+/* Features page
 .feature-page {
   clear: both;
 }
@@ -4047,7 +4047,7 @@ table.standard-table tr:hover td {background-color: #fafafa;}
 .feature-page .content p.with-image {
   margin-top: 30px;
 }
-
+ */
 
 /* About page */
 .about {
