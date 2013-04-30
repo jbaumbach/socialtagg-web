@@ -49,8 +49,8 @@ block content
         .headline.no-margin
           h3 Bio
         p
-          //- Unescape this value with the "!".  Jade escapes everything by default.
-          #!{ user.bio }
+          //- Unescape this value with the "!" instead of "#".  Jade escapes everything by default.
+          | !{ user.bio }
 
   .container.user-view
     .sixteen.columns
