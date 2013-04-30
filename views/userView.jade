@@ -51,7 +51,8 @@ block content
         p
           //- Unescape this value with the "!" instead of "#".  Jade escapes everything by default.
           | !{ user.bio }
-
+  
+ //- Todo: only display the badge if the user is logged in. 
   .container.user-view
     .sixteen.columns
       .headline.no-margin
