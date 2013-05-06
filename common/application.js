@@ -126,7 +126,8 @@ exports.links = function() {
     login: '/login',
     facebook: 'http://facebook.com/socialtagg',
     twitter: 'http://twitter.com/socialtagg',
-    linkedin: 'http://linkedin.com/company/2693505'
+    linkedin: 'http://linkedin.com/company/2693505',
+    about: '/about'
   }
 };
 
