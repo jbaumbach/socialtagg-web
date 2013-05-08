@@ -208,7 +208,7 @@ exports.handleForgotPasswordEmailRequest = function(options, res) {
         case 0:
           thisModule.sendForgotPasswordEmail(userEmail, code, function (err, response) {
             if (err) {
-              thisModule.respond(res, 500, 'There was an error sending the email.');
+              thisModule.respond(res, 500, 'There was an error sending the email.  Please check the logs at this date/time.');
             } else {
               thisModule.respond(res, 200, response);
             }

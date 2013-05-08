@@ -35,7 +35,7 @@ var verificationCode = '343434';
 
 
 //**********************************************************************************************
-var skipActualEmailSending = true;
+var skipActualEmailSending = false;
 //**********************************************************************************************
 
 
@@ -290,7 +290,7 @@ describe('api - user functions', function() {
         });
     });
   
-    it.skip('should send a forgot password email to a good email address', function(done) {
+    it('should send a forgot password email to a good email address', function(done) {
       request(app)
         .post('/apiv1/users')
         .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
@@ -298,6 +298,7 @@ describe('api - user functions', function() {
         .send(JSON.stringify({ action: 'forgotpasswordemail', useremail: 'john.j.baumbach@gmail.com' }))
         .expect(200)
         .end(function(err, res) {
+          // Note: the test will have an error if the response body is not JSON (which in itself indicates an error)
           var responseObject = JSON.parse(res.body);
           assert.equal(responseObject[0].status, "sent", 'didn\'t send properly');
           done();

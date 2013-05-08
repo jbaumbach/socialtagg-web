@@ -14,7 +14,7 @@ var util = require('util')
 //
 // Options:
 //
-//  bool isTemplate: true to use template
+//  { bool isTemplate: true to use template }
 //
 exports.sendMandrillEmail = function(postData, options, resultCallback) {
 
@@ -25,33 +25,65 @@ exports.sendMandrillEmail = function(postData, options, resultCallback) {
     :
     '/api/1.0/messages/send.json';
 
+  //
+  // 2013-05-07 JB: Mandrill got more strict with their API - let's conform more closely
+  // with the http spec and specify the headers explicitly (especially content length)
+  //
+  var dataToPost = JSON.stringify(postData);
+  var headers = {
+    'Content-Type': 'application/json',
+    'Content-Length': dataToPost.length
+  };
+
+
   var options = {
     hostname: 'mandrillapp.com',
     port: 443,
     path: apiPath,
-    method: 'POST'
+    method: 'POST',
+    headers: headers
   };
 
   var req = https.request(options, function(apiRes) {
+
+    var responseStatuscode = apiRes.statusCode;
+    var hadError = responseStatuscode != 200;
+
     apiRes.on('data', function(data) {
       response += data;
     });
 
     apiRes.on('end', function() {
-      console.log('Mandrill response: (' + apiPath + ') ' + util.inspect(response));
+      //
+      // Write some stuff to the logs
+      //
+      console.log('Mandrill response: (' + apiPath + ') code: ' + 
+        responseStatuscode + 
+        ', had error? ' + hadError + ', ' +
+        response);
 
+      if (hadError) {
+        //
+        // Write a bunch more stuff to the logs
+        //
+        console.log('Mandrill data posted: ' + util.inspect(postData));
+        console.log('Mandrill https options: ' + util.inspect(options));
+      }
+      
       //
       // Sometimes this happens:
       //
       // [{"email":"john.j.baumbach@gmail.com","status":"rejected","_id":"a956dca43ef34864b4f64aa6c5a66e36"}]
       //
-      // todo: handle the above?
-      //
-      resultCallback(false, response);
+      
+      resultCallback(hadError, response);
     });
   });
 
-  req.write(JSON.stringify(postData));
+  //
+  // The writing of our post data
+  //
+  req.write(dataToPost);
 
   req.on('error', function(e) {
     console.log('Error sending email: ' + e);
