@@ -14,7 +14,7 @@ describe('homepage', function() {
   it('should display some basic stuff', function(done) {
     request(app)
       .get('/')
-      .expect(/<a href="http:\/\/facebook.com\/socialtagg">/) // Social stuff
+      .expect(/<a href="\/\/www.facebook.com\/socialtagg">/) // Social stuff
       .expect(/UA-36103900-2/) // Google anlaytics
       .expect(200, done);
   });
