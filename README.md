@@ -81,6 +81,11 @@
     
   Be sure to run all the tests after updating your components.  Something may have broken.
 
+## SSL Certs on Heroku
+
+   Follow the instructions about adding the SSL add-on on the Heroku site.  Refer to the document "socialtagg-entered-csr-data.txt"
+   which may or may not be in Assembla.  :)
+
 ## Misc Info
 
   The HTML template used by SocialTagg's website is here: http://vasterad.com/themes/centum/shortcodes.html
