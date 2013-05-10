@@ -290,7 +290,7 @@ describe('api - user functions', function() {
         });
     });
   
-    it('should send a forgot password email to a good email address', function(done) {
+    it.skip('should send a forgot password email to a good email address', function(done) {
       request(app)
         .post('/apiv1/users')
         .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
