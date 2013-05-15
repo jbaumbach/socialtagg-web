@@ -16,6 +16,17 @@ var util = require('util')
   , thisModule = this
   ;
 
+
+//
+// Global variables accessible throughout the application.
+// Some are set in app.js, like so:
+//
+// application.globalVariables.serverPhysicalPath = [path];
+//
+exports.globalVariables = {
+};
+
+
 //
 // Grabs the current user from the session or returns an empty object to the callback.
 //
