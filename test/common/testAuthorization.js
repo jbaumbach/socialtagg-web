@@ -203,6 +203,55 @@ describe('api authorization', function() {
     assert.equal(false, calledNext, 'next() shouldn\'t have been called');
     assert.equal(true, formattedResonse, 'res didn\'t get called with an error');
   });
+  
+
+  it('should work if user clock is mysteriously ahead by a couple of minutes', function() {
+
+    var calledNext = false;
+    var formattedResonse = false;
+    var sampleApiKey = '012345';
+    var samplePw = 'hello';
+
+    var req = {};
+    req.header = function(headerVal) {
+      assert.equal('Authorization', headerVal, 'other headers being requested - need to update this test?');
+
+      //
+      // Timestamp 2 minutes in the future
+      //
+      var futureTimestamp = Math.floor(new Date() / 1000) + (2 * 60);
+      var badHash = globalFunctions.sha256Encode(sampleApiKey + samplePw + futureTimestamp);
+      return util.format('CustomAuth apikey=%s,hash=%s', sampleApiKey, badHash);
+    };
+
+    var res = {};
+    res.format = function(e) {
+      assert.equal(undefined, e, 'the function wrote to the response - either a failure or the test needs updating');
+    };
+
+    //
+    // Make sure the user manager requests the correct api key, then return a good sample
+    // user.
+    //
+    userManager.getApiUser = function(apiKey, resultCallback) {
+
+      assert.equal(sampleApiKey, apiKey, 'api key not properly extracted from header');
+      var apiUser = new ApiUser( { apiKey: sampleApiKey, password: samplePw } );
+
+      resultCallback(apiUser);
+    };
+
+    //
+    // Execute our one and only test.
+    //
+    auth.authorize(req, res, function() { calledNext = true; });
+
+    //
+    // Make sure we had expected behavior
+    //
+    assert.equal(true, calledNext, 'next() should have been called');
+    assert.equal(false, formattedResonse, 'res got called with an error');
+  });
 
   it('should bomb out for unknown user', function() {
 

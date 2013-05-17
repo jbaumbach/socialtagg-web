@@ -72,8 +72,9 @@ exports.authorizeCredentials = function(hashedValue, apiUser, validForMinutes) {
   var timestamp = Math.floor(new Date() / 1000);  // If your server's clock is consistently off you can add seconds here
   var minutes = Math.min(Math.max(1, validForMinutes), 10);  // validMinutes should be between 1 and 10
   var maxSecondsToSearch = 60 * minutes;
+  var secondsToSearchForwardInTime = 60 * -3; // Go 3 minutes back
   
-  for (var loop = 0; loop <= maxSecondsToSearch; loop++) {
+  for (var loop = secondsToSearchForwardInTime; loop <= maxSecondsToSearch; loop++) {
     
     var validValueToHash = util.format('%s%s%d', apiUser.apiKey, apiUser.password, timestamp - loop);
     var validValueHash = globalFunctions.sha256Encode(validValueToHash);
