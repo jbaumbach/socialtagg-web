@@ -64,7 +64,7 @@
    * Deploy to production easily with the bash script:
    
     $ ./deploy-to-heroku.sh
-    $ heroku ps     # Gets status
+    $ heroku ps     # Gets status, use -- remote heroku or -- remote staging
     $ heroku logs   # See what broke, if anything
     $ heroku releases # See the release history for your site
     $ heroku rollback [release] # Rollback to most recent release or specified release (e.g. v43)
@@ -85,6 +85,30 @@
 
    Follow the instructions about adding the SSL add-on on the Heroku site.  Refer to the document "socialtagg-entered-csr-data.txt"
    which may or may not be in Assembla.  :)
+
+## Heroku Staging Environment
+
+  From instructions on heroku: https://devcenter.heroku.com/articles/multiple-environments#starting-with-a-production-app
+  This may be required as well: http://stackoverflow.com/questions/14161621/key-with-fingerprint-not-authorized-in-heroku
+   
+    $ heroku create --remote staging --addons redistogo:nano
+    Creating evening-ocean-8134... done, region is us
+    Adding redistogo:nano to evening-ocean-8134... done
+    http://evening-ocean-8134.herokuapp.com/ | git@heroku.com:evening-ocean-8134.git
+    Git remote staging added
+    
+  Most likely you'll have to creat a new key to access it:
+  
+    $ ssh-keygen -t rsa -f ~/.ssh/identity.herokustage.tagg
+    
+  Add it to heroku:
+  
+    $ heroku keys:add ~/.ssh/identity.herokustage.tagg.pub
+    
+  Then, push to staging and test it:
+    
+    $ git push staging master
+    
 
 ## Misc Info
 

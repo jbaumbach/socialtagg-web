@@ -10,12 +10,14 @@ git commit -a -m "Updates for site"
 
 echo ** 
 echo ** Pushing and building source to Heroku...
-git push heroku master
+git push staging master
 
 echo ** 
 echo ** Checking status after build...
-heroku ps --remote heroku
+heroku ps --remote staging
 
 echo ** 
 echo ** If anything went wrong, you will see the error here...
-heroku logs --remote heroku
+heroku logs --remote staging
+
+
