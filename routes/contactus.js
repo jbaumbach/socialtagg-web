@@ -15,16 +15,10 @@ var globalFunctions = require('./../common/globalfunctions')
 
 exports.contact = function(req, res) {
 
-  // todo: take login logic from index.js and create function in application.js to build the base pageVars object below
-
-    var pageVars =
-    {
-      title: 'Contact Us',
-      currentSessionUser: {},
-      links: application.links()
-    };
-
+  application.buildApplicationPagevars(req, { title: 'Contact Us'}, function(pageVars) {
     res.render('contactus', pageVars);
+  });
+
 
 };
 

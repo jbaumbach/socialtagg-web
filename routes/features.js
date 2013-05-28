@@ -9,15 +9,8 @@ var application = require('../common/application')
 
 exports.main = function(req, res) {
 
-  // todo: take login logic from index.js and create function in application.js to build the base pageVars object below
-
-  var pageVars =
-  {
-    title: 'Features',
-    currentSessionUser: {},
-    links: application.links()
-  };
-
-  res.render('features', pageVars);
+  application.buildApplicationPagevars(req, { title: 'Features'}, function(pageVars) {
+    res.render('features', pageVars);
+  });
 
 };

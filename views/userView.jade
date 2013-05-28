@@ -5,56 +5,56 @@ block content
     .container
       .sixteen.columns
         #page-title
-          h2 #{ user.name }
+          h2 #{ displayUser.name }
           #bolded-line
  
   .container.user-view
     .four.columns
-      img(src=user.pictureUrl).user-image
+      img(src=displayUser.pictureUrl).user-image
     .twelve.columns
-      h2 #{ user.name }
-      p #{ user.title }
-      p #{ user.company }
+      h2 #{ displayUser.name }
+      p #{ displayUser.title }
+      p #{ displayUser.company }
 
   .container.user-view
     .sixteen.columns
       .headline.no-margin
         h3 Contact Information
-      - if (user.phone && user.phone.length > 0)
+      - if (displayUser.phone && displayUser.phone.length > 0)
         p
           i.ico-phone
-          b #{ user.phone }
-      - if (user.website && user.website.length > 0)
+          b #{ displayUser.phone }
+      - if (displayUser.website && displayUser.website.length > 0)
         p
           i.ico-globe
           b
-            a(href=user.website, target="_blank") #{ user.website }
-      - if (user.address && user.address.length > 0)
+            a(href=displayUser.website, target="_blank") #{ displayUser.website }
+      - if (displayUser.address && displayUser.address.length > 0)
         p
           i.ico-google-maps
-          b #{ user.address }
-      - if (user.email && user.email.length > 0)
+          b #{ displayUser.address }
+      - if (displayUser.email && displayUser.email.length > 0)
         p
           i.ico-envelope
           b
-            a(href="mailto:" + user.email) #{ user.email }
-      - if (user.twitter && user.twitter.length > 0)
+            a(href="mailto:" + displayUser.email) #{ displayUser.email }
+      - if (displayUser.twitter && displayUser.twitter.length > 0)
         p
           i.twitter.social
-          b #{ user.twitter }
+          b #{ displayUser.twitter }
 
-  - if (user.bio && user.bio.length > 0)
+  - if (displayUser.bio && displayUser.bio.length > 0)
     .container.user-view
       .sixteen.columns
         .headline.no-margin
           h3 Bio
         p
           //- Unescape this value with the "!" instead of "#".  Jade escapes everything by default.
-          | !{ user.bio }
+          | !{ displayUser.bio }
   
- //- Todo: only display the badge if the user is logged in. 
+ //- Todo: only display the badge if the display user is the logged in user. 
   .container.user-view
     .sixteen.columns
       .headline.no-margin
         h3 Badge
-      img(src=user.qrCodeUrl)
+      img(src=displayUser.qrCodeUrl)

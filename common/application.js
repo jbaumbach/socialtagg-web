@@ -10,7 +10,7 @@
 var util = require('util')
   , userManager = require('../data/userManager')
   , User = require('../models/User')
-  , globalFunctions = require('./globalfunctions')
+  , globalfunctions = require('./globalfunctions')
   , check = require('validator').check
   , sanitize = require('validator').sanitize
   , thisModule = this
@@ -31,7 +31,7 @@ exports.globalVariables = {
 // Grabs the current user from the session or returns an empty object to the callback.
 //
 exports.getCurrentSessionUser = function(req, callback) {
-  var sessionInfo = globalFunctions.getSessionInfo(req);
+  var sessionInfo = globalfunctions.getSessionInfo(req);
 
   var returnResult = function(user) {
     callback(user);
@@ -54,7 +54,7 @@ exports.getCurrentSessionUser = function(req, callback) {
 // 2: logged in user
 //
 exports.loginStatus = function(req) {
-  var sessionInfo = globalFunctions.getSessionInfo(req);
+  var sessionInfo = globalfunctions.getSessionInfo(req);
   
   if (!(sessionInfo && sessionInfo.userId)) {
     // 
@@ -161,3 +161,77 @@ exports.processImageUrlForLargerSize = function(url) {
   }
   return result;
 };
+
+//
+// Call this function to init the global application's pageVars. It
+// sets a 'lite' .user and .isLoggedIn properties based on the current
+// session info.  Pass an optional callback in order to populate the
+// user object as well.
+//
+exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
+
+  if (!pageVars) {
+    pageVars = {};
+  }
+
+  pageVars.user = {};
+  pageVars.links = this.links();
+  
+  //
+  // Temporary items - dark release support
+  //
+  // ex: http://localhost:3000/?loginlink=1 
+  
+  pageVars.loginLink = req.query.loginlink;
+
+  
+  
+  function done() {
+    pageVars.pageVars = JSON.stringify(pageVars);
+
+    if (getUserAndCallback) {
+      getUserAndCallback(pageVars);
+
+    } else {
+      return pageVars;
+    }
+  }
+
+  var sessionInfo = globalfunctions.getSessionInfo(req);
+
+  if (sessionInfo.userId) {
+
+    pageVars.isLoggedIn = true;
+
+    //
+    // Create a 'lite' version of the user object for the page
+    //
+    pageVars.user.id = sessionInfo.userId;
+
+    if (getUserAndCallback) {
+
+      userManager.getUser(sessionInfo.userId, function(user) {
+
+        //
+        // Put in the 'full monty' version of the user object
+        //
+        pageVars.user = user;
+
+        //
+        // Experimental: wrap up all the pageVars in an object and pass
+        // it to the page.  Angular can use it in an ng-init function
+        // for a controller.  This keeps the client in sync with the server.
+        //
+        //pageVars.pageVars = JSON.stringify(pageVars);
+        //getUserAndCallback(pageVars);
+        done();
+      });
+    } else {
+      //pageVars.pageVars = JSON.stringify(pageVars);
+      //return pageVars;
+      return done();
+    }
+  } else {
+    return done();
+  }
+}

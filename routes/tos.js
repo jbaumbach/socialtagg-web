@@ -12,13 +12,9 @@ var application = require('../common/application')
 
 exports.main = function(req, res) {
 
-  // todo: take login logic from index.js and create function in application.js to build the base pageVars object below
-
   var pageVars =
   {
     title: 'Terms of Service',
-    currentSessionUser: {},
-    links: application.links(),
     htmlizedTos: 'Terms of service not available.'
   };
 
@@ -32,8 +28,9 @@ exports.main = function(req, res) {
     } else {
       pageVars.htmlizedTos = data.htmlize();
     }
-    
-    res.render('tos', pageVars);
 
+    application.buildApplicationPagevars(req, pageVars, function(pageVars) {
+      res.render('tos', pageVars);
+    });
   });
 };

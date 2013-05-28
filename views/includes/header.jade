@@ -1,39 +1,44 @@
 // Header
   | ================================================== 
 // 960 Container 
-.container.ie-dropdown-fix
-  // Header 
-  #header
-    // Logo 
-    .eight.columns
-      #logo
-        a(href='/')
-          img(src='/images/weblogo.png', alt='logo')
-        #tagline Connecting people at events
+.container.ie-dropdown-fix(ng-app='indexApp')
+
+  #login
+    include loginbox
+    
+    // Header 
+    #header
+      // Logo 
+      .eight.columns
+        #logo
+          a(href='/')
+            img(src='/images/weblogo.png', alt='logo')
+          #tagline Connecting people at events
+          .clear
+      // Social / Contact 
+      .eight.columns
+        // Social Icons 
+        ul.social-icons
+          li.facebook
+            a(href='#{ links.facebook }') Facebook
+          li.twitter
+            a(href='#{ links.twitter }') Twitter
+          li.linkedin
+            a(href='#{ links.linkedin }') LinkedIn
         .clear
-    // Social / Contact 
-    .eight.columns
-      // Social Icons 
-      ul.social-icons
-        li.facebook
-          a(href='#{ links.facebook }') Facebook
-        li.twitter
-          a(href='#{ links.twitter }') Twitter
-        li.linkedin
-          a(href='#{ links.linkedin }') LinkedIn
-      .clear
-      // Contact Details 
-      #contact-details
-        ul
-          li
-            i.mini-ico-envelope
-            a(href='mailto:support@socialtagg.com') support@socialtagg.com
-        //- Uncomment this when the login is implemented
-        li
-          i.mini-ico-user
-          a#login(href='#loginbox') Login
-  // Header / End 
-  // Navigation 
+        // Contact Details 
+        #contact-details
+          ul
+            li
+              i.mini-ico-envelope
+              a(href='mailto:support@socialtagg.com') support@socialtagg.com
+            //- Remove conditional when the login is implemented
+            if loginLink
+              li
+                i.mini-ico-user
+                a#login(href='#loginbox') Login
+    // Header / End 
+    // Navigation 
   .sixteen.columns
     #navigation
       ul#nav

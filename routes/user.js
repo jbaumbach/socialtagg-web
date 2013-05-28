@@ -12,10 +12,11 @@ var userManager = require('./../data/userManager')
   ;
 
 exports.loginForm = function(req, res) {
-  var pageVars = {
-    title: 'User Login'
-  };
-  res.render('userLogin', pageVars);
+
+  application.buildApplicationPagevars(req, { title: 'User Login'}, function(pageVars) {
+    res.render('userLogin', pageVars);
+  });
+
 };
 
 exports.login = function(req, res) {
@@ -27,22 +28,40 @@ exports.login = function(req, res) {
   userManager.validateCredentials(email, password, function(user) {
     
     if (user) {
+      console.log('logged in ok');
       //
       // User validated successfully.  
       //
       globalfunctions.loginUser(req, user.id);
-      res.redirect(applicationHomepage);
+
+      // Conditionally return a response based on who our client is
+      res.format({
+        // AJAX: let's return 'OK' and some data
+        json: function() { res.json(200, user); },
+
+        // HTML page: redirect to homepage
+        html: function() { res.redirect('/'); }
+      });
+
+
     } else {
+      console.log('failed login');
+
       //
-      // Oops, something went wrong.  Login is a post, but doesn't affect the database, so 
-      // ok to re-render the page with the existing post data rather than our usual
-      // redirect nonsense.
+      // Oops, something went wrong.  
       //
-      var delayMs = 0;
+
+      var delayMs = 250;
       var todoAfterAShortDelay = function() {
-        res.render('userLogin', { title: 'User Login', error: 'Incorrect email or password' });
-      };
+
+        res.format({
+          json: function() { res.json(401, { msg: 'Incorrect email or pw' }); },
+          html: function() { throw 'HTML login not yet supported'; }
+        });
+      }
+
       setTimeout(todoAfterAShortDelay, delayMs);
+      
     }
   })
 }
@@ -127,14 +146,16 @@ exports.detail = function(req, res) {
 
           var pageVars = {
             title: util.format('%s\'s Profile', user.name),
-            user: safeUser,
-            currentSessionUser: currentSessionUser,
-            links: application.links(),
+            
+            displayUser: safeUser,
             showQrCode: requestedUserIsSessionUser
           }
 
           function renderIt() {
-            res.render('userView', pageVars);
+            
+            application.buildApplicationPagevars(req, pageVars, function(pageVars) {
+              res.render('userView', pageVars);
+            });
           }
 
           if (requestedUserIsSessionUser) {
