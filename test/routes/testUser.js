@@ -70,4 +70,11 @@ describe('login and user features', function() {
 
   });
 
+  it('should redirect Karim\'s deleted uuid to new uuid', function(done) {
+    request(app)
+      .get('/users/5329e985-5a08-11e2-924d-02e81ac5a17b') // Karim's old one
+      .expect('Location', '/users/1da5e0ea-c8f1-11e2-8424-ade3d689326d')
+      .expect(301, done);
+  });
+
 });

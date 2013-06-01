@@ -16,7 +16,6 @@ var fromEmail = 'support@socialtagg.com';
 var fromName = 'SocialTagg Support Team';
 
 
-
 exports.respond = function(res, responseCode, response) {
   res.format({
     json: function() { 
@@ -359,3 +358,23 @@ exports.usersPost = function(req, res) {
     thisModule.respond(res, 400, 'The \'action\' parameter is missing. The request cannot be fulfilled.  Sorry.');
   }
 };
+
+exports.contaggs = function(req, res) {
+
+  var requestedUserId = req.params.id;
+
+  thisModule.respond(res, 501, { msg: 'Not implemented yet, try again later - ' + requestedUserId});
+
+  /*
+   userManager.getUser(requestedUserId, function(user) {
+   if (user) {
+   thisModule.respond(res, 200, user);
+   } else {
+   thisModule.respond(res, 404, util.format('user id \'%s\' not found', requestedUserId));
+   }
+   });
+   */
+
+
+}
+

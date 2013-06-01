@@ -264,6 +264,13 @@ describe('api - user functions', function() {
     
   });
 
+  it('should get user contaggs', function(done) {
+    
+    request(app)
+      .get('/apiv1/users/' + goodSampleUserId + '/contaggs')
+      .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
+      .expect(200, done)
+  });
 
   //
   // These tests also test Mandrill.  Prolly could refactor/mock to add true unit tests.

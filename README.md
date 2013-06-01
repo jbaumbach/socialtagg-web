@@ -97,7 +97,7 @@
     http://evening-ocean-8134.herokuapp.com/ | git@heroku.com:evening-ocean-8134.git
     Git remote staging added
     
-  Most likely you'll have to creat a new key to access it:
+  Most likely you'll have to create a new key to access it:
   
     $ ssh-keygen -t rsa -f ~/.ssh/identity.herokustage.tagg
     

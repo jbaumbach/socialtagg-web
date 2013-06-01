@@ -17,7 +17,6 @@ exports.index = function(req, res) {
   var pageVars =
   {
     title: 'API Documentation',
-    links: application.links()
   };
 
   var sessionInfo = globalfunctions.getSessionInfo(req);
@@ -32,7 +31,7 @@ exports.index = function(req, res) {
     // todo: update these with values read from config settings
     //
     //var host = 'http://localhost:3000';
-    var host = 'http://www.socialtagg.com';
+    var host = 'https://www.socialtagg.com';
     
     //
     // Convert API call values into displayable documentation values
@@ -43,7 +42,10 @@ exports.index = function(req, res) {
     });
     
     pageVars.apiUser = apiUser;
-    res.render('apidocumentation', pageVars);
+
+    application.buildApplicationPagevars(req, pageVars, function(pageVars) {
+      res.render('apidocumentation', pageVars);
+    });
 
   }
 

@@ -85,6 +85,17 @@ exports.new = function(req, res) {
 exports.detail = function(req, res) {
   var sessionInfo = globalfunctions.getSessionInfo(req);
   var requestedUserId = req.params.id;
+  
+  //
+  // Special: redirect for Karim's id, which got deleted
+  //
+  if (requestedUserId.toLowerCase() === '5329e985-5a08-11e2-924d-02e81ac5a17b') {
+    var newPath = '/users/1da5e0ea-c8f1-11e2-8424-ade3d689326d';
+    res.writeHead(301, {'Location': newPath});
+    res.end();
+    return;
+  }
+  
   var editMode = req.query['mode'] === 'edit';
   var requestedUserIsSessionUser = sessionInfo.userId === requestedUserId;
   
