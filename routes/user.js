@@ -20,6 +20,8 @@ exports.loginForm = function(req, res) {
 };
 
 exports.login = function(req, res) {
+  console.log('in login func');
+  
   var email = req.body.email;
 
   // only hash password if we're storing it oursevles: globalfunctions.hashPassword(req.body.password);

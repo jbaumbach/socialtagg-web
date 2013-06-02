@@ -10,7 +10,7 @@
 
 var app = angular.module('indexApp', ['ui.bootstrap']);
 
-// Allow POST to different port on the server
+// Allow POST to different port on the server (e.g. use ssl for login on non-ssl page)
 app.config(['$httpProvider', function($httpProvider) {
   $httpProvider.defaults.useXDomain = true;
   delete $httpProvider.defaults.headers.common['X-Requested-With'];
