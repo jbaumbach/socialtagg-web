@@ -16,6 +16,11 @@ var request = require('supertest')
 
 var app = myApp.app();
 
+// Note: same test user as in 'testUserApi.js'
+var changeableUserEmail = 'blah@blah.com';
+var changeableUserName = 'John\'s Test User - Dont Modify';
+var changeablePw = 'yodayoda';  // util.format('%d', new Date());
+
 //
 // Note: if the db closes in other tests, routes here that call the database will bomb out.
 //
@@ -52,8 +57,8 @@ describe('login and user features', function() {
   // and this should fail).
   //
   it.skip('should allow login of known user', function(done) {
-    var email = 'john.j.baumbach@gmail.com';
-    var password = 'Apigee11';
+    var email = changeableUserEmail;
+    var password = changeablePw;
     
     request(app)
       .post('/login')

@@ -13,6 +13,7 @@ var util = require('util')
   , globalfunctions = require('./globalfunctions')
   , check = require('validator').check
   , sanitize = require('validator').sanitize
+  , CSV = require('csv-string')
   , thisModule = this
   ;
 
@@ -183,8 +184,6 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   // ex: http://localhost:3000/?loginlink=1 
   
   pageVars.loginLink = req.query.loginlink;
-
-  
   
   function done() {
     pageVars.pageVars = JSON.stringify(pageVars);
@@ -217,21 +216,79 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
         //
         pageVars.user = user;
 
-        //
-        // Experimental: wrap up all the pageVars in an object and pass
-        // it to the page.  Angular can use it in an ng-init function
-        // for a controller.  This keeps the client in sync with the server.
-        //
-        //pageVars.pageVars = JSON.stringify(pageVars);
-        //getUserAndCallback(pageVars);
         done();
       });
     } else {
-      //pageVars.pageVars = JSON.stringify(pageVars);
-      //return pageVars;
       return done();
     }
   } else {
     return done();
   }
 }
+
+//
+// Return an export file for the passed users
+//
+//  users: array of user objects
+//  format: one of these values: 'csv'
+//  callback(err, data): 
+//    err: code if something went wrong 
+//      1: unsupported 'format' value 
+//    data: data corresponding to the requested format
+//
+// CSV file generation is Outlook friendly based on this format:
+//
+// http://stackoverflow.com/questions/4847596/what-are-the-csv-headers-in-outlook-contact-export
+//
+exports.buildUserExportFile = function(users, format, callback) {
+  
+  if (format.toLowerCase() != 'csv') {
+    callback(1);
+    return;
+  };
+    
+  //
+  // Let's do this little looper thingy so we can always guarantee that our column
+  // values will be aligned with the right column header
+  //
+  var columnsAndRetreivers = [];
+  columnsAndRetreivers.push({ header: 'Title', retreiver: function(user) { return user.title; }});
+  columnsAndRetreivers.push({ header: 'First Name', retreiver: function(user) { return user.firstName; }});
+  columnsAndRetreivers.push({ header: 'Last Name', retreiver: function(user) { return user.lastName; }});
+  columnsAndRetreivers.push({ header: 'Company', retreiver: function(user) { return user.company; }});
+  columnsAndRetreivers.push({ header: 'Job Title', retreiver: function(user) { return user.title; } });
+  columnsAndRetreivers.push({ header: 'E-mail Address', retreiver: function(user) { return user.email; } });
+  columnsAndRetreivers.push({ header: 'Mobile Phone', retreiver: function(user) {return user.phone; } });
+  columnsAndRetreivers.push({ header: 'Web Page', retreiver: function(user) { return user.website; } });
+  columnsAndRetreivers.push({ header: 'Business Street', retreiver: function(user) { return user.address; } });
+
+  //
+  // Build our header row
+  //
+  var headerArray = [];
+  columnsAndRetreivers.forEach(function(cr) {
+    headerArray.push(cr.header);
+  });
+
+  // Note: CSV.stringify() automatically adds the \r\n at the end
+  var resultData = CSV.stringify(headerArray);
+
+  //
+  // Build our value row
+  //
+  users.forEach(function(user) {
+
+    var userValueArray = [];
+    columnsAndRetreivers.forEach(function(cr) {
+      userValueArray.push(cr.retreiver(user));
+    });
+
+    resultData += CSV.stringify(userValueArray);
+  });
+  
+  //
+  // If we're here, we're happy
+  //
+  callback(null, resultData);
+  
+};

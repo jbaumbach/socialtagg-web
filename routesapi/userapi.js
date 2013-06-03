@@ -20,7 +20,8 @@ exports.respond = function(res, responseCode, response) {
   res.format({
     json: function() { 
       //
-      //   The objects dumped include internal variables too, might want to sanitize them.
+      //  If you pass user objects, they're dumped including internal 
+      //  variables too, might want to sanitize them.
       //
       res.json(responseCode, response);
     }
@@ -362,18 +363,42 @@ exports.usersPost = function(req, res) {
 exports.contaggs = function(req, res) {
 
   var requestedUserId = req.params.id;
+  var requestedUserPw = req.params.password;
 
-  thisModule.respond(res, 501, { msg: 'Not implemented yet, try again later - ' + requestedUserId});
+  userManager.getUserContaggs(requestedUserId, function(userContaggs) {
+    if (userContaggs) {
 
-  /*
-   userManager.getUser(requestedUserId, function(user) {
-   if (user) {
-   thisModule.respond(res, 200, user);
-   } else {
-   thisModule.respond(res, 404, util.format('user id \'%s\' not found', requestedUserId));
-   }
-   });
-   */
+      userManager.populateUserContaggs(userContaggs, function(users) {
+        
+        if (users) {
+          
+          application.buildUserExportFile(users, 'csv', function(err, data) {
+            if (err) {
+              thisModule.respond(res, 500, { msg: 'Internal error (' + err + ')'});
+            } else {
+              //
+              // We got the data, let's return it
+              //
+              res.set({
+                'Content-Type': 'text/csv'
+              })
+              
+              res.send(200, new Buffer(data));
+              
+            }
+          });
+          
+        } else {
+          
+          console.log('(error) exports.contaggs: no contaggs found for ' + requestedUserId);
+          thisModule.respond(res, 500, { msg: 'Crud, could not populate list'});
+        }
+      });
+      
+    } else {
+      thisModule.respond(res, 404, util.format('user id \'%s\' not found', requestedUserId));
+    }
+  });
 
 
 }

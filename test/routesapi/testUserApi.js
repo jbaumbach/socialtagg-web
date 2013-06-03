@@ -187,7 +187,7 @@ describe('api - user functions', function() {
         originalcode: verificationCode, 
         newpassword: changeablePw
       }))
-      .expect(/.*useremail.*missing/)
+      .expect(/.*Password updated successfully/)
       .expect(200, done);
   });
 
@@ -258,18 +258,39 @@ describe('api - user functions', function() {
       }))
       .expect(/user was found.*no email/)
       .expect(400, function() {
+        // Reset our mock so other tests aren't affected
         userManager.getUser = origGetUserFunc;
         done();
       });
     
   });
 
-  it('should get user contaggs', function(done) {
+  it('should return 404 for user contaggs call and bad id', function(done) {
+    request(app)
+      .get('/apiv1/users/idontexistatall/contaggs')
+      .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
+      .expect(404, done);
+  });
+  
+  
+  it('should get user contaggs as csv', function(done) {
     
     request(app)
+      // todo: change user id to 'changeableUserEmail' when that account has some contaggs
       .get('/apiv1/users/' + goodSampleUserId + '/contaggs')
+      //.get('/apiv1/users/' + changeableUserEmail + '/contaggs')
       .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
-      .expect(200, done)
+      .expect(200)
+      .end(function(err, res) {
+
+        var responseCsv = res.text;
+        assert.ok(responseCsv.match(/^Title/), 'didn\'t find title header value as first thing');
+        
+        var ct = res.headers['content-type'];
+        assert.ok(ct.match(/text\/csv/), 'didn\'t have right content-type');
+        
+        done();
+      });
   });
 
   //

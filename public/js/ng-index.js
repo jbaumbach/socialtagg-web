@@ -44,6 +44,9 @@ var loginController = app.controller('loginController', function($scope, $http, 
     
     // Note: always use $https/SSL for passing values, $http used here for
     // simplicity.
+    
+    // todo: read url host, port, and protocol from env variables.  See todo in app.js
+    
     $http({
       url: 'https://localhost:3000/login',
       method: 'POST',

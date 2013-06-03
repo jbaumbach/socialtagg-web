@@ -198,6 +198,44 @@ describe('application class', function() {
     assert.ok(isOk, 'didn\'t get back what we put in');
   });
 
+  it('for csv should not allow invalid format', function(done) {
+    application.buildUserExportFile(null, 'dumbformat', function(err, data) {
+      assert.equal(err, 1, 'didn\'t bomb as expected');
+      done();
+    })
+  });
+
+  it('for csv should return good data', function(done) {
+    var users = [];
+    users.push(new User({
+      title: 'Bounty,Hunter',
+      userName: 'bobafett',
+      firstName: 'Boba',
+      lastName: '"Hanfinder" Fett'
+    }));
+    
+    users.push(new User({
+      title: 'Anchorman',
+      firstName: 'Ron',
+      lastName: 'Burgandy',
+      email: 'ron@channel4news.com',
+      website: 'www.anchorman.com',
+      phone: '555-1212'
+    }));
+    
+    application.buildUserExportFile(users, 'csv', function(err, data) {
+      assert.ok(data.match(/^Title/), 'didn\'t find title header value as first thing');
+      assert.ok(data.match(/"Bounty,Hunter"/), 'didn\'t get escaped title value');
+      assert.ok(data.match(/""Hanfinder"" Fett/), 'didn\'t handle double quotes right');
+      
+      assert.ok(data.match(/ron@channel4news.com/), 'didn\'t find Ron\'s email');
+      assert.ok(data.match(/www.anchorman.com/), 'did not find website');
+      assert.ok(data.match(/555-1212/), 'did not find phone number');
+      
+      done();
+    })
+  });
+
 
 });
   
