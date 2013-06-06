@@ -127,7 +127,7 @@
     
   On Heroku production:
   
-    $ heroku config:set NODE_ENV=staging  --remote heroku
+    $ heroku config:set NODE_ENV=production  --remote heroku
 
 
 ## Misc Info

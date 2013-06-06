@@ -175,9 +175,21 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
     pageVars = {};
   }
 
-  pageVars.user = {};
+  //
+  // THe "public" pageVars go out to the client, do NOT put anything you don't want
+  // the client to see/hack here.
+  //
+  pageVars.public = {};
+  pageVars.public.user = {};
+  
+  //
+  // These are required for the login module so it can post the user info securely
+  // in production but not bother in dev
+  //
+  pageVars.public.serverPath = this.globalVariables.serverPath;
+  pageVars.public.secureProtocol = this.globalVariables.secureProtocol;
+  
   pageVars.links = this.links();
-  pageVars.globalVariables = this.globalVariables;
   
   //
   // Temporary items - dark release support
@@ -187,7 +199,8 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   pageVars.loginLink = req.query.loginlink;
   
   function done() {
-    pageVars.pageVars = JSON.stringify(pageVars);
+    // Not sure why this is here
+    pageVars.publicPageVars = JSON.stringify(pageVars.public);
 
     if (getUserAndCallback) {
       getUserAndCallback(pageVars);
@@ -201,12 +214,12 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
 
   if (sessionInfo.userId) {
 
-    pageVars.isLoggedIn = true;
+    pageVars.public.isLoggedIn = true;
 
     //
     // Create a 'lite' version of the user object for the page
     //
-    pageVars.user.id = sessionInfo.userId;
+    pageVars.public.user.id = sessionInfo.userId;
 
     if (getUserAndCallback) {
 
@@ -214,16 +227,17 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
 
         //
         // Put in the 'full monty' version of the user object
+        // todo: remove any insecure info or force the page to SSL
         //
-        pageVars.user = user;
+        pageVars.public.user = user;
 
         done();
       });
     } else {
-      return done();
+      done();
     }
   } else {
-    return done();
+    done();
   }
 }
 

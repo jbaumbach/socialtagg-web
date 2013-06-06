@@ -26,6 +26,8 @@ var loginController = app.controller('loginController', function($scope, $http, 
     $scope.isLoggedIn = pageVars.isLoggedIn;
     console.log('found value isLoggedIn: ' + $scope.isLoggedIn);
     $scope.user = pageVars.user;
+    $scope.serverPath = pageVars.serverPath;
+    $scope.secureProtocol = pageVars.secureProtocol;
   }
 
   $scope.clearError = function() {
@@ -37,18 +39,15 @@ var loginController = app.controller('loginController', function($scope, $http, 
     // todo: urlencode these values
     var postData = 'email=' + $scope.email + '&password=' + $scope.password;
 
+    var postUrl = $scope.secureProtocol + '://' + $scope.serverPath + '/login';
+    
     $scope.loading = true;
 
     console.log('login: ' + postData);
-    console.log('url: ' + $location.path());
-    
-    // Note: always use $https/SSL for passing values, $http used here for
-    // simplicity.
-    
-    // todo: read url host, port, and protocol from env variables.  See todo in app.js
+    console.log('url: ' + postUrl);
     
     $http({
-      url: 'https://localhost:3000/login',
+      url: postUrl,
       method: 'POST',
       data: postData,
       headers: {
