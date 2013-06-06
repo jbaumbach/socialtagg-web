@@ -177,6 +177,7 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
 
   pageVars.user = {};
   pageVars.links = this.links();
+  pageVars.globalVariables = this.globalVariables;
   
   //
   // Temporary items - dark release support

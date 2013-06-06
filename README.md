@@ -86,7 +86,6 @@
   can't confirm, but I think that Heroku only cares about the version of Node.  The
   other modules are loaded by npm and you can use what you want.
   
-
 ## SSL Certs on Heroku
 
    Follow the instructions about adding the SSL add-on on the Heroku site.  Refer to the document "socialtagg-entered-csr-data.txt"
@@ -114,7 +113,22 @@
   Then, push to staging and test it:
     
     $ git push staging master
+
     
+## Environment Variables
+
+  On OSX 10.8 Mountain Lion, you can temporarily set the NODE_ENV environment variable like so:
+  
+    $ export NODE_ENV=staging
+    
+  On Heroku staging:
+  
+    $ heroku config:set NODE_ENV=staging  --remote staging
+    
+  On Heroku production:
+  
+    $ heroku config:set NODE_ENV=staging  --remote heroku
+
 
 ## Misc Info
 
