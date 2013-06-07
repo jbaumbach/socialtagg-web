@@ -278,7 +278,7 @@ describe('api - user functions', function() {
     request(app)
       // todo: change user id to 'changeableUserEmail' when that account has some contaggs
       //.get('/apiv1/users/' + goodSampleUserId + '/contaggs')
-      .get('/apiv1/users/3d86497b-66c4-11e2-8b37-02e81ac5a17b/contaggs')
+      .get('/apiv1/users/3d86497b-66c4-11e2-8b37-02e81ac5a17b/contaggs')// Jeff, many contaggs
       //.get('/apiv1/users/' + changeableUserEmail + '/contaggs')
       .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
       .expect(200)
