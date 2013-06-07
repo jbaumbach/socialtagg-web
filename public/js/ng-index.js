@@ -19,7 +19,7 @@ app.config(['$httpProvider', function($httpProvider) {
 var loginController = app.controller('loginController', function($scope, $http, $location) {
   // Login controller
   $scope.user = {};
-
+  
   // Init function allows the server to initialize Angular variables
   // in case the page gets reloaded or otherwise lost.
   $scope.init = function(pageVars) {
@@ -28,8 +28,20 @@ var loginController = app.controller('loginController', function($scope, $http, 
     $scope.user = pageVars.user;
     $scope.serverPath = pageVars.serverPath;
     $scope.secureProtocol = pageVars.secureProtocol;
+
+    $scope.setLoginMessage();
   }
 
+  $scope.setLoginMessage = function() {
+
+    if ($scope.isLoggedIn) {
+      $scope.loginMsg = 'Logout ' + $scope.user.firstName;
+    } else {
+      $scope.loginMsg = 'Login';
+    }
+
+  }
+  
   $scope.clearError = function() {
     $scope.loginError = false;
   }
@@ -62,6 +74,8 @@ var loginController = app.controller('loginController', function($scope, $http, 
 
       // Close the dialog
       $.fancybox.close();
+        
+      $scope.setLoginMessage();
 
     }).error(function(data, status, headers, config) {
       console.log('oops, failure! ' + data);
@@ -81,6 +95,9 @@ var loginController = app.controller('loginController', function($scope, $http, 
         $scope.isLoggedIn = false;
         $scope.user = {};
         console.log('logged out ok');
+
+        $scope.setLoginMessage();
+
       }).error(function(data, status, headers, config) {
         console.log('crud, server doesn\'t wanna log out');
 

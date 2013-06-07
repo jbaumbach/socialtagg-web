@@ -3,7 +3,7 @@
 // 960 Container 
 .container.ie-dropdown-fix(ng-app='indexApp')
 
-  #login
+  #login(ng-controller='loginController', ng-init='init(' + publicPageVars + ')')
     include loginbox
     
     // Header 
@@ -36,7 +36,7 @@
             if loginLink
               li
                 i.mini-ico-user
-                a#login(href='#loginbox') Login
+                a#login(href='#loginbox') {{ loginMsg }}
     // Header / End 
     // Navigation 
   .sixteen.columns

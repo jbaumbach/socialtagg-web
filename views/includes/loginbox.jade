@@ -1,4 +1,4 @@
-#loginbox(ng-controller='loginController', ng-init='init(' + publicPageVars + ')')
+#loginbox
   // Box Start
   #box_bg
     #content
@@ -16,7 +16,7 @@
         | Sign in using your registered account:
         br
         input.login.user(type='text', ng-model='email', placeholder='Email')
-        input.login.password(type='text', ng-model='password', placeholder='Password')
+        input.login.password(type='password', ng-model='password', placeholder='Password')
       // Green Button 
       .button.green
         a(href='#', ng-click='login()') Sign In

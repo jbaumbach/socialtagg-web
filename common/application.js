@@ -285,6 +285,10 @@ exports.buildUserExportFile = function(users, format, callback) {
     headerArray.push(cr.header);
   });
 
+  if (columnsAndRetreivers.length != headerArray.length) {
+    console.log('Crap, headers not enough fields');  
+  }
+  
   // Note: CSV.stringify() automatically adds the \r\n at the end
   var resultData = CSV.stringify(headerArray);
 
@@ -298,7 +302,9 @@ exports.buildUserExportFile = function(users, format, callback) {
       userValueArray.push(cr.retreiver(user));
     });
 
-    resultData += CSV.stringify(userValueArray);
+    var columnRow = CSV.stringify(userValueArray);
+    
+    resultData += columnRow;
   });
   
   //

@@ -253,3 +253,11 @@ exports.upsert = function(req, res) {
     
   }); 
 }
+
+exports.myContaggs = function(req, res) {
+
+  application.buildApplicationPagevars(req, { title: 'My Contaggs'}, function(pageVars) {
+    res.render('mycontaggs', pageVars);
+  });
+
+}

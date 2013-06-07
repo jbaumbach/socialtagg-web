@@ -26,6 +26,10 @@
    
     $ npm install
 
+   * Make sure Redis is set up and the server is started:
+   
+    $ /Applications/My\ Applications/redis-2.6.7/src/redis-server
+    
    * Fire up the application server:
 
     $ node app

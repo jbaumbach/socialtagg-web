@@ -70,7 +70,8 @@ describe('login and user features', function() {
   it('should not have # symbol in front of user bio', function(done) {
     request(app)
       .get('/users/3d86497b-66c4-11e2-8b37-02e81ac5a17b') // Jeff Mock
-      .expect(/<h3>Bio<\/h3><\/div><p>(\s| )*\w*/)    // paragraph tag followed by whitespace followed by letters
+      // <div class="headline no-margin">\n          <h3>Bio</h3>\n        </div>\n        <p>Jeff is the lead iOS
+      .expect(/<h3>Bio<\/h3>\s*<\/div>\s*<p>(\s| )*\w*/m)    // paragraph tag followed by whitespace followed by letters
       .expect(200, done);
 
   });

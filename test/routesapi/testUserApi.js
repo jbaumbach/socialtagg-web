@@ -176,7 +176,7 @@ describe('api - user functions', function() {
   // a useful test automation-wise.  But can be run sometimes if you manually set the code
   // in usergrid (or create a new test user that has a consistent code)
   //
-  it.skip('should reset password with valid and existing verification code', function(done) {
+  it('should reset password with valid and existing verification code', function(done) {
     request(app)
       .post('/apiv1/users')
       .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
@@ -277,7 +277,8 @@ describe('api - user functions', function() {
     
     request(app)
       // todo: change user id to 'changeableUserEmail' when that account has some contaggs
-      .get('/apiv1/users/' + goodSampleUserId + '/contaggs')
+      //.get('/apiv1/users/' + goodSampleUserId + '/contaggs')
+      .get('/apiv1/users/3d86497b-66c4-11e2-8b37-02e81ac5a17b/contaggs')
       //.get('/apiv1/users/' + changeableUserEmail + '/contaggs')
       .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
       .expect(200)

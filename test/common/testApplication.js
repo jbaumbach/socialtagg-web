@@ -214,8 +214,9 @@ describe('application class', function() {
       lastName: '"Hanfinder" Fett'
     }));
     
+    // This user should NOT have the first field ('title'), we want to test the
+    // bug fix for the missing column if the first field is empty.
     users.push(new User({
-      title: 'Anchorman',
       firstName: 'Ron',
       lastName: 'Burgandy',
       email: 'ron@channel4news.com',
@@ -231,6 +232,18 @@ describe('application class', function() {
       assert.ok(data.match(/ron@channel4news.com/), 'didn\'t find Ron\'s email');
       assert.ok(data.match(/www.anchorman.com/), 'did not find website');
       assert.ok(data.match(/555-1212/), 'did not find phone number');
+      
+      //
+      // Let's count some columns
+      //
+      var lines = data.split('\n');
+      var headerColCount = lines[0].split(',').length;
+      assert.ok(headerColCount > 0, 'need at least one column');
+      
+      // Poor-man's parse of the CSV.  This will break if there's a comma in a field
+      var burgandyColCount = lines[2].split(',').length;
+      
+      assert.equal(burgandyColCount, headerColCount, 'burgandy didn\'t have all cols');
       
       done();
     })
