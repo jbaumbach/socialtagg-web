@@ -4,6 +4,52 @@ block content
 
   .container
     .sixteen.columns
-      .headline.no-margin
-        h3 What is UggaBugga?
-      p UggaBugga is a lifechanging thing.
+      #page-title
+        h2 My Contaggs
+        #bolded-line  
+  
+  .container.my-contaggs
+    if !public.isLoggedIn
+
+      .sixteen.columns
+        .headline.no-margin
+          h3 Contaggs
+
+          p Please log in.
+    else
+
+      .twelve.columns
+        .headline.no-margin
+          h4 Contaggs
+
+        if locals.contaggs
+          //- Todo: convert this to an angular controller to allow single-page
+          //- contagg management
+          each contagg in contaggs
+            p #{ contagg.name }
+        
+        else
+          p You have no contaggs at this time.
+
+      .four.columns
+        .widget-alt
+          .headline.no-margin
+            h4 Tools
+          .tool-items
+            a(href=links.mycontaggs + '?action=export')
+              i.ico-file-export
+              span Export your Contaggs
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -48,6 +48,22 @@ exports.getCurrentSessionUser = function(req, callback) {
 };
 
 //
+// Grabs the the user id of the current logged in user
+//
+exports.getCurrentSessionUserId = function(req) {
+  var result;
+
+  var loginStatus = thisModule.loginStatus(req);
+  
+  if (loginStatus == 2) {
+    var sessionInfo = globalfunctions.getSessionInfo(req);
+    result = sessionInfo.userId;
+  }
+  
+  return result;
+}
+
+//
 // Get login status.  Results are as follows:
 //
 // 0: anonymous user
@@ -140,7 +156,8 @@ exports.links = function() {
     twitter: '//www.twitter.com/socialtagg',
     linkedin: '//www.linkedin.com/company/2693505',
     about: '/about',
-    tos: '/termsofservice'
+    tos: '/termsofservice',
+    mycontaggs: '/mycontaggs'
   }
 };
 
@@ -199,7 +216,7 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   pageVars.loginLink = req.query.loginlink;
   
   function done() {
-    // Not sure why this is here
+    // Encode our public objects, to be readable by the client (Angular)
     pageVars.publicPageVars = JSON.stringify(pageVars.public);
 
     if (getUserAndCallback) {
@@ -271,7 +288,6 @@ exports.buildUserExportFile = function(users, format, callback) {
   columnsAndRetreivers.push({ header: 'First Name', retreiver: function(user) { return user.firstName; }});
   columnsAndRetreivers.push({ header: 'Last Name', retreiver: function(user) { return user.lastName; }});
   columnsAndRetreivers.push({ header: 'Company', retreiver: function(user) { return user.company; }});
-  columnsAndRetreivers.push({ header: 'Job Title', retreiver: function(user) { return user.title; } });
   columnsAndRetreivers.push({ header: 'E-mail Address', retreiver: function(user) { return user.email; } });
   columnsAndRetreivers.push({ header: 'Mobile Phone', retreiver: function(user) {return user.phone; } });
   columnsAndRetreivers.push({ header: 'Web Page', retreiver: function(user) { return user.website; } });

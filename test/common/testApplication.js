@@ -249,6 +249,42 @@ describe('application class', function() {
     })
   });
 
+  it('should return user id of logged in user', function(done) {
+    
+    var uid = 'abdce';
+    var fakeSessionInfo = { userId: uid };
+    
+    // Mock the loginStatus function
+    var tempLoginStatus = application.loginStatus;
+    var tempGetSessionInfo = globalFunctions.getSessionInfo;
+    
+    application.loginStatus = function () { return 2; };
+    globalFunctions.getSessionInfo = function() { return fakeSessionInfo; };
+    
+    assert.equal(application.getCurrentSessionUserId(), uid, 'did\'t get right user id');
+    
+    // Unmock the mocked loginStatus function
+    application.loginStatus = tempLoginStatus;
+    globalFunctions.getSessionInfo = tempGetSessionInfo;
+    
+    done();
+  });
 
+  it('should return no user id if no one logged in', function(done) {
+
+    var fakeSessionInfo;
+
+    // Mock the loginStatus function
+    var tempGetSessionInfo = globalFunctions.getSessionInfo;
+
+    globalFunctions.getSessionInfo = function() { return fakeSessionInfo; };
+
+    assert.ok(!application.getCurrentSessionUserId(), 'did\'t get untruthy user id');
+
+    // Unmock the mocked loginStatus function
+    globalFunctions.getSessionInfo = tempGetSessionInfo;
+
+    done();
+  })
 });
   

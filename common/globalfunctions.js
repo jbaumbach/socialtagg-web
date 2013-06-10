@@ -15,6 +15,11 @@ var util = require('util')
 exports.getSessionInfo = function(req) {
   var sessionInfo;
   
+  // Help find stupid programmer errors faster
+  if (!req) {
+    throw '(error) getSessionInfo: req is null, cannot continue';
+  }
+  
   try {
     sessionInfo = req.session.sessionInfo;
   } catch(err) {

@@ -4036,6 +4036,11 @@ table.standard-table tr:hover td {background-color: #fafafa;}
   margin-top: 30px;
 }
 
+/************* SocialTagg - My Contaggs ****************************** */
+.my-contaggs .tool-items span {
+  margin-top: 19px;
+  position: absolute;
+}
 
 
 /* =================================================================== */

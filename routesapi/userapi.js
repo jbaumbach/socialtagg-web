@@ -363,7 +363,6 @@ exports.usersPost = function(req, res) {
 exports.contaggs = function(req, res) {
 
   var requestedUserId = req.params.id;
-  var requestedUserPw = req.params.password;
 
   userManager.getUserContaggs(requestedUserId, function(userContaggs) {
     if (userContaggs) {
@@ -380,7 +379,8 @@ exports.contaggs = function(req, res) {
               // We got the data, let's return it
               //
               res.set({
-                'Content-Type': 'text/csv'
+                'Content-Type': 'text/csv',
+                'Content-Disposition': 'attachment; filename="mycontaggs.csv"'
               })
               
               res.send(200, new Buffer(data));

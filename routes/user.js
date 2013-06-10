@@ -9,6 +9,7 @@ var userManager = require('./../data/userManager')
   , User = require('../models/User')
   , ApiUser = require('../models/ApiUser')
   , application = require('../common/application')
+  , userapi = require('../routesapi/userapi')
   ;
 
 exports.loginForm = function(req, res) {
@@ -254,10 +255,63 @@ exports.upsert = function(req, res) {
   }); 
 }
 
+//
+// Show the current logged in user's contaggs page
+//
 exports.myContaggs = function(req, res) {
 
-  application.buildApplicationPagevars(req, { title: 'My Contaggs'}, function(pageVars) {
-    res.render('mycontaggs', pageVars);
-  });
+  var exportAction = req.query.action == 'export';
+  
+  console.log('exportAction: ' + exportAction);
+  
+  
+  function done() {
+    application.buildApplicationPagevars(req, initialPageVars, function(pageVars) {
+      res.render('mycontaggs', pageVars);
+    });
+  }
 
+  var initialPageVars = { title: 'My Contaggs' };
+  var userId = application.getCurrentSessionUserId(req);
+
+  if (!userId) {
+    console.log('aint got a user id');
+    
+    done();
+  } else {
+    
+    if (exportAction) {
+
+      //
+      // Let's use the API call to get the results
+      //
+      req.params.id = userId;
+
+      userapi.contaggs(req, res);
+      
+      
+    } else {
+
+      userManager.getUserContaggs(userId, function(userContaggs) {
+        console.log('got contaggs: ' + userContaggs);
+
+        if (userContaggs) {
+
+          userManager.populateUserContaggs(userContaggs, function(users) {
+
+            console.log('got populated users: ' + users);
+
+            if (users) {
+              initialPageVars.contaggs = users;
+              done();
+            } else {
+              done();
+            }
+          });
+        } else {
+          done();
+        }
+      });
+    }
+  }
 }
