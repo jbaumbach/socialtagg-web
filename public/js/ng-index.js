@@ -60,7 +60,6 @@ var loginController = app.controller('loginController', function($scope, $http, 
     console.log('login: ' + postData);
     console.log('url: ' + postUrl);
     
-    var success = function
     $http({
       url: postUrl,
       method: 'POST',
