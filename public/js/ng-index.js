@@ -79,6 +79,10 @@ var loginController = app.controller('loginController', function($scope, $http, 
 
     }).error(function(data, status, headers, config) {
       console.log('oops, failure! ' + data);
+      console.log('status: ' + status);
+      console.log('headers: ' + headers);
+      console.log('config: ' + config);
+        
       $scope.loginError = true;
       $scope.loading = false;
 

@@ -40,7 +40,10 @@ exports.login = function(req, res) {
       // Conditionally return a response based on who our client is
       res.format({
         // AJAX: let's return 'OK' and some data
-        json: function() { res.json(200, user); },
+        json: function() {
+          console.log('sending back user: ' + user);
+          res.json(200, user); 
+        },
 
         // HTML page: redirect to homepage
         html: function() { res.redirect('/'); }
