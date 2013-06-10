@@ -33,10 +33,13 @@
               i.mini-ico-envelope
               a(href='mailto:support@socialtagg.com') support@socialtagg.com
             //- Remove conditional when the login is implemented
-            if loginLink
+            if loginLink || isLoggedIn
               li
                 i.mini-ico-user
-                a#login(href='#loginbox') {{ loginMsg }}
+                if !isLoggedIn
+                  a#login(href='#loginbox') {{ loginMsg }}
+                else
+                  a#login(href=links.logout) {{ loginMsg }}
     // Header / End 
     // Navigation 
   .sixteen.columns

@@ -147,11 +147,11 @@ exports.getSanitizedUser = function(rawUser) {
 //
 exports.links = function() {
   return {
-    home: '/',
+    home: thisModule.globalVariables.applicationHomepage,
     features: '/features',
     developers: '/developers',
     contact: '/contactus',
-    login: '/login',
+    logout: '/logout',
     facebook: '//www.facebook.com/socialtagg',
     twitter: '//www.twitter.com/socialtagg',
     linkedin: '//www.linkedin.com/company/2693505',
@@ -198,6 +198,7 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   //
   pageVars.public = {};
   pageVars.public.user = {};
+  pageVars.isLoggedIn = false;
   
   //
   // These are required for the login module so it can post the user info securely
@@ -231,7 +232,7 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
 
   if (sessionInfo.userId) {
 
-    pageVars.public.isLoggedIn = true;
+    pageVars.isLoggedIn = pageVars.public.isLoggedIn = true;
 
     //
     // Create a 'lite' version of the user object for the page

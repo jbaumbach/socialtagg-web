@@ -41,7 +41,7 @@ exports.login = function(req, res) {
       res.format({
         // AJAX: let's return 'OK' and some data
         json: function() {
-          console.log('sending back user: ' + user);
+          console.log('sending back user: ' + util.inspect(user));
           res.json(200, user); 
         },
 
@@ -74,7 +74,7 @@ exports.login = function(req, res) {
 
 exports.logout = function(req, res) {
   globalfunctions.logoutUser(req);
-  res.redirect(applicationHomepage);
+  res.redirect(application.globalVariables.applicationHomepage);
 }
 
 exports.new = function(req, res) {
