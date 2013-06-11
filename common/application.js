@@ -206,6 +206,9 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   //
   pageVars.public.serverPath = this.globalVariables.serverPath;
   pageVars.public.secureProtocol = this.globalVariables.secureProtocol;
+  pageVars.public.loginDest = pageVars.loginDest;
+  
+  console.log('loginDest: ' + pageVars.public.loginDest);
   
   pageVars.links = this.links();
   

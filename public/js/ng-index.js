@@ -22,6 +22,7 @@ var loginController = app.controller('loginController', function($scope, $http, 
     $scope.user = pageVars.user;
     $scope.serverPath = pageVars.serverPath;
     $scope.secureProtocol = pageVars.secureProtocol;
+    $scope.loginDest = pageVars.loginDest;
 
     $scope.setLoginMessage();
   }
@@ -45,12 +46,12 @@ var loginController = app.controller('loginController', function($scope, $http, 
     // todo: urlencode these values
     var postData = 'email=' + $scope.email + '&password=' + $scope.password;
 
+    var successUrl = $scope.secureProtocol + '://' + $scope.serverPath + ($scope.loginDest || '');
     var postUrl = $scope.secureProtocol + '://' + $scope.serverPath + '/login';
     
     $scope.loading = true;
 
-    console.log('login: ' + postData);
-    console.log('url: ' + postUrl);
+    console.log('successUrl: ' + successUrl);
     
     $http({
       url: postUrl,
@@ -63,13 +64,16 @@ var loginController = app.controller('loginController', function($scope, $http, 
     }).success(function(data, status, headers, config) {
       console.log('successful login' + data);
       $scope.isLoggedIn = true;
-      $scope.user.name = data.name;
+      $scope.user = data;
       $scope.loading = false;
 
       // Close the dialog
-      $.fancybox.close();
-        
-      $scope.setLoginMessage();
+      //$.fancybox.close();
+      
+      // Redirect to desired page, but secure.  Todo: see if you can get
+      // sessionId to be the same both with http and https.  That way, the 
+      // session won't get lost when the user is going back and forth.
+      window.location = successUrl;
 
     }).error(function(data, status, headers, config) {
       console.log('oops, failure! ' + data);

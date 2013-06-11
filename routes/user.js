@@ -273,7 +273,7 @@ exports.myContaggs = function(req, res) {
     });
   }
 
-  var initialPageVars = { title: 'My Contaggs' };
+  var initialPageVars = { title: 'My Contaggs', loginDest: '/mycontaggs' };
   var userId = application.getCurrentSessionUserId(req);
 
   if (!userId) {
