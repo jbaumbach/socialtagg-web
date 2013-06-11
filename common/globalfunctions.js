@@ -44,6 +44,9 @@ exports.getSessionInfo = function(req) {
 exports.setSessionInfo = function(req, sessionInfo) {
   try {
     req.session.sessionInfo = sessionInfo;
+    
+    console.log('(info) setting sessionInfo: ' + util.inspect(req.session.sessionInfo));
+    
   } catch(err) {
     throw 'Error setting session info - be sure redis is running: ' + err;    
   }
