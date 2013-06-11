@@ -41,7 +41,6 @@ exports.login = function(req, res) {
       res.format({
         // AJAX: let's return 'OK' and some data
         json: function() {
-          console.log('sending back user: ' + util.inspect(user));
           res.json(200, user); 
         },
 
