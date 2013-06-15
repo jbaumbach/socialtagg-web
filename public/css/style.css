@@ -20,7 +20,7 @@
 /* Logo / Tagline
 ====================================*/
 #logo {
-	margin-top: 22px;
+	/* margin-top: 22px; */
 }
 
 #logo a img{float: left;}
@@ -4042,6 +4042,21 @@ table.standard-table tr:hover td {background-color: #fafafa;}
   position: absolute;
 }
 
+.download-links {
+  margin-bottom: 10px;
+}
+
+.download-links h3 {
+  /* 
+  margin: auto;
+  text-align: center;
+  */
+}
+
+.download-links a img {
+  float: left;
+  margin: 0 10px 10px 0;
+}
 
 /* =================================================================== */
 /* Media Queries

@@ -3,26 +3,24 @@
   // 960 Container 
   .container
     // About 
-    .two-thirds.column    
+    .five.columns    
       // Was four.columns
       .footer-headline
         h4 About Us
       p
         | SocialTagg creates beautiful, simple, and intuitive software that helps people connect with each other.
-    // Contact us 
-      .one-third.column
+    
+    .six.columns
+      .download-links
         .footer-headline
-          h4 Stay Informed
-        p
-          | Sign up and be the first to know
-          | when we launch our app!
-        p
-          form#mc-embedded-subscribe-form.validate(action='http://socialtagg.us6.list-manage.com/subscribe/post?u=422cc79ee72514c707686eda8&id=c13ef13295', method='post', name='mc-embedded-subscribe-form', target='_blank', novalidate='novalidate')
-            input#mce-EMAIL.email(type='email', value='', name='EMAIL', placeholder='email address', required='required')
-            input#mc-embedded-subscribe.button(type='submit', value='Subscribe', name='subscribe')
-  
+          h4 Download our apps:
+        a(href=links.appiphone)
+          img(src='/images/appstore_horizontal.png')
+        a(href=links.appandroid)
+          img(src='/images/google_play.png')
+
     // About 
-    .one-third.column
+    .five.columns
       .footer-headline
         h4 Useful Links
       ul.links-list
@@ -35,7 +33,7 @@
         li
           a(href='#{ links.tos }') Terms of Service
 
-//-
+    //-
       p
         | Consectetur adipiscing elit aeneane lorem lipsum, condimentum ultrices consequat eu, vehicula mauris lipsum adipiscing lipsum aenean orci lorem.
     // Footer / Bottom 
