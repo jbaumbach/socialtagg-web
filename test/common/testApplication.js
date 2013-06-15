@@ -225,7 +225,7 @@ describe('application class', function() {
     }));
     
     application.buildUserExportFile(users, 'csv', function(err, data) {
-      assert.ok(data.match(/^Title/), 'didn\'t find title header value as first thing');
+      assert.ok(data.match(/^Job Title/), 'didn\'t find title header value as first thing');
       assert.ok(data.match(/"Bounty,Hunter"/), 'didn\'t get escaped title value');
       assert.ok(data.match(/""Hanfinder"" Fett/), 'didn\'t handle double quotes right');
       

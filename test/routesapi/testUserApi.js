@@ -285,7 +285,7 @@ describe('api - user functions', function() {
       .end(function(err, res) {
 
         var responseCsv = res.text;
-        assert.ok(responseCsv.match(/^Title/), 'didn\'t find title header value as first thing');
+        assert.ok(responseCsv.match(/^Job Title/), 'didn\'t find title header value as first thing');
         
         var ct = res.headers['content-type'];
         assert.ok(ct.match(/text\/csv/), 'didn\'t have right content-type');

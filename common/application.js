@@ -288,7 +288,7 @@ exports.buildUserExportFile = function(users, format, callback) {
   // values will be aligned with the right column header
   //
   var columnsAndRetreivers = [];
-  columnsAndRetreivers.push({ header: 'Title', retreiver: function(user) { return user.title; }});
+  columnsAndRetreivers.push({ header: 'Job Title', retreiver: function(user) { return user.title; }});
   columnsAndRetreivers.push({ header: 'First Name', retreiver: function(user) { return user.firstName; }});
   columnsAndRetreivers.push({ header: 'Last Name', retreiver: function(user) { return user.lastName; }});
   columnsAndRetreivers.push({ header: 'Company', retreiver: function(user) { return user.company; }});
