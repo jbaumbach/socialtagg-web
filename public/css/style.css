@@ -20,7 +20,7 @@
 /* Logo / Tagline
 ====================================*/
 #logo {
-	/* margin-top: 22px; */
+	margin-top: 22px;
 }
 
 #logo a img{float: left;}
