@@ -44,5 +44,9 @@ script(type='text/javascript', src='/js/ng-index.js')
 //- The login controller
   script(type='text/javascript', src='/js/ng-login.js')
 
+//- Smartbanner for iOS/Android detection and link to download apps
+if locals.usesmartbanner
+  include smartbanner-head
+
 //-********** Analytics control - should be placed at end of <head> section
 include analytics
