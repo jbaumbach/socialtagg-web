@@ -122,7 +122,13 @@ exports.authorize = function(req, res, next) {
   //
   // Descriptive string to pass to client in an error message in case something goes wrong
   //
-  var expectedDesc = 'Authorization: CustomAuth apikey=your_key, hash=sha256(your_key+your_password+seconds_since_epoch)';
+  var expectedDesc;
+  
+  if (req.secure) {
+    expectedDesc = '(SSL) Authorization: CustomAuth apikey=your_key';    
+  } else {
+    expectedDesc = '(non SSL) Authorization: CustomAuth apikey=your_key, hash=sha256(your_key+your_password+seconds_since_epoch)';
+  }
   
   var requestValidForMins = 5;
   
