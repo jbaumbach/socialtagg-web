@@ -151,7 +151,7 @@ exports.links = function() {
     features: '/features',
     developers: '/developers',
     contact: '/contactus',
-    login: '/login',
+    login: thisModule.globalVariables.secureProtocol + '://' + thisModule.globalVariables.serverPath + '/login',
     logout: '/logout',
     facebook: '//www.facebook.com/socialtagg',
     twitter: '//www.twitter.com/socialtagg',
