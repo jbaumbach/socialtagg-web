@@ -1,40 +1,43 @@
-#loginbox
+#loginbox(ng-controller='loginController', ng-init='init(' + publicPageVars + ')')
   // Box Start
   #box_bg
     #content
       h1 Sign In
-      // Social Buttons 
-      .social
-        | Sign in using social network:
-        br
-        .twitter
-          a.btn_1(href='#') Login with Twitter
-        .fb
-          a.btn_2(href='#') Login with Facebook
+      if locals.showsocial
+        // Social Buttons
+        .social
+          | Sign in using social network:
+          br
+          .twitter
+            a.btn_1(href='#') Login with Twitter
+          .fb
+            a.btn_2(href='#') Login with Facebook
       // Login Fields 
       #login(ng-class='{error:loginError}')
         | Sign in using your registered account:
         br
         input.login.user(type='text', ng-model='email', ng-class='{error: loginError}', placeholder='Email')
         input.login.password(type='password', ng-model='password', ng-class='{error: loginError}', placeholder='Password')
+      
       // Green Button 
       .button.green
         a(href='#', ng-click='login()') Sign In
-      // Checkbox 
-      .checkbox
-        li
-          fieldset
-            legend#title2.desc
-            //if lt IE 8
-            label#title2.desc
-            div
-              span
-                input#Field.field.checkbox(name='Field', type='checkbox', value='First Choice', tabindex='4', onchange='handleInput(this);')
-                label.choice(for='Field') Keep me signed in
-  // Text Under Box 
-  #bottom_text
-    | Don't have an account?
-    a(href='#') Sign Up
-    br
-    | Remind
-    a(href='#') Password
+      //- Uncomment this when implemented
+        // Checkbox 
+        .checkbox
+          li
+            fieldset
+              legend#title2.desc
+              //if lt IE 8
+              label#title2.desc
+              div
+                span
+                  input#Field.field.checkbox(name='Field', type='checkbox', value='First Choice', tabindex='4', onchange='handleInput(this);')
+                  label.choice(for='Field') Keep me signed in
+  //- Text Under Box 
+    #bottom_text
+      | Don't have an account?
+      a(href='#') Sign Up
+      br
+      | Remind
+      a(href='#') Password

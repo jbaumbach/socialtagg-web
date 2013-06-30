@@ -195,11 +195,12 @@ exports.validateCredentials = function(email, password, resultCallback) {
   thisModule.getUserByUsername(email, function(user) {
     
     if (user) {
-      console.log('found user ok');
+      console.log('(info) found user ok');
       client().login(email, password, function(err) {
         
         if (err) {
           // Crap
+          console.log('(error) client().login failed, err: ' + err);
         } else {
           result = user;
         }
@@ -208,7 +209,7 @@ exports.validateCredentials = function(email, password, resultCallback) {
         
       });
     } else {
-      console.log('couldnt find user by email: ' + email);
+      console.log('(info) couldn\'t find user by email: ' + email);
       
       resultCallback(result);
     }

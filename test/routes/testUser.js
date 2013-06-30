@@ -29,12 +29,12 @@ describe('login and user features', function() {
 
   this.timeout(9000);
 
-  it.skip('should have login fields on login page', function(done) {
+  it('should have login fields on login page', function(done) {
     request(app)
       .get('/login')
-      .expect(/input.*name="email"/)
-      .expect(/input.*name="password"/)
-      .expect(/input.*type="submit"/)
+      .expect(/secureProtocol&quot;:&quot;http&quot;/)  // should have secure server
+      .expect(/loginDest&quot;:&quot;.*&quot;/)         // should have a login destination
+      .expect(/input.*type="password"/)
       .expect(200, done);
   });
   

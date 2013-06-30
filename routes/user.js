@@ -13,9 +13,15 @@ var userManager = require('./../data/userManager')
   ;
 
 exports.loginForm = function(req, res) {
-
-  application.buildApplicationPagevars(req, { title: 'User Login'}, function(pageVars) {
-    res.render('userLogin', pageVars);
+  
+  var pageVars = { 
+    title: 'User Login', 
+    usesAngular: true,
+    showsocial: req.query.showsocial
+  };
+  
+  application.buildApplicationPagevars(req, pageVars, function(pageVars) {
+    res.render('login', pageVars);
   });
 
 };
@@ -28,6 +34,8 @@ exports.login = function(req, res) {
   // only hash password if we're storing it oursevles: globalfunctions.hashPassword(req.body.password);
   var password = req.body.password; 
 
+  console.log('(temp logging) e: ' + email + ', p: ' + password);
+  
   userManager.validateCredentials(email, password, function(user) {
     
     if (user) {

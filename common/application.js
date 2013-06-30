@@ -151,6 +151,7 @@ exports.links = function() {
     features: '/features',
     developers: '/developers',
     contact: '/contactus',
+    login: '/login',
     logout: '/logout',
     facebook: '//www.facebook.com/socialtagg',
     twitter: '//www.twitter.com/socialtagg',
@@ -208,7 +209,7 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   //
   pageVars.public.serverPath = this.globalVariables.serverPath;
   pageVars.public.secureProtocol = this.globalVariables.secureProtocol;
-  pageVars.public.loginDest = pageVars.loginDest;
+  pageVars.public.loginDest = '/';  // pageVars.loginDest;
   
   console.log('loginDest: ' + pageVars.public.loginDest);
   
@@ -219,7 +220,8 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   //
   // ex: http://localhost:3000/?loginlink=1 
   
-  pageVars.loginLink = req.query.loginlink;
+  // specified in app.js for 'development'
+  //pageVars.loginLink = req.query.loginlink;
   
   function done() {
     // Encode our public objects, to be readable by the client (Angular)

@@ -1,46 +1,41 @@
 // Header
   | ================================================== 
 // 960 Container 
-.container.ie-dropdown-fix(ng-app='indexApp')
+.container.ie-dropdown-fix
 
-  #login(ng-controller='loginController', ng-init='init(' + publicPageVars + ')')
-    include loginbox
     
-    // Header 
-    #header
-      // Logo 
-      .twelve.columns
-        #logo
-          a(href='/')
-            img(src='/images/weblogo.png', alt='logo')
-          #tagline Connecting people at events
-          .clear
-
-      // Social / Contact 
-      .four.columns
-        // Social Icons 
-        ul.social-icons
-          li.facebook
-            a(href='#{ links.facebook }') Facebook
-          li.twitter
-            a(href='#{ links.twitter }') Twitter
-          li.linkedin
-            a(href='#{ links.linkedin }') LinkedIn
+  // Header 
+  #header
+    // Logo 
+    .twelve.columns
+      #logo
+        a(href='/')
+          img(src='/images/weblogo.png', alt='logo')
+        #tagline Connecting people at events
         .clear
-        // Contact Details 
-        #contact-details
-          ul
+
+    // Social / Contact 
+    .four.columns
+      // Social Icons 
+      ul.social-icons
+        li.facebook
+          a(href='#{ links.facebook }') Facebook
+        li.twitter
+          a(href='#{ links.twitter }') Twitter
+        li.linkedin
+          a(href='#{ links.linkedin }') LinkedIn
+      .clear
+      // Contact Details 
+      #contact-details
+        ul
+          //- Remove conditional when the login is implemented
+          if loginLink || isLoggedIn
             li
-              i.mini-ico-envelope
-              a(href='mailto:support@socialtagg.com') support@socialtagg.com
-            //- Remove conditional when the login is implemented
-            if loginLink || isLoggedIn
-              li
-                i.mini-ico-user
-                if !isLoggedIn
-                  a#login(href='#loginbox') {{ loginMsg }}
-                else
-                  a#login(href=links.logout) {{ loginMsg }}
+              i.mini-ico-user
+              if !isLoggedIn
+                a#login(href=links.login) Login
+              else
+                a#login(href=links.logout) Logout #{ locals.public.user.userName }
     // Header / End 
     // Navigation 
   .sixteen.columns

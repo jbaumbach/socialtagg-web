@@ -13,10 +13,13 @@ var app = angular.module('indexApp', ['ui.bootstrap']);
 var loginController = app.controller('loginController', function($scope, $http, $location) {
   // Login controller
   $scope.user = {};
-  
+
+  console.log('in loginController...');
+
   // Init function allows the server to initialize Angular variables
   // in case the page gets reloaded or otherwise lost.
   $scope.init = function(pageVars) {
+
     $scope.isLoggedIn = pageVars.isLoggedIn;
     console.log('found value isLoggedIn: ' + $scope.isLoggedIn);
     $scope.user = pageVars.user;
