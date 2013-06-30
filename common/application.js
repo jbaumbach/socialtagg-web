@@ -221,7 +221,7 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   // ex: http://localhost:3000/?loginlink=1 
   
   // specified in app.js for 'development'
-  //pageVars.loginLink = req.query.loginlink;
+  pageVars.loginLink = pageVars.loginLink || req.query.loginlink;
   
   function done() {
     // Encode our public objects, to be readable by the client (Angular)
