@@ -31,11 +31,9 @@ exports.login = function(req, res) {
   
   var email = req.body.email;
 
-  // only hash password if we're storing it oursevles: globalfunctions.hashPassword(req.body.password);
+  // only hash password if we're storing it ourselves: globalfunctions.hashPassword(req.body.password);
   var password = req.body.password; 
 
-  console.log('(temp logging) e: ' + email + ', p: ' + password);
-  
   userManager.validateCredentials(email, password, function(user) {
     
     if (user) {
