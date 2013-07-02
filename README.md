@@ -110,9 +110,13 @@
   
     $ ssh-keygen -t rsa -f ~/.ssh/identity.herokustage.tagg
     
-  Add the key to the ssh agent (do this if Heroku suddenly stops working even though it was set up ok for a while):
+  Add the key to the ssh-agent (also redo this if Heroku suddenly stops working even though it was set up ok for a while):
     
     $ ssh-add ~/.ssh/identity.herokustage.tagg
+  
+  Make sure your key is in the agent:
+  
+    $ ssh-add -l
   
   Add it to heroku:
   
