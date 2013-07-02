@@ -15,22 +15,29 @@ block content
         .headline.no-margin
           h3 Contaggs
 
-          p Please log in.
+          p Please 
+            a(href=links.login) log in.
     else
 
       .twelve.columns
-        .headline.no-margin
+        .headline.no-margin.contagg-list
           h4 Contaggs
 
         if locals.contaggs
           //- Todo: convert this to an angular controller to allow single-page
           //- contagg management
           each contagg in contaggs
-            p #{ contagg.name }
-        
+            .twelve.columns.contagg-container
+              a(href=contagg.path)
+                img(src=contagg.pictureUrl).user-image
+                p #{ contagg.name }
+          
         else
-          p You have no contaggs at this time.
+          .twelve.columns
+            p You have no contaggs at this time.
+            p Contaggs are easy to add.  Download our mobile app and scan your contact's QR code.
 
+      //- Right-hand column
       .four.columns
         .widget-alt
           .headline.no-margin

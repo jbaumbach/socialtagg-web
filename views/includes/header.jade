@@ -28,14 +28,12 @@
       // Contact Details 
       #contact-details
         ul
-          //- Remove conditional when the login is implemented
-          if loginLink || isLoggedIn
-            li
-              i.mini-ico-user
-              if !isLoggedIn
-                a#login(href=links.login) Login
-              else
-                a#login(href=links.logout) Logout #{ locals.public.user.userName }
+          li
+            i.mini-ico-user
+            if !isLoggedIn
+              a#login(href=links.login) Login
+            else
+              a#login(href=links.logout) Logout #{ locals.public.user.userName }
     // Header / End 
     // Navigation 
   .sixteen.columns
@@ -70,8 +68,10 @@
           a(href='#{ links.contact }') Contact
         li
           a(href='#{ links.about }') About Us
-    
-    //- Search Form 
+        li
+          a(href='#{ links.mycontaggs }') My Contaggs
+
+//- Search Form 
       .search-form
         form(method='get', action='#')
           input.search-text-box(type='text')

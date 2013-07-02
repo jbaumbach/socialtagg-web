@@ -160,7 +160,8 @@ exports.links = function() {
     tos: '/termsofservice',
     mycontaggs: '/mycontaggs',
     appiphone: 'http://itunes.apple.com/app/id649747318',
-    appandroid: 'https://play.google.com/store/apps/details?id=com.socialtagg&feature=search_result#?t=W251bGwsMSwyLDEsImNvbS5zb2NpYWx0YWdnIl0'
+    appandroid: 'https://play.google.com/store/apps/details?id=com.socialtagg&feature=search_result#?t=W251bGwsMSwyLDEsImNvbS5zb2NpYWx0YWdnIl0',
+    userdetail: '/users/%id%'
   }
 };
 

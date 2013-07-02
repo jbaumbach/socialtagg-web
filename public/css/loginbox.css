@@ -168,3 +168,7 @@
 #loginbox #bottom_text a:hover {color: #878787; -webkit-transition:all 0.2s linear; -moz-transition:all 0.2s linear; -o-transition:all 0.3s linear; -transition:all 0.2s linear}
 #loginbox #blue {color:#2b83b6 !important;}
 #loginbox #blue:hover {color: #878787 !important;}
+
+#loginbox .icon-spinner {
+  padding: 25px 20px;
+}

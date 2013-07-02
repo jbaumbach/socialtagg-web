@@ -21,7 +21,8 @@
  */
 
 var util = require('util')
-  , globalFunctions = require('../common/globalfunctions');
+  , globalFunctions = require('../common/globalfunctions')
+  ;
 
 //
 // Return a new user
@@ -84,7 +85,7 @@ Object.defineProperty(User.prototype, "path", {
       
       // todo: update this when we have a urlmanager
       
-      result = 'http://www.socialtagg.com/users/' + this.id;
+      result = '/users/' + this.id;
     }  
     return result;
   }  

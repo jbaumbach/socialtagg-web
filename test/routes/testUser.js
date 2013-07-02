@@ -51,10 +51,8 @@ describe('login and user features', function() {
   });
 
   //
-  // Todo: figure out why Supertest isn't following the redirect as indicated
-  // in the documentation.  This test should then be updated to test if the 
-  // user was logged in successfully (e.g. if Redis not running, sessions won't work,
-  // and this should fail).
+  // Todo: figure out why usergrid doesn't like logging in a user with perfectly good info
+  // via supertest, even though it works fine in a browser.
   //
   it.skip('should allow login of known user', function(done) {
     var email = changeableUserEmail;

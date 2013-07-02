@@ -18,10 +18,11 @@
         br
         input.login.user(type='text', ng-model='email', ng-class='{error: loginError}', placeholder='Email')
         input.login.password(type='password', ng-model='password', ng-class='{error: loginError}', placeholder='Password')
-      
+
       // Green Button 
       .button.green
         a(href='#', ng-click='login()') Sign In
+
       //- Uncomment this when implemented
         // Checkbox 
         .checkbox
@@ -34,7 +35,11 @@
                 span
                   input#Field.field.checkbox(name='Field', type='checkbox', value='First Choice', tabindex='4', onchange='handleInput(this);')
                   label.choice(for='Field') Keep me signed in
-  //- Text Under Box 
+
+      i.icon-spinner.icon-spin.pull-right.icon-2x(ng-show='loading')
+
+
+//- Text Under Box 
     #bottom_text
       | Don't have an account?
       a(href='#') Sign Up

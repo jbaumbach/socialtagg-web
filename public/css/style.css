@@ -4046,16 +4046,20 @@ table.standard-table tr:hover td {background-color: #fafafa;}
   margin-bottom: 10px;
 }
 
-.download-links h3 {
-  /* 
-  margin: auto;
-  text-align: center;
-  */
-}
-
 .download-links a img {
   float: left;
   margin: 0 10px 10px 0;
+}
+
+.my-contaggs .contagg-container img {
+  width: 50px;
+  height: auto;
+  float: left;
+  padding-right: 10px;
+}
+
+.my-contaggs .contagg-container {
+  margin-bottom: 20px;
 }
 
 /* =================================================================== */

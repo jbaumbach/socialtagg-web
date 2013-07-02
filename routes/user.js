@@ -297,13 +297,12 @@ exports.myContaggs = function(req, res) {
 
       userapi.contaggs(req, res);
       
-      
     } else {
 
       userManager.getUserContaggs(userId, function(userContaggs) {
         console.log('got contaggs: ' + userContaggs);
 
-        if (userContaggs) {
+        if (userContaggs && userContaggs.length > 0) {
 
           userManager.populateUserContaggs(userContaggs, function(users) {
 
