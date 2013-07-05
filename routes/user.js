@@ -322,3 +322,79 @@ exports.myContaggs = function(req, res) {
     }
   }
 }
+
+//
+// Show the current logged in user's events page
+//
+exports.myAttendedEvents = function(req, res) {
+  
+  function done() {
+    application.buildApplicationPagevars(req, initialPageVars, function(pageVars) {
+      res.render('myattendedevents', pageVars);
+    });
+  }
+
+  var initialPageVars = { title: 'My Attended Events', loginDest: '/myattendedevents' };
+  var userId = application.getCurrentSessionUserId(req);
+
+  if (!userId) {
+    console.log('aint got a user id');
+    
+    done();
+  } else {
+    
+    userManager.getUserEventsAttended(userId, function(userEvents) {
+      console.log('got events: ' + userEvents);
+
+      if (userEvents && userEvents.length > 0) {
+
+        userManager.populateEvents(userEvents, function(events) {
+
+          if (events) {
+            initialPageVars.events = events;
+            done();
+          } else {
+            done();
+          }
+        });
+      } else {
+        done();
+      }
+    });
+  }
+}
+
+//
+// Show the current logged in user's events page
+//
+exports.myOwnedEvents = function(req, res) {
+  
+  function done() {
+    application.buildApplicationPagevars(req, initialPageVars, function(pageVars) {
+      res.render('myownedevents', pageVars);
+    });
+  }
+
+  var initialPageVars = { title: 'My Owned Events', loginDest: '/myownedevents' };
+  var userId = application.getCurrentSessionUserId(req);
+
+  if (!userId) {
+    console.log('aint got a user id');
+    
+    done();
+  } else {
+    
+    userManager.getUserEventsOwned(userId, function(userEvents) {
+      console.log('got events: ' + userEvents);
+
+      if (userEvents && userEvents.length > 0) {
+
+        initialPageVars.events = events;
+        done();
+      } else {
+        
+        done();
+      }
+    });
+  }
+}

@@ -4062,6 +4062,22 @@ table.standard-table tr:hover td {background-color: #fafafa;}
   margin-bottom: 20px;
 }
 
+/**************** SocialTagg - Events ******************************** */
+
+.my-events .desc {
+  font-weight: bold;
+  width: 100px;
+  /* display: inline-block; */
+  float: left;
+}
+
+.event-detail li {
+}
+
+.my-events .tool-items span {
+    margin-top: 19px;
+    position: absolute;
+}
 /* =================================================================== */
 /* Media Queries
 ====================================================================== */

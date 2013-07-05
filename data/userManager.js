@@ -73,6 +73,19 @@ exports.setUserPasswordWithVerificationCodeByEmail = function(email, originalCod
   db.setUserPasswordWithVerificationCodeByEmail(email, originalCode, newPw, resultCallback);
 };
 
+exports.getUserEventsAttended = function(id, resultCallback) {
+  db.getUserEventsAttended(id, resultCallback);
+}
+
+exports.getUserEventsOwned = function(id, resultCallback) {
+  db.getUserEventsOwned(id, resultCallback);
+}
+
+exports.populateEvents = function(eventIdList, resultCallback) {
+  db.populateEvents(eventIdList, resultCallback);
+}
+
+
 //********************************************************************************
 // API user functions
 //********************************************************************************

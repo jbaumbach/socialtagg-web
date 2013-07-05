@@ -1,0 +1,49 @@
+extends layout
+
+block content
+
+  .container
+    .sixteen.columns
+      #page-title
+        h2 My Owned Events
+        #bolded-line  
+  
+  .container.my-events
+    if !public.isLoggedIn
+
+      .sixteen.columns
+        .headline.no-margin
+          h3 Events
+
+          p Please 
+            a(href=links.login) log in.
+    else
+
+      .twelve.columns
+        .headline.no-margin.event-list
+          h4 Events I Own
+
+        if locals.events
+          //- Todo: convert this to an angular controller to allow single-page
+          //- event management
+          each event in events
+            .twelve.columns.event-container
+              p #{ event.name }
+          
+        else
+          .twelve.columns
+            p You do not own any events at this time.
+
+      include includes/eventtools
+
+
+
+
+
+
+
+
+
+
+
+

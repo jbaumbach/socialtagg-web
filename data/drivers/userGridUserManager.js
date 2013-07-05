@@ -342,6 +342,59 @@ exports.addUserContagg = function(user, userIdToAdd, resultCallback) {
 };
 
 //
+// Get the events this user has attended
+//
+exports.getUserEventsAttended = function(id, resultCallback) {
+  var events = [];
+  var sampleEvent = {
+    event_uuid: 1234,
+    checkin_date: Date.parse('2013-07-05 16:45')
+  };
+  
+  events.push(sampleEvent);
+  
+  resultCallback(events);
+};
+
+//
+// Get the events this user is the owner of
+//
+exports.getUserEventsOwned = function(id, resultCallback) {
+  var events = [];
+  var sampleEvent = {
+    
+  };
+  
+  resultCallback(events);
+}
+
+//
+// Grab the complete object from the db for each event in the list
+//
+exports.populateEvents = function(eventIdList, resultCallback) {
+  var events = [];
+  var sampleEvent = {
+    uuid: 1234,
+    owner: 5678,
+    name: 'SocialTagg\'s Event',
+    description: 'Super special event for getting new event planners',
+    modified: Date.parse('2013-07-05 16:45'),
+    created: Date.parse('2013-07-05 16:45'),
+    start_date: Date.parse('2013-07-05 17:45'),
+    end_date: Date.parse('2013-07-05 18:45'),
+    location_lat: 33.988105,
+    location_lon: -118.47056,
+    website: 'www.socialtagg.com',
+    link: application.getEventDetailUrlForId(1234)
+  };
+  
+  events.push(sampleEvent);
+  
+  resultCallback(events);
+  
+};
+
+//
 // Callback params: err  (0 = no error, 1 = user not found, 2 = db error)
 //                  code (the verification code)
 //

@@ -1,0 +1,55 @@
+extends layout
+
+block content
+
+  .container
+    .sixteen.columns
+      #page-title
+        h2 Event Details
+        #bolded-line  
+  
+  .container.my-events
+    if !public.isLoggedIn
+
+      .sixteen.columns
+        .headline.no-margin
+          h3 Event Details
+
+          p Please 
+            a(href=links.login) log in.
+    else
+
+      .twelve.columns
+        .headline.no-margin
+          h4 Event Details
+
+        .twelve.columns
+          ul
+            li
+              .desc Name
+              .value #{ event.name }
+
+            li
+              .desc Description
+              .value #{ event.description }  
+
+            li
+              .desc Date
+              .value #{ new Date(event.start_date).toString() }
+      
+
+      include includes/eventtools
+      
+
+
+
+
+
+
+
+
+
+
+
+
+

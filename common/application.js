@@ -160,9 +160,18 @@ exports.links = function() {
     tos: '/termsofservice',
     mycontaggs: '/mycontaggs',
     appiphone: 'http://itunes.apple.com/app/id649747318',
-    appandroid: 'https://play.google.com/store/apps/details?id=com.socialtagg&feature=search_result#?t=W251bGwsMSwyLDEsImNvbS5zb2NpYWx0YWdnIl0'
+    appandroid: 'https://play.google.com/store/apps/details?id=com.socialtagg&feature=search_result#?t=W251bGwsMSwyLDEsImNvbS5zb2NpYWx0YWdnIl0',
+    myattendedevents: '/myattendedevents',
+    myownedevents: '/myownedevents'
   }
 };
+
+//
+// Get the url for an event detail page.
+//
+exports.getEventDetailUrlForId = function(id) {
+  return '/events/' + id;
+}
 
 //
 // Process an image url, doing stuff like adding parameter for getting a large
@@ -211,7 +220,7 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   pageVars.public.secureProtocol = this.globalVariables.secureProtocol;
   pageVars.public.loginDest = '/';  // pageVars.loginDest;
   
-  console.log('loginDest: ' + pageVars.public.loginDest);
+  //console.log('loginDest: ' + pageVars.public.loginDest);
   
   pageVars.links = this.links();
   
@@ -221,7 +230,7 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   // ex: http://localhost:3000/?loginlink=1 
   
   // specified in app.js for 'development'
-  pageVars.loginLink = pageVars.loginLink || req.query.loginlink;
+  pageVars.showevents = this.globalVariables.showevents || req.query.showevents;
   
   function done() {
     // Encode our public objects, to be readable by the client (Angular)
