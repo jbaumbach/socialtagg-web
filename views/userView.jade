@@ -32,7 +32,7 @@ block content
         p
           i.ico-globe
           b
-            a(href=displayUser.website, target="_blank") #{ displayUser.website }
+            a(href='http://' + displayUser.website, target="_blank") #{ displayUser.website }
       - if (displayUser.address && displayUser.address.length > 0)
         p
           i.ico-google-maps
