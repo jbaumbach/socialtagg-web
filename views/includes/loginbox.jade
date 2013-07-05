@@ -16,8 +16,9 @@
       #login(ng-class='{error:loginError}')
         | Sign in using your registered account:
         br
-        input.login.user(type='text', ng-model='email', ng-class='{error: loginError}', placeholder='Email')
-        input.login.password(type='password', ng-model='password', ng-class='{error: loginError}', placeholder='Password')
+        form(method='POST')
+          input.login.user(type='text', ng-model='email', ng-class='{error: loginError}', placeholder='Email', name='username', id='username')
+          input.login.password(type='password', ng-model='password', ng-class='{error: loginError}', placeholder='Password', name='password', id='password')
 
       // Green Button 
       .button.green

@@ -14,8 +14,6 @@ var loginController = app.controller('loginController', function($scope, $http, 
   // Login controller
   $scope.user = {};
 
-  console.log('in loginController...');
-
   // Init function allows the server to initialize Angular variables
   // in case the page gets reloaded or otherwise lost.
   $scope.init = function(pageVars) {
@@ -46,7 +44,13 @@ var loginController = app.controller('loginController', function($scope, $http, 
 
   $scope.login = function() {
 
-    // todo: urlencode these values
+    // Angular.js hack for Lastpass and other browser-based autocompleters.
+    if (!$scope.email && !$scope.password) {
+      console.log('(info) fixing possible browser autocompleter');
+      $scope.email = $('#username').val();
+      $scope.password = $('#password').val();
+    };
+    
     var postData = 'email=' + $scope.email + '&password=' + $scope.password;
 
     var successUrl = $scope.secureProtocol + '://' + $scope.serverPath + ($scope.loginDest || '');
@@ -54,8 +58,6 @@ var loginController = app.controller('loginController', function($scope, $http, 
     
     $scope.loading = true;
 
-    console.log('successUrl: ' + successUrl);
-    
     $http({
       url: postUrl,
       method: 'POST',
@@ -70,12 +72,6 @@ var loginController = app.controller('loginController', function($scope, $http, 
       $scope.user = data;
       $scope.loading = false;
 
-      // Close the dialog
-      //$.fancybox.close();
-      
-      // Redirect to desired page, but secure.  Todo: see if you can get
-      // sessionId to be the same both with http and https.  That way, the 
-      // session won't get lost when the user is going back and forth.
       window.location = successUrl;
 
     }).error(function(data, status, headers, config) {
@@ -91,7 +87,6 @@ var loginController = app.controller('loginController', function($scope, $http, 
   }
 
   $scope.logout = function() {
-    console.log('logging out');
 
     $http({
       url: '/logout',
@@ -99,12 +94,10 @@ var loginController = app.controller('loginController', function($scope, $http, 
     }).success(function(data, status, headers, config) {
         $scope.isLoggedIn = false;
         $scope.user = {};
-        console.log('logged out ok');
 
         $scope.setLoginMessage();
 
       }).error(function(data, status, headers, config) {
-        console.log('crud, server doesn\'t wanna log out');
 
       });
   }
