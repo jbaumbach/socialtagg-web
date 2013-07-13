@@ -375,7 +375,12 @@ exports.myOwnedEvents = function(req, res) {
     });
   }
 
-  var initialPageVars = { title: 'My Owned Events', loginDest: '/myownedevents' };
+  var initialPageVars = { 
+    title: 'My Owned Events', 
+    loginDest: '/myownedevents',
+    usesAngular: true
+  };
+  
   var userId = application.getCurrentSessionUserId(req);
 
   if (!userId) {
@@ -389,7 +394,7 @@ exports.myOwnedEvents = function(req, res) {
 
       if (userEvents && userEvents.length > 0) {
 
-        initialPageVars.events = events;
+        initialPageVars.events = userEvents;
         done();
       } else {
         

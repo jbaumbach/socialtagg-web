@@ -168,13 +168,14 @@ jQuery(document).ready(function()
 				.hide(options.speed);
 			}
 			
+      /* 2013-07-13 JB: modifying this as it's in conflict with angular
 			if (options.hideBoxes){}
 			
 			else if (! options.hideBoxes)
 			{
 				notification.css({'display': 'block', 'visiblity': 'visible'});
 			}
-			
+			*/
 		});
 	};
 })();

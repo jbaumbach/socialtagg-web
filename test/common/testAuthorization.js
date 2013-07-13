@@ -308,5 +308,60 @@ describe('api authorization', function() {
 
   });
 
+  describe('sessionIdAuthenticate', function() {
+    it('should not continue if no logged in user', function() {
+      
+      // Lil bit of mocking
+      var req = {};
+      req.session = {};
+      
+      var res = {};
+      res.json = function(status, desc) {
+        jsonStatusSet = status;  
+      }
+      
+      var next = function() {
+        nextCalled = true;
+      }
+      
+      // Setup
+      var nextCalled = false;
+      var jsonStatusSet = 0;
+      
+      auth.sessionIdAuthenticate(req, res, next);
+      
+      assert.equal(jsonStatusSet, 401, 'didn\'t set json status code properly');
+      assert.equal(nextCalled, false, 'called next() for some reason');
+      
+    });
+
+    it('should continue if logged in user', function() {
+
+      // Lil bit of mocking
+      var req = { session: { sessionInfo: { userId: '1234' } } };
+
+      var res = {};
+      res.json = function(status, desc) {
+        jsonStatusSet = status;
+      }
+
+      var next = function() {
+        nextCalled = true;
+      }
+
+      // Setup
+      var nextCalled = false;
+      var jsonStatusSet = 0;
+
+      auth.sessionIdAuthenticate(req, res, next);
+
+      assert.equal(jsonStatusSet, 0, 'set json status code for some reason');
+      assert.equal(nextCalled, true, 'didn\'t call next()');
+
+    });
+
+
+  });
+  
   //*********** All test should be above this line
 });

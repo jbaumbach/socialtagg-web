@@ -1,5 +1,10 @@
 extends layout
 
+//- Include any page-specific javascript here
+block javascripts
+
+  script(type='text/javascript', src='/js/ng-events.js')
+
 block content
 
   .container
@@ -8,7 +13,7 @@ block content
         h2 My Owned Events
         #bolded-line  
   
-  .container.my-events
+  .container.my-events(ng-controller='eventController')
     if !public.isLoggedIn
 
       .sixteen.columns
@@ -20,21 +25,73 @@ block content
     else
 
       .twelve.columns
-        .headline.no-margin.event-list
+        //-.headline.no-margin.event-list
           h4 Events I Own
-
-        if locals.events
-          //- Todo: convert this to an angular controller to allow single-page
-          //- event management
-          each event in events
-            .twelve.columns.event-container
-              p #{ event.name }
+        
+        //- Error message  // , 
+        .notification.error(ng-show='hasError')
+          p
+            span Sorry, there was an error! &nbsp; {{ errorMsg }}
+            a.close(href='#')
+      
+        table.standard-table(ng-show='hasEvents')
+          thead
+            tr
+              th Name
+              th Created
+              th Actions
+          tbody
+            tr(data-id='{{event.uuid}}', ng-repeat='event in events')
+              td
+               a(href='#', ng-click='editEvent(event)') {{ event.name }}
+              td {{ event.created | date:'MM-dd-yyyy' }}
+              td
+                a.button.gray(href='#', ng-click='editEvent(event)') Edit
+                a.button.gray(href='#', ng-click='deleteEvent(event)') Delete
+                a.button.color(href='{{ event.link }}', target='_blank') View
           
-        else
-          .twelve.columns
-            p You do not own any events at this time.
+        p(ng-show='!hasEvents && isLoading') Loading events...
+        
+        p(ng-show='!hasEvents && !isLoading') You do not own any events at this time.
+      
+        a.button.color(href='#', ng-click='showEdit()') New Event
+      
+        form.form-horizontal.new-event(ng-show='isEditVisible')
+          .headline 
+            h4 Event Details
+          
+          input(type='hidden', ng-model='editableEvent.uuid')
+      
+          .field
+            label(for='inputName') Name
+            input.text(type='text', id='inputName', ng-model='editableEvent.name', required)
 
-      include includes/eventtools
+          .field
+            label(for='inputDescription') Description
+            input.text(type='text', id='inputDescription', ng-model='editableEvent.description', required)
+
+          .field
+            label(for='inputAddress') Address
+            input.text(type='text', id='inputAddress', ng-model='editableEvent.address', required)
+
+          .field
+            label(for='inputDate') Date
+            input.text(type='text', id='inputDate', ng-model='editableEvent.date', required)
+
+          .field
+            label(for='inputHours') Event Duration (hours)
+            input.text(type='text', id='inputHours', ng-model='editableEvent.hours', required)
+
+          .field
+            label(for='inputWebsite') Website Url
+            input.text(type='text', id='inputWebsite', ng-model='editableEvent.website', required)
+
+
+          p
+          a.button.color(href='#', ng-click='saveEvent(editableEvent)') Save
+          a.button.gray(href='#', ng-click='cancelEdit()') Close
+
+    //- include includes/eventtools
 
 
 

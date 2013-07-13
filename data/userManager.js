@@ -85,6 +85,10 @@ exports.populateEvents = function(eventIdList, resultCallback) {
   db.populateEvents(eventIdList, resultCallback);
 }
 
+exports.getUserContaggsFromEvent = function(userId, eventId, resultCallback) {
+  db.getUserContaggsFromEvent(userId, eventId, resultCallback);
+}
+
 
 //********************************************************************************
 // API user functions

@@ -4078,6 +4078,11 @@ table.standard-table tr:hover td {background-color: #fafafa;}
     margin-top: 19px;
     position: absolute;
 }
+
+.my-events a.button {
+  margin-right:8px;
+}
+
 /* =================================================================== */
 /* Media Queries
 ====================================================================== */

@@ -188,3 +188,21 @@ exports.authorize = function(req, res, next) {
     thisModule.authorizationComplete(error, req, res, next);
   }
 }
+
+//
+// Verify that there is a logged in user via session
+//
+exports.sessionIdAuthenticate = function(req, res, next) {
+
+  var sessionInfo = globalFunctions.getSessionInfo(req);
+
+  if (sessionInfo.userId) {
+    
+    next();
+  
+  } else {
+
+    res.json(401, { description: 'No logged in user' } );
+
+  }
+}

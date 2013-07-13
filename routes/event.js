@@ -32,6 +32,7 @@ exports.detail = function(req, res) {
     if (events && events.length > 0) {
       
       pageVars.event = events[0];
+      pageVars.title = pageVars.event.name + ' - Details';
       done();
       
     } else {

@@ -23,7 +23,7 @@ exports.getSessionInfo = function(req) {
   try {
     sessionInfo = req.session.sessionInfo;
   } catch(err) {
-    console.log('Error getting session info - be sure redis is running: ' + err);
+    console.log('(error) can\'t get session info - be sure redis is running: ' + err);
   }
 
   if (!sessionInfo) {

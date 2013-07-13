@@ -135,6 +135,42 @@ function setUserGridUserPassword(existingUser, newPw, resultCallback) {
 };
 
 
+function getUserContaggsByOptions(options, resultCallback) {
+    client().createCollection(options, function (err, resultContacts) {
+    if (err) {
+      // Crap
+
+    } else {
+      var result = [];
+      
+      while (resultContacts.hasNextEntity()) {
+        
+        var contagg = resultContacts.getNextEntity();
+        var contaggId = contagg.get('uuid_contagg'); 
+        
+        //
+        // It seems like it's possible there can be duplicate contaggs in
+        // usergrid.  Let's enforce uniqueness.
+        //
+        if (!result.find('uuid', contaggId)) {
+          var resultItem = {
+            uuid: contaggId,
+            created: contagg.get('created')
+          };
+          
+          result.push(resultItem);
+        }
+      }
+    }
+
+    resultCallback(result);
+
+  });
+
+}
+
+//***************** Public functions ********************************
+
 exports.getUser = function(id, resultCallback) {
 
   var options = {
@@ -237,37 +273,9 @@ exports.getUserContaggs = function(id, resultCallback) {
       limit: '100'
     }
   };
+
+  getUserContaggsByOptions(options, resultCallback);
   
-  client().createCollection(options, function (err, resultContacts) {
-    if (err) {
-      // Crap
-
-    } else {
-      result = [];
-      
-      while (resultContacts.hasNextEntity()) {
-        
-        var contagg = resultContacts.getNextEntity();
-        var contaggId = contagg.get('uuid_contagg'); 
-        
-        //
-        // It seems like it's possible there can be duplicate contaggs in
-        // usergrid.  Let's enforce uniqueness.
-        //
-        if (!result.find('uuid', contaggId)) {
-          var resultItem = {
-            uuid: contaggId,
-            created: contagg.get('created')
-          };
-          
-          result.push(resultItem);
-        }
-      }
-    }
-
-    resultCallback(result);
-
-  });
 };
 
 exports.populateUserContaggs = function(userContaggIdList, resultCallback) {
@@ -357,19 +365,49 @@ exports.getUserEventsAttended = function(id, resultCallback) {
 };
 
 //
-// Get the events this user is the owner of
+// Gets user contaggs for the specified event
+//
+// Params:
+//    userId - The user to look up
+//    eventId - The event's id where the contagg was made
+//    resultCallback - the function to call when complete.  The signature is:
+//        contaggs - the contaggs objects, or undefined if something went wrong
+//
+exports.getUserContaggsFromEvent = function(userId, eventId, resultCallback) {
+  var result = undefined;
+
+  var options = {
+    type: 'contaggs',
+    qs: { 
+      // Note - you must use SINGLE QUOTES around a string value to search for
+      ql: util.format('select * where uuid_user = %s and event_uuid = %s order by created DESC', 
+        userId,
+        eventId),
+      limit: '100'
+    }
+  };
+
+  getUserContaggsByOptions(options, resultCallback);
+  
+};
+
+//
+// Get the events this user is the owner of.
+// Parameters:
+//  id: the user id to search for
+//  resultCallback: function pointer with this signature:
+//    events: fully populated array of event objects.
 //
 exports.getUserEventsOwned = function(id, resultCallback) {
-  var events = [];
-  var sampleEvent = {
-    
-  };
-  
-  resultCallback(events);
+  thisModule.populateEvents([1234], resultCallback);
 }
 
 //
-// Grab the complete object from the db for each event in the list
+// Grab the complete object from the db for each event in the list. 
+// Parameters:
+//  eventIdList: array of event ids to lookup
+//  resultCallback: function pointer with this signature:
+//    events: fully populated array of event objects
 //
 exports.populateEvents = function(eventIdList, resultCallback) {
   var events = [];

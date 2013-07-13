@@ -14,6 +14,7 @@ var loginController = app.controller('loginController', function($scope, $http, 
   // Login controller
   $scope.user = {};
 
+  
   // Init function allows the server to initialize Angular variables
   // in case the page gets reloaded or otherwise lost.
   $scope.init = function(pageVars) {
@@ -25,10 +26,12 @@ var loginController = app.controller('loginController', function($scope, $http, 
     $scope.secureProtocol = pageVars.secureProtocol;
     $scope.loginDest = pageVars.loginDest;
 
-    $scope.setLoginMessage();
+    // $scope.setLoginMessage();
   }
 
-  $scope.setLoginMessage = function() {
+  /* Note: not yet used 
+
+   $scope.setLoginMessage = function() {
 
     if ($scope.isLoggedIn) {
       $scope.loginMsg = 'Logout ' + $scope.user.firstName;
@@ -41,6 +44,7 @@ var loginController = app.controller('loginController', function($scope, $http, 
   $scope.clearError = function() {
     $scope.loginError = false;
   }
+  */
 
   $scope.login = function() {
 
@@ -86,6 +90,7 @@ var loginController = app.controller('loginController', function($scope, $http, 
       });
   }
 
+  /* Note: not yet used 
   $scope.logout = function() {
 
     $http({
@@ -101,4 +106,6 @@ var loginController = app.controller('loginController', function($scope, $http, 
 
       });
   }
+  */
+  
 })

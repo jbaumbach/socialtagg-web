@@ -5,15 +5,21 @@ block content
   .container
     .sixteen.columns
       #page-title
-        h2 #{ event.name } - Details
+        h2 Event Details
         #bolded-line  
+
+  
+  //-
+  //- ********** Note: delete this file if the myownedevents.jade Angular experiment fails
+  //-
+  
   
   .container.my-events
     if !public.isLoggedIn
 
       .sixteen.columns
         .headline.no-margin
-          h3 #{ event.name } - Details
+          h3 Event Details
 
           p Please 
             a(href=links.login) log in.
@@ -36,22 +42,6 @@ block content
             li
               .desc Date
               .value #{ new Date(event.start_date).toString() }
-
-      .twelve.columns
-        .headline
-          h4 Contaggs from Event
-        
-        //- Display the event's contaggs if we have any
-        if locals.contaggs
-          each contagg in contaggs
-            .twelve.columns.contagg-container
-              a(href=contagg.path)
-                img(src=contagg.pictureUrl).user-image
-                p #{ contagg.name }
-
-        else
-          .twelve.columns
-            p You do not have any contaggs from this event.
 
 include includes/eventtools
       
