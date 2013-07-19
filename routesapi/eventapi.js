@@ -45,7 +45,7 @@ exports.eventsOwnedByUserId = function(req, res) {
 
 };
 
-// todo: implement some kind of validation
+// todo: implement validator
 function validateInputWithMsg(input, options, messageArray) {
   var errMsg;
   
@@ -142,5 +142,46 @@ exports.deleteOwnedEvent = function(req, res) {
   console.log('(info) deleting event: ' + uuid);
   
   res.send(200);
+  
+}
+
+exports.eventSurvey = function(req, res) {
+  
+  var eventId = req.params.eventId;
+
+  console.log('(info) found id: ' + eventId + ', is our id? ' + (eventId != '1234'));
+  
+  // todo: call event manager to grab the survey and questions for this id.  Then move the below there as
+  // sample data.
+
+  if (!eventId) {
+    res.send(404, { msg: 'no event id provided'});
+    
+  } else if (eventId != '1234') {
+    var msg = 'event id "' + eventId + '" not found';
+    console.log('(warning) ' + msg);
+    
+    res.send(404, { msg: msg });
+    
+  } else {
+    
+    var result = {};
+    result.uuid = '98765432';
+    result.event_uuid = '1234';
+    result.create_date = new Date();
+    result.is_anonymous = true;
+    result.inactive_ind = false;
+    
+    var questions = [];
+    questions.push({ questionId: '1', type: 'scale_1to5', text: 'Overall, how successful was this event?' });
+    questions.push({ questionId: '2', type: 'multichoice', text: 'What did you like best about the event?', choices: [
+      'The laser dome', 'The open bar', 'The dance show', 'The venue'
+    ] });
+    questions.push({ questionId: '3', type: 'freeform', text: 'What would you change for next time?'});
+    
+    result.questions = questions;
+    
+    res.send(200, result);
+  }
   
 }

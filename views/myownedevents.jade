@@ -13,92 +13,159 @@ block content
         h2 My Owned Events
         #bolded-line  
   
-  .container.my-events(ng-controller='eventController')
-    if !public.isLoggedIn
-
+  if !public.isLoggedIn
+    .container
       .sixteen.columns
         .headline.no-margin
           h3 Events
-
+  
           p Please 
             a(href=links.login) log in.
-    else
-
-      .twelve.columns
-        //-.headline.no-margin.event-list
-          h4 Events I Own
-        
-        //- Error message  // , 
-        .notification.error(ng-show='hasError')
-          p
-            span Sorry, there was an error! &nbsp; {{ errorMsg }}
-            a.close(href='#')
+  else
+    .controllerContainer.my-events(ng-controller='eventController')
+      .container
       
-        table.standard-table(ng-show='hasEvents')
-          thead
-            tr
-              th Name
-              th Created
-              th Actions
-          tbody
-            tr(data-id='{{event.uuid}}', ng-repeat='event in events')
-              td
-               a(href='#', ng-click='editEvent(event)') {{ event.name }}
-              td {{ event.created | date:'MM-dd-yyyy' }}
-              td
-                a.button.gray(href='#', ng-click='editEvent(event)') Edit
-                a.button.gray(href='#', ng-click='deleteEvent(event)') Delete
-                a.button.color(href='{{ event.link }}', target='_blank') View
+        .twelve.columns
+          //-.headline.no-margin.event-list
+            h4 Events I Own
           
-        p(ng-show='!hasEvents && isLoading') Loading events...
+          //- Error message  // , 
+          .notification.error(ng-show='hasError')
+            p
+              span Sorry, there was an error! &nbsp; {{ errorMsg }}
+              a.close(href='#')
         
-        p(ng-show='!hasEvents && !isLoading') You do not own any events at this time.
-      
-        a.button.color(href='#', ng-click='showEdit()') New Event
-      
-        form.form-horizontal.new-event(ng-show='isEditVisible')
-          .headline 
-            h4 Event Details
+          table.standard-table(ng-show='hasEvents')
+            thead
+              tr
+                th Name
+                th Created
+                th Actions
+            tbody
+              tr(data-id='{{event.uuid}}', ng-repeat='event in events')
+                td
+                 a(href='#', ng-click='editEvent(event)', no-click) {{ event.name }}
+                td {{ event.created | date:'MM-dd-yyyy' }}
+                td
+                  a.button.gray(href='#', ng-click='editEvent(event)', no-click) Edit
+                  a.button.gray(href='#', ng-click='deleteEvent(event)', no-click) Delete
+                  a.button.color(href='{{ event.link }}', target='_blank') View
+            
+          p(ng-show='!hasEvents && isLoading') Loading events...
           
-          input(type='hidden', ng-model='editableEvent.uuid')
-      
-          .field
-            label(for='inputName') Name
-            input.text(type='text', id='inputName', ng-model='editableEvent.name', required)
+          p(ng-show='!hasEvents && !isLoading') You do not own any events at this time.
+        
+          a.button.color(href='#', ng-click='showEdit()', no-click) New Event
+        
+      .container(ng-show='isEditVisible')
+        
+        .six.columns
+          form.form-horizontal.new-event
+            .headline 
+              h4 Event Details
+            
+            input(type='hidden', ng-model='editableEvent.uuid')
+        
+            .field
+              label(for='inputName') Name
+              input.text(type='text', id='inputName', ng-model='editableEvent.name', required)
+  
+            .field
+              label(for='inputDescription') Description
+              input.text(type='text', id='inputDescription', ng-model='editableEvent.description', required)
+  
+            .field
+              label(for='inputAddress') Address
+              input.text(type='text', id='inputAddress', ng-model='editableEvent.address', required)
+  
+            .field
+              label(for='inputDate') Date
+              input.text(type='text', id='inputDate', ng-model='editableEvent.date', required)
+  
+            .field
+              label(for='inputHours') Event Duration (hours)
+              input.text(type='text', id='inputHours', ng-model='editableEvent.hours', required)
+  
+            .field
+              label(for='inputWebsite') Website Url
+              input.text(type='text', id='inputWebsite', ng-model='editableEvent.website', required)
+  
+  
+            p
+            a.button.color(href='#', ng-click='saveEvent(editableEvent)', no-click) Save
+            a.button.gray(href='#', ng-click='cancelEdit()', no-click) Close
+  
+        .six.columns
+          .headline
+            h4 Event Survey Questions
+          
+          div(ng-show='isCurrentEventSaved && (survey.inactive_ind || !survey)')
+            //input(type='checkbox', ng-model='!survey.inactive_ind') 
+            //span &nbsp; Include a post-event survey for attendees
+            a.button.color(href='#', ng-click='showSurvey()', no-click) Add a Survey
+          
+          div(ng-show='!isCurrentEventSaved')
+            p Save the current event to show survey options.
+          
+          .survey(ng-show='isCurrentEventSaved && !survey.inactive_ind && survey')
+            
+            ol.survey-questions(ng-show='survey.questions && survey.questions.length > 0')
+              li(ng-repeat='question in survey.questions') 
+                a(href='#', ng-click='editQuestion(question)', no-click) {{ question.text }}
+                i.mini-ico-remove-sign(ng-click='removeQuestion(question)')
+  
+            p(ng-show='survey.questions && survey.questions.length == 0') Click 'Add Question' to add your survey questions.
+            
+            a.button.color(href='#', ng-click='addSurveyQuestion()', no-click) Add Question
+            
+            form.form-horizontal.new-survey-question(ng-show='editableQuestion')
 
-          .field
-            label(for='inputDescription') Description
-            input.text(type='text', id='inputDescription', ng-model='editableEvent.description', required)
+              .headline
+                h4 Survey Question Detail
 
-          .field
-            label(for='inputAddress') Address
-            input.text(type='text', id='inputAddress', ng-model='editableEvent.address', required)
+              .field
+                label(for='questionText') Question Text
+                input.text(type='text', ng-model='editableQuestion.text', required)
 
-          .field
-            label(for='inputDate') Date
-            input.text(type='text', id='inputDate', ng-model='editableEvent.date', required)
+              .field
+                label(for='surveyQuestionType') Answer Type 
+              
+                .container
+                  .three.columns
+                    select(ng-model='editableQuestion.type', ng-options='q.value as q.label for q in questionTypes')
+              
+                  .three.columns
+                    a.button.color(href='#', ng-click='saveQuestion(editableQuestion)', no-click) Save Question
 
-          .field
-            label(for='inputHours') Event Duration (hours)
-            input.text(type='text', id='inputHours', ng-model='editableEvent.hours', required)
+              .multipleChoice(ng-show='showMultichoice()')
+                .headline
+                  h4 Multiple Choice Answers
+  
+                p
+                
+                ol.multi-choice-options
+                  li(ng-repeat='choice in editableQuestion.choices') {{ choice }}
+                    i.mini-ico-remove-sign(ng-click='removeMultichoicePossibleAnswer(choice)')
+                
+                p(ng-show='!editableQuestion.choices || editableQuestion.choices.length == 0')
+                  | Enter the possible choices for this question below.  Click the plus sign after each one.
 
-          .field
-            label(for='inputWebsite') Website Url
-            input.text(type='text', id='inputWebsite', ng-model='editableEvent.website', required)
-
-
-          p
-          a.button.color(href='#', ng-click='saveEvent(editableEvent)') Save
-          a.button.gray(href='#', ng-click='cancelEdit()') Close
-
-    //- include includes/eventtools
-
-
-
-
-
-
-
+                .field.answer-type
+                  label(for='multichoicePossibleAnswer') Multiple Choice Possible Answer
+                  
+                  .container
+                    .five.columns
+                      input.text(type='text', ng-model='multichoicePossibleAnswer', id='multichoicePossibleAnswer', required)
+                    .one.column
+                      i.ico-circle-plus(ng-click='saveMultichoicePossibleAnswer()')
+  
+              p
+              a.button.color(href='#', ng-click='saveSurvey()', no-click) Save Survey
+              a.button.gray(href='#', ng-click='removeSurvey()', no-click) Remove Survey
+  
+  
+  
+  
 
 
 

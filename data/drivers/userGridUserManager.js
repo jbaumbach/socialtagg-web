@@ -426,7 +426,8 @@ exports.populateEvents = function(eventIdList, resultCallback) {
     link: application.getEventDetailUrlForId(1234)
   };
   
-  events.push(sampleEvent);
+  // Testing: return empty array
+  // events.push(sampleEvent);
   
   resultCallback(events);
   

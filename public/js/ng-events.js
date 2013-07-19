@@ -13,19 +13,36 @@ angular.module("eventService", ["ngResource"]).
     );
   });
 
-// Add eventService dependency to the app 
-app.requires.push('eventService');
+angular.module('surveyService', ['ngResource']).
+  factory("Survey", function($resource) {
+    return $resource(
+      "/apiv1/loggedinuser/ownedevents/:eventId/surveyquestions/:uuid",
+      { eventId: "@event_uuid", uuid: "@uuid" },
+      { "update": { method: "PUT"} }
+    );
+  });
 
-var eventController = app.controller('eventController', function($scope, Event) {
-  
+
+
+
+// Add services dependencies to the app 
+app.requires.push('eventService');
+app.requires.push('surveyService');
+
+var eventController = app.controller('eventController', function($scope, Event, Survey) {
+
+
   $scope.isLoading = true;
   $scope.hasError = false;
+  $scope.isCurrentEventSaved = false;
   
   var createEvent = function (newEvent) {
     newEvent.$save(function() {
       
       console.log('save success');
       $scope.events.push(newEvent);
+      $scope.hasEvents = true;
+      
       setEdit(false, null);
       
     }, function() {
@@ -36,11 +53,15 @@ var eventController = app.controller('eventController', function($scope, Event) 
 
   var updateEvent = function(event) {
     event.$update(function() {
-      console.log('update success');
+
+      console.log('(info) updateEvent: success');
+
+      $scope.isCurrentEventSaved = true;
+
       setEdit(false, null);
 
     }, function() {
-      console.log('update error');
+      console.log('(error) updateEvent: error');
       setErr(true, arguments);
     });
   };
@@ -49,6 +70,12 @@ var eventController = app.controller('eventController', function($scope, Event) 
     $scope.isEditVisible = isEditVisible;
     $scope.editableEvent = editableEvent;
     setErr(false, null);
+    
+    // Load up survey questions
+    if (isEditVisible) {
+      $scope.isCurrentEventSaved = editableEvent.uuid ? true : false;
+      initSurvey(editableEvent);
+    }
   }
   
   var setErr = function(hasError, arguments) {
@@ -81,8 +108,7 @@ var eventController = app.controller('eventController', function($scope, Event) 
   };
 
   $scope.editEvent = function (event) {
-    $scope.isEditVisible = true;
-    $scope.editableEvent = event;
+    setEdit(true, event);
   };
 
   $scope.deleteEvent = function (event) {
@@ -103,4 +129,132 @@ var eventController = app.controller('eventController', function($scope, Event) 
     $scope.hasEvents = $scope.events && $scope.events.length > 0;
   });
 
+  //********
+  // Survey Questions 
+  //********
+  
+  function initSurvey(event) {
+
+    function createSurvey() {
+
+      console.log('(info) created new survey');
+      $scope.survey = new Survey();
+      $scope.survey.inactive_ind = true;
+      $scope.survey.questions = [];
+
+    };
+    
+    //$scope.hasSurveyQuestions = false;
+    $scope.isLoadingSurvey = true;
+    
+    if (event.uuid) {
+      $scope.survey = Survey.get({ eventId: event.uuid }, function() {
+        // Done loading events
+        $scope.isLoadingSurvey = false;
+        
+        if (!$scope.survey) {
+          createSurvey();
+        } else {
+          console.log('(info) editing existing survey');
+        }
+      }, function() {
+        // Error?
+        console.log('(error) no survey returned');
+        createSurvey();
+      });
+    } else {
+      console.log('(info) no event yet');
+      $scope.survey = null;
+    }
+
+  }
+
+  $scope.showSurvey = function() {
+    $scope.survey.inactive_ind = false;
+  }
+  
+  $scope.questionTypes = [
+    { label: 'Scale of 1 to 5', value: 'scale_1to5' },
+    { label: 'Multiple choice', value: 'multichoice' },
+    { label: 'Freeform Input', value: 'freeform' }
+  ];
+  
+  $scope.showMultichoice = function() {
+    var isMultiChoiceQuestion = $scope.editableQuestion && 
+      $scope.editableQuestion.type === 'multichoice';
+
+    if (isMultiChoiceQuestion) {
+      $scope.editableQuestion.choices = $scope.editableQuestion.choices || [];
+    }
+
+    return isMultiChoiceQuestion;
+  }
+  
+  $scope.addSurveyQuestion = function() {
+    $scope.editableQuestion = {};
+  }
+  
+  $scope.removeQuestion = function(question) {
+    $scope.survey.questions = _.without($scope.survey.questions, question);
+    $scope.editableQuestion = null;
+  }
+  
+  $scope.editQuestion = function(question) {
+    $scope.editableQuestion = question;
+  }
+
+  $scope.saveQuestion = function(question) {
+    if (!question.questionId) {
+      var newQuestionId = 0;
+      $scope.survey.questions.forEach(function(question) {
+        newQuestionId = Math.max(newQuestionId, question.questionId);
+      });
+      newQuestionId++;
+      question.questionId = newQuestionId;
+      $scope.survey.questions.push(question);
+      
+      console.log('(info) added question with id: ' + newQuestionId);
+    }
+    
+    $scope.editableQuestion = null;
+  }
+  
+  function saveSurvey() {
+
+    console.log('(info) saving survey...');
+    
+  };
+  
+  $scope.saveSurvey = function() {
+    saveSurvey();
+  }
+  
+  $scope.removeSurvey = function() {
+    console.log('(info) removing survey...');
+    $scope.survey.inactive_ind = true;
+    saveSurvey();
+  }
+  
+  
+  //********
+  // Mulitple choice - possible answers 
+  //********
+
+  $scope.saveMultichoicePossibleAnswer = function() {
+    $scope.editableQuestion.choices.push($scope.multichoicePossibleAnswer);
+    $scope.multichoicePossibleAnswer = null;
+  }
+
+  $scope.removeMultichoicePossibleAnswer = function(choice) {
+    $scope.editableQuestion.choices = _.without($scope.editableQuestion.choices, choice);
+  }
+});
+
+// Prevent the default html action for following # anchors
+eventController.directive('noClick', function() {
+  return function(scope, element, attrs) {
+    $(element).click(function(event) {
+      event.preventDefault();
+    });
+  }
 });

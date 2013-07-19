@@ -4083,6 +4083,18 @@ table.standard-table tr:hover td {background-color: #fafafa;}
   margin-right:8px;
 }
 
+.my-events ol {
+  margin-bottom:15px;
+}
+
+.my-events ol li i {
+  margin-left: 10px;
+}
+
+.my-events .survey .answer-type i {
+  margin: -5px;
+}
+
 /* =================================================================== */
 /* Media Queries
 ====================================================================== */
