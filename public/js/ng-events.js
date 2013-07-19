@@ -115,6 +115,8 @@ var eventController = app.controller('eventController', function($scope, Event, 
     event.$delete(function() {
       console.log('delete success');
       $scope.events = _.without($scope.events, event);
+      $scope.hasEvents = $scope.events.length > 0;
+      
       setEdit(false, null);
 
     }, function() {
