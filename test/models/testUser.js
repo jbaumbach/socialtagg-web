@@ -8,9 +8,9 @@
 // There shouldn't be a whole log of app logic in the dumb classes, but
 // we'll want to test that some stuff like properties and constructors work.
 //
-var assert = require('assert');
-
-var User = require('../../models/User');
+var assert = require('assert')
+  , User = require('../../models/User')
+  ;
 
 describe('User model', function() {
 

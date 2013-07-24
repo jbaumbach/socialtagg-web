@@ -37,6 +37,7 @@ var eventController = app.controller('eventController', function($scope, Event, 
   $scope.isCurrentEventSaved = false;
   
   var createEvent = function (newEvent) {
+
     newEvent.$save(function() {
       
       console.log('save success');
@@ -52,6 +53,7 @@ var eventController = app.controller('eventController', function($scope, Event, 
   };
 
   var updateEvent = function(event) {
+    
     event.$update(function() {
 
       console.log('(info) updateEvent: success');
@@ -62,6 +64,7 @@ var eventController = app.controller('eventController', function($scope, Event, 
 
     }, function() {
       console.log('(error) updateEvent: error');
+      // Note: "arguments" are returned from the server
       setErr(true, arguments);
     });
   };

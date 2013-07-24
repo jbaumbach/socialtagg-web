@@ -146,4 +146,21 @@ describe('globalFunctions', function() {
     assert.equal(r1.firstName, 'steve', 'didn\'t get "steve" back');
     assert.equal(r1.lastName, 'jones', 'didn\'t get "jones" back');
   });
+  
+  it('should convert date to default if null', function() {
+    var date;
+    var def = 'nada';
+    
+    var r = globalFunctions.convertDate(date, def);
+    assert.equal(r, def, 'didn\'t get default back');
+  });
+  
+  it('should return formatted date', function() {
+    var date = new Date();
+    var res = date.toDateString();
+    var def = 'blah';
+    
+    var r = globalFunctions.convertDate(date, def);
+    assert.equal(r, res, 'didn\'t get formatted date back');
+  });
 }) 

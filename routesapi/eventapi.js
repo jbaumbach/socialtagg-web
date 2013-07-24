@@ -5,6 +5,7 @@
  */
 
 var userManager = require('./../data/userManager')
+  , eventManager = require('./../data/eventManager')
   , util = require('util')
   , globalfunctions = require('./../common/globalfunctions')
   , application = require('../common/application')
@@ -99,14 +100,21 @@ exports.insertOwnedEvent = function(req, res) {
     
   } else {
 
+    eventRaw.owner = application.getCurrentSessionUserId(req);
+    
     // insert to db
-    
-    var insertedEvent = eventRaw;
-    insertedEvent.uuid = '1234567890';
-    insertedEvent.created = new Date();
-    insertedEvent.link = '/events/1234';
-    
-    res.send(200, insertedEvent );
+    eventManager.insertEvent(eventRaw, function(err, insertedEvent) {
+
+      if (err) {
+        
+        res.send(500, { msg: err });
+
+      } else {
+
+        insertedEvent.link = '/events/' + insertedEvent.uuid;
+        res.send(200, insertedEvent );
+      }
+    });
   }
 }
 
@@ -126,7 +134,6 @@ exports.updateOwnedEvent = function(req, res) {
   } else {
 
     var updatedEvent = eventRaw;
-    updatedEvent.modified = new Date();
 
     // update event in db
 

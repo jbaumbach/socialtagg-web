@@ -414,7 +414,7 @@ exports.populateEvents = function(eventIdList, resultCallback) {
   var sampleEvent = {
     uuid: 1234,
     owner: 5678,
-    name: 'SocialTagg\'s Event',
+    name: 'SocialTagg\'s Gathering',
     description: 'Super special event for getting new event planners',
     modified: Date.parse('2013-07-05 16:45'),
     created: Date.parse('2013-07-05 16:45'),

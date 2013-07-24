@@ -29,11 +29,11 @@ block content
           //-.headline.no-margin.event-list
             h4 Events I Own
           
-          //- Error message  // , 
-          .notification.error(ng-show='hasError')
+          //- Error message, set style explicitly so it won't flash on page refresh
+          .notification.error(ng-show='hasError', style='display: none;')
             p
               span Sorry, there was an error! &nbsp; {{ errorMsg }}
-              a.close(href='#')
+              a.close(href='#', ng-click='hasError=false', no-click)
         
           table.standard-table(ng-show='hasEvents')
             thead
@@ -60,6 +60,10 @@ block content
       .container(ng-show='isEditVisible')
         
         .six.columns
+          //-
+          //- Note: we're using Angular validation, so turn off HTML5 validation
+          //- See: http://dailyjs.com/2013/06/06/angularjs-7/
+          //-
           form.form-horizontal.new-event
             .headline 
               h4 Event Details
@@ -67,28 +71,28 @@ block content
             input(type='hidden', ng-model='editableEvent.uuid')
         
             .field
-              label(for='inputName') Name
-              input.text(type='text', id='inputName', ng-model='editableEvent.name', required)
+              label(for='inputName') Name of Event
+              input.text(type='text', size='100', id='inputName', ng-model='editableEvent.name', required)
   
             .field
               label(for='inputDescription') Description
-              input.text(type='text', id='inputDescription', ng-model='editableEvent.description', required)
+              input.text(type='text', size='100', id='inputDescription', ng-model='editableEvent.description', required)
   
             .field
               label(for='inputAddress') Address
-              input.text(type='text', id='inputAddress', ng-model='editableEvent.address', required)
+              input.text(type='text', size='100', id='inputAddress', ng-model='editableEvent.address', required)
   
             .field
               label(for='inputDate') Date
-              input.text(type='text', id='inputDate', ng-model='editableEvent.date', required)
+              input.text(type='date', id='inputDate', ng-model='editableEvent.date', required)
   
             .field
               label(for='inputHours') Event Duration (hours)
-              input.text(type='text', id='inputHours', ng-model='editableEvent.hours', required)
+              input.text(type='number', size='3', id='inputHours', ng-model='editableEvent.hours', required)
   
             .field
               label(for='inputWebsite') Website Url
-              input.text(type='text', id='inputWebsite', ng-model='editableEvent.website', required)
+              input.text(type='url', size='100', id='inputWebsite', ng-model='editableEvent.website')
   
   
             p

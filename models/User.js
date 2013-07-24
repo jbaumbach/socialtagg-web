@@ -123,4 +123,7 @@ Object.defineProperty(User.prototype, "name", {
   }
 });
 
+//
+// Export our class
+//
 module.exports = User;

@@ -132,6 +132,22 @@ exports.splitNames = function(fullName) {
   return result;
 }
 
+/**
+ * Convert a possibly null date to a date string, using the default if otherwise.
+ * @param inputDate
+ * @param defaultIfNull
+ */
+exports.convertDate = function(inputDate, defaultIfNull) {
+  
+  var result = defaultIfNull;
+  if (inputDate) {
+    result = new Date(inputDate).toDateString();
+  }
+  
+  return result;
+};
+
+
 //***********************************************
 // Class extensions
 //***********************************************
