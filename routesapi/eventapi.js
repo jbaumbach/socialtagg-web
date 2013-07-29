@@ -28,7 +28,7 @@ exports.eventsOwnedByUserId = function(req, res) {
     
   } else {
 
-    userManager.getUserEventsOwned(userId, function(userEvents) {
+    userManager.getUserEventsOwned(userId, function(err, userEvents) {
 
       if (userEvents && userEvents.length > 0) {
 
@@ -73,11 +73,11 @@ function validateRawEvent(eventRaw, invalidDataMsgs) {
     invalidDataMsgs.push('address is empty');
   }
 
-  if (!eventRaw.date) {
+  if (!eventRaw.startDate) {
     invalidDataMsgs.push('date is empty');
   }
 
-  if (!eventRaw.hours) {
+  if (!eventRaw.durationHours) {
     invalidDataMsgs.push('event duration is empty');
   }
 
@@ -111,7 +111,6 @@ exports.insertOwnedEvent = function(req, res) {
 
       } else {
 
-        insertedEvent.link = '/events/' + insertedEvent.uuid;
         res.send(200, insertedEvent );
       }
     });
@@ -137,18 +136,42 @@ exports.updateOwnedEvent = function(req, res) {
 
     // update event in db
 
-    res.send(200, updatedEvent);
+    eventManager.updateEvent(eventRaw, function(err, updatedEvent) {
+
+      if (err) {
+
+        res.send(500, { msg: err });
+
+      } else {
+
+        res.send(200, updatedEvent );
+      }
+
+    })
   }
 
 }
 
+/*
+Delete an event from the database.  Actually delete!
+ */
 exports.deleteOwnedEvent = function(req, res) {
   
   var uuid = req.params.id;
   
   console.log('(info) deleting event: ' + uuid);
-  
-  res.send(200);
+
+  eventManager.deleteEvent(uuid, function(err) {
+    if (err) {
+      
+      res.send(500, { msg: 'Error deleting item ' + uuid + ' from db'});
+      
+    } else {
+      
+      res.send(200, { msg: 'Successfully deleted item ' + uuid});
+      
+    }
+  })
   
 }
 

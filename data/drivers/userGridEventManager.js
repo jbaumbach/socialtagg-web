@@ -18,32 +18,53 @@ var util = require('util')
  * 
  * @param userGridEvent
  */
-function eventFromUserGridEvent(userGridEvent) {
+exports.eventFromUserGridEvent = function(userGridEvent) {
 
   return new Event({
-    id: userGridEvent.get('uuid'),
+    uuid: userGridEvent.get('uuid'),
     owner: userGridEvent.get('owner'),
     name: userGridEvent.get('event_name'),
     description: userGridEvent.get('description'),
-    modified: globalFunctions.convertDate(userGridEvent.get('modified'), 'n/a'),
-    created: globalFunctions.convertDate(userGridEvent.get('created'), 'n/a'),
-    startDate: userGridEvent.get('startDate'),
-    durationHours: userGridEvent.get('durationHours'),
+    modified: userGridEvent.get('modified'),
+    created: userGridEvent.get('created'),
+    address: userGridEvent.get('address'),
+    timezoneOffset: userGridEvent.get('timezone_offset'),
+    startDate: userGridEvent.get('start_date'),
+    checkinPeriodStartTimeMins: userGridEvent.get('checkin_period_start_mins'),
+    durationHours: userGridEvent.get('duration_hours'),
     locationLat: userGridEvent.get('locationLat'),
     locationLon: userGridEvent.get('locationLon'),
     website: userGridEvent.get('website'),
-    inactiveDate: userGridEvent.get('inactiveDate')
+    inactiveDate: userGridEvent.get('inactive_date')
   });
 };
 
 /**
+ Get a minimal object for getting an event from userGrid
+ 
+ Parameters:
+ eventId - the event id
+ 
+ Returns
+ A userGrid event suitable for querying the DB.
+ */
+function userGridEventFromId(eventId) {
+  return {
+    type: 'events-sts',
+    uuid: eventId
+  };
+}
+/**
  Generate the "options" object that the usergrid component uses when
  inserting or updating data in the database.
  
- * @param postedEvent - the data fields containing the data.  (Hint: from
- *        the Angular model on the events page)
- * @param isInserting - true to add a unique "name" field
- * @returns: the usergrid object. 
+ Parameters:
+ postedEvent - the data fields containing the data.  (Hint: from
+         the Angular model on the events page)
+ isInserting - true to add a unique "name" field
+ 
+ returns: the usergrid object.
+ 
  */
 function userGridEventFromData(postedEvent) {
   
@@ -55,15 +76,20 @@ function userGridEventFromData(postedEvent) {
     // Note: the property names on the left here are the fields in the
     // database.  They must match the '.get(name)' names in the
     // 'eventFromUserGridEvent()' function.
+    // The names on the right side must match the properties of the
+    // event model in the Angular model (ng-events.js).
     //
 
     owner: postedEvent.owner,
     event_name: postedEvent.name,
     description: postedEvent.description,
     address: postedEvent.address,
-    startDate: postedEvent.date,
-    durationHours: postedEvent.hours,
-    website: postedEvent.website
+    timzone_offset: postedEvent.timezoneOffset,
+    start_date: postedEvent.startDate,
+    checkin_period_start_mins: postedEvent.checkinPeriodStartTimeMins,
+    duration_hours: postedEvent.durationHours,
+    website: postedEvent.website,
+    inactive_date: postedEvent.inactiveDate 
 
   };
 
@@ -86,7 +112,7 @@ function userGridEventFromData(postedEvent) {
     // Get the entity from usergrid during the "CreateEntity()" call, rather
     // than generating an error.  This allows updates on the object.
     //
-    result.getOnExist = true;
+    // result.getOnExist = true;
 
   }
 
@@ -108,22 +134,15 @@ function userGridEventFromData(postedEvent) {
 exports.insertEvent = function(event, callback) {
   var result = undefined;
   
-  console.log('(info) userGridEventManager.insertEvent: raw from form = ' + util.inspect(event));
-  
   var options = userGridEventFromData(event);
-  
-  console.log('(info) userGridEventManager.insertEvent: going in = ' + util.inspect(options));
   
   client().createEntity(options, function(err, newEvent) {
     
-    console.log('(info) userGridEventManager.insertEvent: err? = ' + err);
-
     var result;
     
     if (!err) {
-      result = eventFromUserGridEvent(newEvent);
-      
-      console.log('(info) userGridEventManager.insertEvent: built = ' + util.inspect(result));
+
+      result = thisModule.eventFromUserGridEvent(newEvent);
     }
     
     callback(err, result);
@@ -135,16 +154,14 @@ exports.insertEvent = function(event, callback) {
  Update an existing event in the usergrid database
  
  Parameters:
-   event - the event data to insert.  The owner id should be filled in already.
-       See the Angular form data and model for data object field names, they're
-       slightly different than the property names.
+   event - the event data to update.  The owner id should be filled in already.
    callback - the callback function, with this signature:
      err - description of any errors that occurred
-     createdEvent - the new event that was created (has the new event uuid)
+     createdEvent - the new event that was update
    */
 exports.updateEvent = function(event, callback) {
   
-  // todo: test this!!! 
+  // implement an endpoint, and test this!!! 
   
   //
   // Single point of exit
@@ -153,8 +170,11 @@ exports.updateEvent = function(event, callback) {
     callback(err, result);
   }
   
+  var updatedEvent = userGridEventFromData(event);
   var options = userGridEventFromData(event);
-  
+
+  console.log('data put from Angular: ' + util.inspect(updatedEvent));
+
   client().createEntity(options, function(err, existingEvent) {
     
     var result;
@@ -164,7 +184,9 @@ exports.updateEvent = function(event, callback) {
       // We simply got the existing usergrid object from the db.  Let's
       // set the properties and save it.
       //
-      existingEvent.set(options);
+      existingEvent.set(updatedEvent);
+      
+      console.log('about to put to UG: ' + util.inspect(updatedEvent));
       
       existingEvent.save(function(err) {
         done(err, result);
@@ -188,17 +210,15 @@ exports.updateEvent = function(event, callback) {
  */
 exports.getEvent = function(eventId, callback) {
   
-  // todo: test this!!!
+  var options = userGridEventFromId(eventId);
   
-  var options = userGridEventFromData({
-    uuid: eventId
-  });
+  console.log('calling UG with: ' + util.inspect(options));
   
-  client().createEntity(options, function(err, existingEvent) {
+  client().getEntity(options, function(err, existingEvent) {
     var result;
     
     if (!err) {
-      result = eventFromUserGridEvent(existingEvent);
+      result = thisModule.eventFromUserGridEvent(existingEvent);
     }
     
     callback(err, result);
@@ -216,8 +236,6 @@ exports.getEvent = function(eventId, callback) {
       err - filled in if something went wrong
  */
 exports.deleteEvent = function(eventId, callback) {
-
-  // todo: test this!!!
 
   var options = userGridEventFromData({
     uuid: eventId

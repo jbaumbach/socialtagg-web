@@ -9,6 +9,7 @@ var userManager = require('./../data/userManager')
   , globalfunctions = require('./../common/globalfunctions')
   , User = require('../models/User')
   , application = require('../common/application')
+  , eventManager = require('../data/eventManager')
   ;
 
 exports.detail = function(req, res) {
@@ -24,20 +25,23 @@ exports.detail = function(req, res) {
   };
   
 
-  var eventIds = [];
-  eventIds.push(req.params.id);
+  var eventId = req.params.id;
   
-  userManager.populateEvents(eventIds, function(events) {
+  eventManager.getEvent(eventId, function(err, event) {
 
-    if (events && events.length > 0) {
+    console.log('(GET) event.detal - err: ' + err);
+    
+    if (!err) {
       
-      pageVars.event = events[0];
+      pageVars.event = event;
       pageVars.title = pageVars.event.name + ' - Details';
       done();
       
     } else {
       
-      res.send(404, 'Sorry, that event is not found.');
+      pageVars.title = 'Event Not Found';
+      done();
+      
     }
     
   });

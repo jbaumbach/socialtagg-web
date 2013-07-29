@@ -12,7 +12,7 @@ describe('eventManager', function() {
   
   it('should create an event', function(done) {
   
-    // todo: put creation code here
+    // put creation code here
     done();
   });
   

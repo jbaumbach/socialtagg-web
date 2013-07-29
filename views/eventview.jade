@@ -5,7 +5,7 @@ block content
   .container
     .sixteen.columns
       #page-title
-        h2 #{ event.name } - Details
+        h2 Event Details
         #bolded-line  
   
   .container.my-events
@@ -13,10 +13,16 @@ block content
 
       .sixteen.columns
         .headline.no-margin
-          h3 #{ event.name } - Details
+          h3 Event - Details
 
           p Please 
             a(href=links.login) log in.
+    
+    else if !locals.event
+
+      .sixteen.columns
+        p Sorry, that event is not accessible.
+    
     else
 
       .twelve.columns
@@ -35,7 +41,7 @@ block content
 
             li
               .desc Date
-              .value #{ new Date(event.start_date).toString() }
+              .value #{ event.startDate }
 
       .twelve.columns
         .headline

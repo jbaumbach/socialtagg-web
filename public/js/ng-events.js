@@ -38,8 +38,12 @@ var eventController = app.controller('eventController', function($scope, Event, 
   
   var createEvent = function (newEvent) {
 
+    $scope.isWorking = true;
+    
     newEvent.$save(function() {
-      
+
+      $scope.isWorking = false;
+
       console.log('save success');
       $scope.events.push(newEvent);
       $scope.hasEvents = true;
@@ -47,14 +51,20 @@ var eventController = app.controller('eventController', function($scope, Event, 
       setEdit(false, null);
       
     }, function() {
+      $scope.isWorking = false;
+
       console.log('save error');
       setErr(true, arguments);
     });
   };
 
   var updateEvent = function(event) {
-    
+
+    $scope.isWorking = true;
+
     event.$update(function() {
+
+      $scope.isWorking = false;
 
       console.log('(info) updateEvent: success');
 
@@ -63,6 +73,8 @@ var eventController = app.controller('eventController', function($scope, Event, 
       setEdit(false, null);
 
     }, function() {
+      $scope.isWorking = false;
+
       console.log('(error) updateEvent: error');
       // Note: "arguments" are returned from the server
       setErr(true, arguments);
@@ -115,6 +127,7 @@ var eventController = app.controller('eventController', function($scope, Event, 
   };
 
   $scope.deleteEvent = function (event) {
+    event.isWorking = true;
     event.$delete(function() {
       console.log('delete success');
       $scope.events = _.without($scope.events, event);
@@ -123,6 +136,8 @@ var eventController = app.controller('eventController', function($scope, Event, 
       setEdit(false, null);
 
     }, function() {
+      
+      event.isWorking = false;
       console.log('delete error');
     });
   };
@@ -242,7 +257,7 @@ var eventController = app.controller('eventController', function($scope, Event, 
   
   
   //********
-  // Mulitple choice - possible answers 
+  // Multiple choice - possible answers 
   //********
 
   $scope.saveMultichoicePossibleAnswer = function() {

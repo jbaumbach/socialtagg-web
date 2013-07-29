@@ -389,7 +389,7 @@ exports.myOwnedEvents = function(req, res) {
     done();
   } else {
     
-    userManager.getUserEventsOwned(userId, function(userEvents) {
+    userManager.getUserEventsOwned(userId, function(err, userEvents) {
       console.log('got events: ' + userEvents);
 
       if (userEvents && userEvents.length > 0) {

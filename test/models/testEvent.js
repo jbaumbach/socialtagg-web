@@ -14,13 +14,16 @@ describe('Event model', function() {
   it('should have a working constructor', function() {
     
     var initData = {
-      id: 'blah',
+      uuid: 'blah',
       owner: '123456',
       name: 'my event',
       description: 'my sample description',
       modified: new Date(),
       created: 1360536391023,      // Sun Feb 10 2013
+      address: '1234 Tattoine St.',
+      timezoneOffset: -8, // PST
       startDate: new Date(),
+      checkinPeriodStartTimeMins: 15,
       durationHours: 55,
       locationLat: -34.4534,
       locationLon: 123.2323,

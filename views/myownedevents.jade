@@ -45,12 +45,12 @@ block content
               tr(data-id='{{event.uuid}}', ng-repeat='event in events')
                 td
                  a(href='#', ng-click='editEvent(event)', no-click) {{ event.name }}
-                td {{ event.created | date:'MM-dd-yyyy' }}
+                td {{ event.created | date:'EEEE, M-d-yyyy, h:mm:ss a' }}
                 td
                   a.button.gray(href='#', ng-click='editEvent(event)', no-click) Edit
                   a.button.gray(href='#', ng-click='deleteEvent(event)', no-click) Delete
-                  a.button.color(href='{{ event.link }}', target='_blank') View
-            
+                  a.button.color(href='{{ event.path }}', target='_blank') View
+                  i.icon-spinner.icon-spin.icon-2x(ng-show='event.isWorking')
           p(ng-show='!hasEvents && isLoading') Loading events...
           
           p(ng-show='!hasEvents && !isLoading') You do not own any events at this time.
@@ -70,6 +70,8 @@ block content
             
             input(type='hidden', ng-model='editableEvent.uuid')
         
+            //- Note: the ng-model fields below must match the properties in the Event object
+        
             .field
               label(for='inputName') Name of Event
               input.text(type='text', size='100', id='inputName', ng-model='editableEvent.name', required)
@@ -84,11 +86,11 @@ block content
   
             .field
               label(for='inputDate') Date
-              input.text(type='date', id='inputDate', ng-model='editableEvent.date', required)
+              input.text(type='date', id='inputDate', ng-model='editableEvent.startDate', required)
   
             .field
               label(for='inputHours') Event Duration (hours)
-              input.text(type='number', size='3', id='inputHours', ng-model='editableEvent.hours', required)
+              input.text(type='number', size='3', id='inputHours', ng-model='editableEvent.durationHours', required)
   
             .field
               label(for='inputWebsite') Website Url
@@ -98,6 +100,7 @@ block content
             p
             a.button.color(href='#', ng-click='saveEvent(editableEvent)', no-click) Save
             a.button.gray(href='#', ng-click='cancelEdit()', no-click) Close
+            i.icon-spinner.icon-spin.icon-2x(ng-show='isWorking')
   
         .six.columns
           .headline

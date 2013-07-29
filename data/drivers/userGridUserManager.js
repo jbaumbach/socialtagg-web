@@ -14,6 +14,7 @@ var util = require('util')
   , ApiUser = require('../../models/ApiUser.js')
   , globalFunctions = require('../../common/globalfunctions')
   , application = require('../../common/application')
+  , userGridEventManager = require('./userGridEventManager')
   , thisModule = this
   ;
 
@@ -27,8 +28,6 @@ var util = require('util')
 // Maps a User Grid user to our app's user
 //
 function userFromUserGridUser(userGridUser) {
-  
-  // todo: really understand UG responses.  There's FB stuff in there.
   
   var dateStr = 'n/a';
   if (userGridUser.get('created')) {
@@ -396,43 +395,48 @@ exports.getUserContaggsFromEvent = function(userId, eventId, resultCallback) {
 // Parameters:
 //  id: the user id to search for
 //  resultCallback: function pointer with this signature:
-//    events: fully populated array of event objects.
+//    err: defined if an error occurred
+//    events: fully populated array of Event objects.
 //
 exports.getUserEventsOwned = function(id, resultCallback) {
-  thisModule.populateEvents([1234], resultCallback);
+  
+  var result = undefined;
+
+  var options = {
+    type: 'events-sts',
+    qs: {
+      ql: util.format('select * where owner = %s order by created DESC', id),
+      limit: '100'
+    }
+  }
+  
+  client().createCollection(options, function(err, resultEvents) {
+    if (err) {
+      
+      console.log('(error) userGridUserManager.getUserEventsOwned: ' + err);
+      
+    } else {
+      
+      result = [];
+      
+      while(resultEvents.hasNextEntity()) {
+
+        var event = resultEvents.getNextEntity();
+        var userEvent = userGridEventManager.eventFromUserGridEvent(event);
+        
+        console.log('Found event: ' + util.inspect(userEvent));
+        
+        result.push(userEvent);
+
+      }
+    }
+
+    resultCallback(err, result);
+
+  });
 }
 
-//
-// Grab the complete object from the db for each event in the list. 
-// Parameters:
-//  eventIdList: array of event ids to lookup
-//  resultCallback: function pointer with this signature:
-//    events: fully populated array of event objects
-//
-exports.populateEvents = function(eventIdList, resultCallback) {
-  var events = [];
-  var sampleEvent = {
-    uuid: 1234,
-    owner: 5678,
-    name: 'SocialTagg\'s Gathering',
-    description: 'Super special event for getting new event planners',
-    modified: Date.parse('2013-07-05 16:45'),
-    created: Date.parse('2013-07-05 16:45'),
-    start_date: Date.parse('2013-07-05 17:45'),
-    end_date: Date.parse('2013-07-05 18:45'),
-    location_lat: 33.988105,
-    location_lon: -118.47056,
-    website: 'www.socialtagg.com',
-    link: application.getEventDetailUrlForId(1234)
-  };
   
-  // Testing: return empty array
-  // events.push(sampleEvent);
-  
-  resultCallback(events);
-  
-};
-
 //
 // Callback params: err  (0 = no error, 1 = user not found, 2 = db error)
 //                  code (the verification code)
