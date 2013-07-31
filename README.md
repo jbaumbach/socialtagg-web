@@ -68,11 +68,20 @@
    * Deploy to production easily with the bash script:
    
     $ ./deploy-to-heroku.sh
+    
+   * Other commands:
+   
     $ heroku ps     # Gets status, use -- remote heroku or -- remote staging
     $ heroku logs   # See what broke, if anything
     $ heroku releases # See the release history for your site
     $ heroku rollback [release] # Rollback to most recent release or specified release (e.g. v43)
+   
     
+   * SVN error: "SVN commit failed: Directory out of date".  This happens when you rename
+    a directory in a way SVN doesn't like.  To fix:
+    
+    $ svn update   # See: http://stackoverflow.com/questions/3298384/svn-commit-failed-directory-out-of-date
+   
 ## Third-party Components
 
   In the open source world, new updates are released often.  To list your versions:

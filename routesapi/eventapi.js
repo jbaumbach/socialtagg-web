@@ -158,8 +158,6 @@ exports.deleteOwnedEvent = function(req, res) {
   
   var uuid = req.params.id;
   
-  console.log('(info) deleting event: ' + uuid);
-
   if (!uuid) {
 
     res.send(400, { msg: 'no event id provided'});
@@ -191,9 +189,7 @@ exports.deleteOwnedEvent = function(req, res) {
             res.send(500, { msg: 'a server error has occurred!'});
 
           }
-          
         });
-
       }
     })
   }
