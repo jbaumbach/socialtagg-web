@@ -21,7 +21,7 @@
 // Add the test file(s) you want to debug here.
 //
 
-//var testFiles = ["./test/routes/testUser.js"];
+//var testFiles = ["./test/views/testUser.js"];
 //var testFiles = ["./test/common/testAuthorization.js"];
 //var testFiles = ["./test/common/testGlobalFunctions.js"];
 //var testFiles = ["./test/data/testUserManager.js"];

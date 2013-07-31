@@ -353,13 +353,15 @@ exports.addUserContagg = function(user, userIdToAdd, resultCallback) {
 //
 exports.getUserEventsAttended = function(id, resultCallback) {
   var events = [];
+  /*
   var sampleEvent = {
     event_uuid: 1234,
     checkin_date: Date.parse('2013-07-05 16:45')
   };
-  
   events.push(sampleEvent);
-  
+  */
+
+
   resultCallback(events);
 };
 
@@ -405,7 +407,7 @@ exports.getUserEventsOwned = function(id, resultCallback) {
   var options = {
     type: 'events-sts',
     qs: {
-      ql: util.format('select * where owner = %s order by created DESC', id),
+      ql: util.format('select * where owner = %s and not inactive_ind = \'true\' order by created DESC', id),
       limit: '100'
     }
   }

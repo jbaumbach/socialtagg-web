@@ -16,8 +16,6 @@ exports.eventsOwnedByUserId = function(req, res) {
   //
   // Grab user id from the session
   //
-  //res.send(500, { msg: 'Not implemented yet, please try again later.'} );
-
 
   var userId = application.getCurrentSessionUserId(req);
 
@@ -84,10 +82,10 @@ function validateRawEvent(eventRaw, invalidDataMsgs) {
   // eventRaw.website is not required but should be validated
 }
 
+/*
+Insert an event into the DB
+ */
 exports.insertOwnedEvent = function(req, res) {
-  //
-  // todo: implement saving.  Must return the new event.
-  //
   
   var eventRaw = req.body;
   var invalidDataMsgs = [];
@@ -153,7 +151,8 @@ exports.updateOwnedEvent = function(req, res) {
 }
 
 /*
-Delete an event from the database.  Actually delete!
+  Delete an event from the database.  Don't actually delete, just 
+  inactivate.
  */
 exports.deleteOwnedEvent = function(req, res) {
   
@@ -161,57 +160,136 @@ exports.deleteOwnedEvent = function(req, res) {
   
   console.log('(info) deleting event: ' + uuid);
 
-  eventManager.deleteEvent(uuid, function(err) {
-    if (err) {
-      
-      res.send(500, { msg: 'Error deleting item ' + uuid + ' from db'});
-      
-    } else {
-      
-      res.send(200, { msg: 'Successfully deleted item ' + uuid});
-      
-    }
-  })
-  
+  if (!uuid) {
+
+    res.send(400, { msg: 'no event id provided'});
+
+  } else {
+
+    eventManager.getEvent(uuid, function(err, event) {
+
+      if (err) {
+
+        res.send(500, { msg: 'a server error has occurred!'});
+
+      } else if (!event) {
+
+        res.send(404, { msg: util.format('event id "%s" not found', uuid)});
+
+      } else {
+
+        event.inactiveInd = 'true';
+        
+        eventManager.updateEvent(event, function(err, event) {
+   
+          if (!err) {
+            
+            res.send(200, { msg: 'deleted event ok'} );
+            
+          } else {
+            
+            res.send(500, { msg: 'a server error has occurred!'});
+
+          }
+          
+        });
+
+      }
+    })
+  }
 }
 
-exports.eventSurvey = function(req, res) {
+exports.getEventSurvey = function(req, res) {
   
   var eventId = req.params.eventId;
 
   console.log('(info) found id: ' + eventId + ', is our id? ' + (eventId != '1234'));
   
-  // todo: call event manager to grab the survey and questions for this id.  Then move the below there as
-  // sample data.
-
   if (!eventId) {
-    res.send(404, { msg: 'no event id provided'});
     
-  } else if (eventId != '1234') {
-    var msg = 'event id "' + eventId + '" not found';
-    console.log('(warning) ' + msg);
-    
-    res.send(404, { msg: msg });
+    res.send(400, { msg: 'no event id provided'});
     
   } else {
-    
-    var result = {};
-    result.uuid = '98765432';
-    result.event_uuid = '1234';
-    result.create_date = new Date();
-    result.is_anonymous = true;
-    result.inactive_ind = false;
-    
-    var questions = [];
-    questions.push({ questionId: '1', type: 'scale_1to5', text: 'Overall, how successful was this event?' });
-    questions.push({ questionId: '2', type: 'multichoice', text: 'What did you like best about the event?', choices: [
-      'The laser dome', 'The open bar', 'The dance show', 'The venue'
-    ] });
-    questions.push({ questionId: '3', type: 'freeform', text: 'What would you change for next time?'});
-    
-    result.questions = questions;
-    
-    res.send(200, result);
+
+    eventManager.getSurveyByEventId(eventId, function(err, survey) {
+      
+      if (err) {
+        
+        res.send(500, { msg: 'a server error has occurred!'});
+        
+      } else if (!survey) {
+        
+        res.send(404, { msg: util.format('event id "%s" not found', eventId)});
+        
+      } else {
+        
+        res.send(200, survey);
+      }
+    })
+  }
+  
+}
+
+function validateRawSurvey(surveyRaw, invalidDataMsgs) {
+  return invalidDataMsgs;
+}
+
+/**
+ Inserts a new survey into the database
+ */
+exports.insertEventSurvey = function(req, res) {
+  
+  var surveyRaw = req.body;
+  var invalidDataMsgs = [];
+
+  validateRawSurvey(surveyRaw, invalidDataMsgs);
+
+  if (invalidDataMsgs.length > 0) {
+
+    res.send(400, { errors: invalidDataMsgs });
+
+  } else {
+
+    // insert to db
+    eventManager.insertSurvey(surveyRaw, function(err, insertedSurvey) {
+
+      if (err) {
+
+        res.send(500, { msg: err });
+
+      } else {
+
+        res.send(200, insertedSurvey );
+      }
+    });
+  }
+}
+
+exports.updateEventSurvey = function(req, res) {
+  
+  var surveyRaw = req.body;
+  var invalidDataMsgs = [];
+
+  validateRawSurvey(surveyRaw, invalidDataMsgs);
+
+  if (invalidDataMsgs.length > 0) {
+
+    res.send(400, { errors: invalidDataMsgs });
+
+  } else {
+
+    // insert to db
+    eventManager.updateSurvey(surveyRaw, function(err, updatedSurvey) {
+
+      if (err) {
+
+        res.send(500, { msg: err });
+
+      } else {
+
+        res.send(200, updatedSurvey );
+      }
+    });
   }
   
 }

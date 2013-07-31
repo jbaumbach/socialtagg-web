@@ -338,7 +338,7 @@ exports.myAttendedEvents = function(req, res) {
   var userId = application.getCurrentSessionUserId(req);
 
   if (!userId) {
-    console.log('aint got a user id');
+    console.log('(warning) aint got a user id');
     
     done();
   } else {

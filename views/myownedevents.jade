@@ -106,15 +106,16 @@ block content
           .headline
             h4 Event Survey Questions
           
-          div(ng-show='isCurrentEventSaved && (survey.inactive_ind || !survey)')
-            //input(type='checkbox', ng-model='!survey.inactive_ind') 
-            //span &nbsp; Include a post-event survey for attendees
+          div(ng-show='isCurrentEventSaved && (!survey || survey.inactiveInd)')
             a.button.color(href='#', ng-click='showSurvey()', no-click) Add a Survey
           
           div(ng-show='!isCurrentEventSaved')
             p Save the current event to show survey options.
           
-          .survey(ng-show='isCurrentEventSaved && !survey.inactive_ind && survey')
+          div(ng-show='isCurrentEventSaved && isLoadingSurvey')
+            p Looking for a survey...
+          
+          .survey(ng-show='isCurrentEventSaved && survey && !survey.inactiveInd && !isLoadingSurvey')
             
             ol.survey-questions(ng-show='survey.questions && survey.questions.length > 0')
               li(ng-repeat='question in survey.questions') 
@@ -169,7 +170,8 @@ block content
             p
             a.button.color(href='#', ng-click='saveSurvey()', no-click) Save Survey
             a.button.gray(href='#', ng-click='removeSurvey()', no-click) Remove Survey
-  
+            i.icon-spinner.icon-spin.icon-2x(ng-show='isSurveyWorking')
+
   
   
   

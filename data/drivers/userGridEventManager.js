@@ -35,7 +35,7 @@ exports.eventFromUserGridEvent = function(userGridEvent) {
     locationLat: userGridEvent.get('locationLat'),
     locationLon: userGridEvent.get('locationLon'),
     website: userGridEvent.get('website'),
-    inactiveDate: userGridEvent.get('inactive_date')
+    inactiveInd: userGridEvent.get('inactive_ind')
   });
 };
 
@@ -89,7 +89,7 @@ function userGridEventFromData(postedEvent) {
     checkin_period_start_mins: postedEvent.checkinPeriodStartTimeMins,
     duration_hours: postedEvent.durationHours,
     website: postedEvent.website,
-    inactive_date: postedEvent.inactiveDate 
+    inactive_ind: postedEvent.inactiveInd 
 
   };
 
@@ -161,8 +161,6 @@ exports.insertEvent = function(event, callback) {
    */
 exports.updateEvent = function(event, callback) {
   
-  // implement an endpoint, and test this!!! 
-  
   //
   // Single point of exit
   //
@@ -192,9 +190,10 @@ exports.updateEvent = function(event, callback) {
         done(err, result);
       });
       
-    }
+    } else {
     
-    done(err, result);
+      done(err, result);
+    }
   });
   
 }
@@ -254,4 +253,183 @@ exports.deleteEvent = function(eventId, callback) {
       callback(err);
     }
   });
+}
+
+/*
+  Get the survey associated with the passed event id
+  
+  Parameters:
+    eventId: the event id
+    callback: a function to callback on with signature:
+      err: filled in if something bad happened
+      survey: the found survey if we have one, otherwise undefined
+ */
+exports.getSurveyByEventId = function(eventId, callback) {
+  
+  var options = {
+    type: 'surveys',
+    qs: {
+      ql: util.format('select * where event_uuid = %s', eventId)
+    }
+  }
+  
+  client().createCollection(options, function(err, existingSurveys) {
+    if (err) {
+      callback(err, null);
+    } else {
+      if (existingSurveys.hasNextEntity()) {
+        
+        var userGridResultSurvey = existingSurveys.getNextEntity();
+        var result = thisModule.surveyFromUserGridSurvey(userGridResultSurvey);
+        
+        callback(false, result);
+        
+      } else {
+        callback(false, null);
+      }
+    }
+  })
+  
+}
+
+/*
+  Get a usergrid 'options' object from the passed survey data
+  
+  Parameters:
+    postedSurvey: the survey data
+    
+ */
+exports.userGridSurveyFromData = function (postedSurvey) {
+  var result = {
+    
+    type: 'surveys',
+
+    //
+    // Note: the property names on the left here are the fields in the
+    // database.  They must match the '.get(name)' names in the
+    // 'surveyFromUserGridSurvey()' function.
+    // The names on the right side must match the properties of the
+    // event model in the Angular model (ng-events.js).
+    //
+
+    event_uuid: postedSurvey.eventId,
+    is_anonymous: true,
+    when_to_show_type: 1,
+    when_to_show_mins: 10,
+    inactive_ind: postedSurvey.inactiveInd,
+    questions: postedSurvey.questions
+    
+  }
+    
+  if (!postedSurvey.uuid) {
+  
+    //
+    // Must create a unique value for 'name' according to the UG docs:
+    // http://apigee.com/docs/usergrid/content/data-model
+    //
+    // It has some restrictions as far as allowed characters, which apparently
+    // // are undocumented.  Let's use MD5 to be safe.
+    //
+    result.name = 'surv' + globalFunctions.md5Encode(postedSurvey.eventId + new Date());
+  
+  } else {
+    
+    result.uuid = postedSurvey.uuid; 
+  }
+ 
+  return result;
+}
+
+/*
+  Returns a Survey object from the passed usergrid object
+ */
+exports.surveyFromUserGridSurvey = function (ugSurvey) {
+  var result = {
+    uuid: ugSurvey.get('uuid'),
+    eventId: ugSurvey.get('event_uuid'),
+    isAnonymous: ugSurvey.get('is_anonymous'),
+    whenToShowType: ugSurvey.get('when_to_show_type'),
+    whentoShowMins: ugSurvey.get('when_to_show_mins'),
+    inactiveInd: ugSurvey.get('inactive_ind'),
+    questions: ugSurvey.get('questions')
+  };
+  
+  return result;
+}
+
+/**
+ Inserts a survey for an event into the database
+ 
+ Parameters:
+  survey - the survey data
+  callback - a function to call when the saving is done, with signature:
+    err - filled in if something bad happened
+    newSurvey - the inserted survey
+ */
+exports.insertSurvey = function(survey, callback) {
+  
+  var result = undefined;
+
+  var options = thisModule.userGridSurveyFromData(survey);
+
+  client().createEntity(options, function(err, newSurvey) {
+
+    var result;
+
+    if (!err) {
+
+      result = thisModule.surveyFromUserGridSurvey(newSurvey);
+    }
+
+    callback(err, result);
+
+  });
+  
+}
+
+/**
+ Update an existing survey in the usergrid database
+
+ Parameters:
+ survey - the survey data to update.  The uuid should be filled in already.
+ callback - the callback function, with this signature:
+   err - description of any errors that occurred
+   createdSurvey - the new survey that was update
+ */
+exports.updateSurvey = function(survey, callback) {
+  //
+  // Single point of exit
+  //
+  function done(err, result) {
+    callback(err, result);
+  }
+
+  var updatedSurvey = thisModule.userGridSurveyFromData(survey);
+  var options = thisModule.userGridSurveyFromData(survey);
+
+  console.log('data put from Angular: ' + util.inspect(updatedSurvey));
+
+  client().createEntity(options, function(err, existingSurvey) {
+
+    var result;
+
+    if (!err) {
+      //
+      // We simply got the existing usergrid object from the db.  Let's
+      // set the properties and save it.
+      //
+      existingSurvey.set(updatedSurvey);
+
+      console.log('about to put to UG: ' + util.inspect(updatedSurvey));
+
+      existingSurvey.save(function(err) {
+        done(err, result);
+      });
+
+    } else {
+
+      done(err, result);
+    }
+  });
+  
 }

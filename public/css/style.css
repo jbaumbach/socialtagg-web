@@ -4095,10 +4095,6 @@ table.standard-table tr:hover td {background-color: #fafafa;}
   margin: -5px;
 }
 
-.my-events tbody i.icon-2x {
-  /* padding-top:5px; // not compatible with spinning */
-}
-
 /* =================================================================== */
 /* Media Queries
 ====================================================================== */

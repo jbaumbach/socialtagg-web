@@ -16,13 +16,11 @@ angular.module("eventService", ["ngResource"]).
 angular.module('surveyService', ['ngResource']).
   factory("Survey", function($resource) {
     return $resource(
-      "/apiv1/loggedinuser/ownedevents/:eventId/surveyquestions/:uuid",
-      { eventId: "@event_uuid", uuid: "@uuid" },
+      "/apiv1/loggedinuser/ownedevents/:eventId/surveys/:uuid",
+      { eventId: "@eventId", uuid: "@uuid" },
       { "update": { method: "PUT"} }
     );
   });
-
-
 
 
 // Add services dependencies to the app 
@@ -31,10 +29,9 @@ app.requires.push('surveyService');
 
 var eventController = app.controller('eventController', function($scope, Event, Survey) {
 
-
+  $scope.isCurrentEventSaved = false;
   $scope.isLoading = true;
   $scope.hasError = false;
-  $scope.isCurrentEventSaved = false;
   
   var createEvent = function (newEvent) {
 
@@ -44,7 +41,6 @@ var eventController = app.controller('eventController', function($scope, Event, 
 
       $scope.isWorking = false;
 
-      console.log('save success');
       $scope.events.push(newEvent);
       $scope.hasEvents = true;
       
@@ -53,7 +49,6 @@ var eventController = app.controller('eventController', function($scope, Event, 
     }, function() {
       $scope.isWorking = false;
 
-      console.log('save error');
       setErr(true, arguments);
     });
   };
@@ -65,9 +60,6 @@ var eventController = app.controller('eventController', function($scope, Event, 
     event.$update(function() {
 
       $scope.isWorking = false;
-
-      console.log('(info) updateEvent: success');
-
       $scope.isCurrentEventSaved = true;
 
       setEdit(false, null);
@@ -75,13 +67,13 @@ var eventController = app.controller('eventController', function($scope, Event, 
     }, function() {
       $scope.isWorking = false;
 
-      console.log('(error) updateEvent: error');
       // Note: "arguments" are returned from the server
       setErr(true, arguments);
     });
   };
 
   var setEdit = function(isEditVisible, editableEvent) {
+    
     $scope.isEditVisible = isEditVisible;
     $scope.editableEvent = editableEvent;
     setErr(false, null);
@@ -129,7 +121,7 @@ var eventController = app.controller('eventController', function($scope, Event, 
   $scope.deleteEvent = function (event) {
     event.isWorking = true;
     event.$delete(function() {
-      console.log('delete success');
+      
       $scope.events = _.without($scope.events, event);
       $scope.hasEvents = $scope.events.length > 0;
       
@@ -138,7 +130,6 @@ var eventController = app.controller('eventController', function($scope, Event, 
     }, function() {
       
       event.isWorking = false;
-      console.log('delete error');
     });
   };
 
@@ -157,14 +148,13 @@ var eventController = app.controller('eventController', function($scope, Event, 
 
     function createSurvey() {
 
-      console.log('(info) created new survey');
       $scope.survey = new Survey();
-      $scope.survey.inactive_ind = true;
+      $scope.survey.eventId = event.uuid;
+      $scope.survey.inactiveInd = true;
       $scope.survey.questions = [];
 
     };
     
-    //$scope.hasSurveyQuestions = false;
     $scope.isLoadingSurvey = true;
     
     if (event.uuid) {
@@ -174,23 +164,20 @@ var eventController = app.controller('eventController', function($scope, Event, 
         
         if (!$scope.survey) {
           createSurvey();
-        } else {
-          console.log('(info) editing existing survey');
         }
       }, function() {
         // Error?
-        console.log('(error) no survey returned');
+        $scope.isLoadingSurvey = false;
+
         createSurvey();
       });
     } else {
-      console.log('(info) no event yet');
       $scope.survey = null;
     }
-
   }
 
   $scope.showSurvey = function() {
-    $scope.survey.inactive_ind = false;
+    $scope.survey.inactiveInd = false;
   }
   
   $scope.questionTypes = [
@@ -205,8 +192,10 @@ var eventController = app.controller('eventController', function($scope, Event, 
 
     if (isMultiChoiceQuestion) {
       $scope.editableQuestion.choices = $scope.editableQuestion.choices || [];
-    }
-
+    } else if ($scope.editableQuestion) {
+      $scope.editableQuestion.choices = undefined;
+    } 
+    
     return isMultiChoiceQuestion;
   }
   
@@ -224,35 +213,71 @@ var eventController = app.controller('eventController', function($scope, Event, 
   }
 
   $scope.saveQuestion = function(question) {
+    
     if (!question.questionId) {
+      
       var newQuestionId = 0;
+      // Get the next question id.  Holes in the order are ok.
       $scope.survey.questions.forEach(function(question) {
         newQuestionId = Math.max(newQuestionId, question.questionId);
       });
       newQuestionId++;
       question.questionId = newQuestionId;
       $scope.survey.questions.push(question);
-      
-      console.log('(info) added question with id: ' + newQuestionId);
     }
     
     $scope.editableQuestion = null;
   }
   
-  function saveSurvey() {
+  function saveSurvey(theSurvey) {
 
-    console.log('(info) saving survey...');
+    $scope.isSurveyWorking = true;
+    
+    if (theSurvey.uuid) {
+      
+      // Update the survey
+      theSurvey.$update(function() {
+        
+        // Updated ok
+        $scope.isSurveyWorking = false;
+
+
+      }, function() {
+        
+        // Error updating
+        $scope.isSurveyWorking = false;
+
+
+      })
+      
+    } else {
+      
+      // Insert the survey
+      theSurvey.$save(function() {
+        
+        // Saved ok
+        $scope.isSurveyWorking = false;
+
+
+      }, function() {
+        
+        // Crud, an error
+        $scope.isSurveyWorking = false;
+
+
+      });
+    }
     
   };
   
   $scope.saveSurvey = function() {
-    saveSurvey();
+    saveSurvey($scope.survey);
   }
   
   $scope.removeSurvey = function() {
     console.log('(info) removing survey...');
-    $scope.survey.inactive_ind = true;
-    saveSurvey();
+    $scope.survey.inactiveInd = true;
+    saveSurvey($scope.survey);
   }
   
   
@@ -270,7 +295,7 @@ var eventController = app.controller('eventController', function($scope, Event, 
   }
 });
 
-// Prevent the default html action for following # anchors
+// Directive to prevent the default html action for following # anchors
 eventController.directive('noClick', function() {
   return function(scope, element, attrs) {
     $(element).click(function(event) {
