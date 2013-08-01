@@ -16,3 +16,12 @@ exports.index = function(req, res){
   });
 
 };
+
+
+exports.specialEventsTeamExtCurrAct = function(req, res) {
+  
+  application.buildApplicationPagevars(req, { title: 'Special Event' }, function(pageVars) {
+    res.render('specialevents/teamextracurricularactivity', pageVars);
+  });
+  
+}
