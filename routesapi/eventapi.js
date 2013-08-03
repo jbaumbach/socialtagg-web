@@ -11,6 +11,9 @@ var userManager = require('./../data/userManager')
   , application = require('../common/application')
   ;
 
+/*
+  Return a list of events owned by the logged in user
+ */
 exports.eventsOwnedByUserId = function(req, res) {
   
   //
@@ -83,7 +86,7 @@ function validateRawEvent(eventRaw, invalidDataMsgs) {
 }
 
 /*
-Insert an event into the DB
+  Insert an event into the DB
  */
 exports.insertOwnedEvent = function(req, res) {
   
@@ -115,6 +118,9 @@ exports.insertOwnedEvent = function(req, res) {
   }
 }
 
+/*
+  Update an event in the database
+ */
 exports.updateOwnedEvent = function(req, res) {
   
   var uuid = req.params.id;
@@ -195,6 +201,9 @@ exports.deleteOwnedEvent = function(req, res) {
   }
 }
 
+/*
+  Get an event survey
+ */
 exports.getEventSurvey = function(req, res) {
   
   var eventId = req.params.eventId;
@@ -226,12 +235,15 @@ exports.getEventSurvey = function(req, res) {
   
 }
 
+/*
+  Todo: validate survey fields when submitted
+ */
 function validateRawSurvey(surveyRaw, invalidDataMsgs) {
   return invalidDataMsgs;
 }
 
-/**
- Inserts a new survey into the database
+/*
+  Inserts a new survey into the database
  */
 exports.insertEventSurvey = function(req, res) {
   
@@ -261,6 +273,9 @@ exports.insertEventSurvey = function(req, res) {
   }
 }
 
+/*
+  Updates a server in the database
+ */
 exports.updateEventSurvey = function(req, res) {
   
   var surveyRaw = req.body;

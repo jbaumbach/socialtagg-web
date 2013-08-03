@@ -17,7 +17,7 @@ exports.index = function(req, res){
 
 };
 
-
+// 2013/7/31 JB - Tim's team event for school
 exports.specialEventsTeamExtCurrAct = function(req, res) {
   
   application.buildApplicationPagevars(req, { title: 'Special Event' }, function(pageVars) {

@@ -19,3 +19,12 @@ describe('homepage', function() {
       .expect(200, done);
   });
 });
+
+describe('misc. pages', function() {
+  it('should bring up Tim\'s team page', function(done) {
+    request(app)
+      .get('/specialevents/teamextracurricularactivity')
+      .expect(/Team Extracurricular Activity/)
+      .expect(200, done);
+  });
+});

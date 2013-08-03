@@ -4095,6 +4095,15 @@ table.standard-table tr:hover td {background-color: #fafafa;}
   margin: -5px;
 }
 
+.my-events .new-event .event-datetime .column, 
+.my-events .new-event .event-datetime .columns {
+  margin-left: 0;
+}
+
+.event-datetime .field input {
+  width: 80px;
+}
+
 /* =================================================================== */
 /* Media Queries
 ====================================================================== */

@@ -54,6 +54,7 @@ function userGridEventFromId(eventId) {
     uuid: eventId
   };
 }
+
 /**
  Generate the "options" object that the usergrid component uses when
  inserting or updating data in the database.
@@ -100,19 +101,13 @@ function userGridEventFromData(postedEvent) {
     // http://apigee.com/docs/usergrid/content/data-model
     //
     // It has some restrictions as far as allowed characters, which apparently
-    // // are undocumented.  Let's use MD5 to be safe.
+    // are undocumented.  Let's use MD5 to be safe.
     //
     result.name = 'name' + globalFunctions.md5Encode(postedEvent.owner + postedEvent.name + new Date());
     
   } else {
 
     result.uuid = postedEvent.uuid;
-
-    //
-    // Get the entity from usergrid during the "CreateEntity()" call, rather
-    // than generating an error.  This allows updates on the object.
-    //
-    // result.getOnExist = true;
 
   }
 
@@ -158,7 +153,7 @@ exports.insertEvent = function(event, callback) {
    callback - the callback function, with this signature:
      err - description of any errors that occurred
      createdEvent - the new event that was update
-   */
+*/
 exports.updateEvent = function(event, callback) {
   
   //

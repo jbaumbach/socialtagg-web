@@ -106,6 +106,7 @@ var eventController = app.controller('eventController', function($scope, Event, 
   }
   
   $scope.saveEvent = function (event) {
+    // If existing event, updated it else create it.
     if (event.uuid) {
       updateEvent(event);
     }
@@ -231,6 +232,8 @@ var eventController = app.controller('eventController', function($scope, Event, 
   
   function saveSurvey(theSurvey) {
 
+    console.log('saving survey...');
+    
     $scope.isSurveyWorking = true;
     
     if (theSurvey.uuid) {

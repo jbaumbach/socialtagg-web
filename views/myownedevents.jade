@@ -4,6 +4,7 @@ extends layout
 block javascripts
 
   script(type='text/javascript', src='/js/ng-events.js')
+  //- script(type='text/javascript', src='//cdnjs.cloudflare.com/ajax/libs/jstimezonedetect/1.0.4/jstz.min.js')
 
 block content
 
@@ -78,20 +79,45 @@ block content
   
             .field
               label(for='inputDescription') Description
-              input.text(type='text', size='100', id='inputDescription', ng-model='editableEvent.description', required)
+              //- input.text(type='text', size='100', id='inputDescription', ng-model='editableEvent.description', required)
+              textarea(id='inputDescription', ng-model='editableEvent.description', required)
   
             .field
               label(for='inputAddress') Address
               input.text(type='text', size='100', id='inputAddress', ng-model='editableEvent.address', required)
-  
-            .field
-              label(for='inputDate') Date
-              input.text(type='date', id='inputDate', ng-model='editableEvent.startDate', required)
-  
-            .field
-              label(for='inputHours') Event Duration (hours)
-              input.text(type='number', size='3', id='inputHours', ng-model='editableEvent.durationHours', required)
-  
+
+            .container.event-datetime
+              .two.columns
+                .field
+                  label(for='inputStartDate') Start Date
+                  input.text(type='text', id='inputStartDate', ng-model='editableEvent.startDate', required, placeholder='m/d/yyyy')
+
+              .two.columns
+                .field
+                  label(for='inputStartTime') Time
+                  input.text(type='text', id='inputStartTime', ng-model='editableEvent.startTime', required, placeholder='h:mm AM/PM')
+
+              .two.columns
+                .field
+                  label(for='inputTimeZone') Time Zone
+                  select(id='inputTimeZone', ng-model='editableEvent.timezone')
+                    option(value='-8') PST
+                    option(value='-7') MST
+                    option(value='-6') CST
+                    option(value='-5') EST
+
+            .container.event-datetime
+              .two.columns
+                .field
+                  label(for='inputEndDate') End Date
+                  input.text(type='text', id='inputEndDate', ng-model='editableEvent.endDate', required, placeholder='m/d/yyyy')
+              
+              .two.columns
+                .field
+                  label(for='inputEndTime') Time
+                  input.text(type='text', id='inputEndTime', ng-model='editableEvent.endTime', required, placeholder='h:mm AM/PM')
+              
+
             .field
               label(for='inputWebsite') Website Url
               input.text(type='url', size='100', id='inputWebsite', ng-model='editableEvent.website')
@@ -104,7 +130,7 @@ block content
   
         .six.columns
           .headline
-            h4 Event Survey Questions
+            h4 Post-Event Survey
           
           div(ng-show='isCurrentEventSaved && (!survey || survey.inactiveInd)')
             a.button.color(href='#', ng-click='showSurvey()', no-click) Add a Survey
