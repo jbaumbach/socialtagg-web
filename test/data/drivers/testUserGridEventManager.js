@@ -29,7 +29,7 @@ describe('userGridEventManager', function() {
       "eventId": "42e60bfa-fd80-11e2-b3fe-3df7a1a1c275",
       "isAnonymous": true,
       "whenToShowType": "showAfterXMins",
-      "whentoShowMins": 10,
+      "whentoShowMins": 20,
       "inactiveInd": false,
       "questions": [
         {
