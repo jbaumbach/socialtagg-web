@@ -337,7 +337,7 @@ exports.userGridSurveyFromData = function (postedSurvey) {
     event_uuid: postedSurvey.eventId,
     is_anonymous: true,
     when_to_show_type: postedSurvey.whenToShowType,
-    when_to_show_mins: 10,
+    when_to_show_mins: postedSurvey.whentoShowMins,
     inactive_ind: postedSurvey.inactiveInd,
     questions: postedSurvey.questions
     
