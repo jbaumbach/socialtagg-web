@@ -21,14 +21,16 @@ describe('Event model', function() {
       modified: new Date(),
       created: 1360536391023,      // Sun Feb 10 2013
       address: '1234 Tattoine St.',
+      startDate: '2/2/2121',
+      startTime: '1:30 PM',
+      endDate: '2/3/2121',
+      endTime: '4:30 PM',
       timezoneOffset: -8, // PST
-      startDate: new Date(),
       checkinPeriodStartTimeMins: 15,
-      durationHours: 55,
       locationLat: -34.4534,
       locationLon: 123.2323,
       website: 'http://www.holycrap.com',
-      inactiveDate: new Date()
+      inactiveInd: true
     };
     
     var testEvent = new Event(initData);

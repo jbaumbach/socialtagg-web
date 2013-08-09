@@ -4,7 +4,7 @@ extends layout
 block javascripts
 
   script(type='text/javascript', src='/js/ng-events.js')
-  //- script(type='text/javascript', src='//cdnjs.cloudflare.com/ajax/libs/jstimezonedetect/1.0.4/jstz.min.js')
+  //- This is awesome, but kind of a pain.  Todo. script(type='text/javascript', src='//cdnjs.cloudflare.com/ajax/libs/jstimezonedetect/1.0.4/jstz.min.js')
 
 block content
 
@@ -52,6 +52,7 @@ block content
                   a.button.gray(href='#', ng-click='deleteEvent(event)', no-click) Delete
                   a.button.color(href='{{ event.path }}', target='_blank') View
                   i.icon-spinner.icon-spin.icon-2x(ng-show='event.isWorking')
+          
           p(ng-show='!hasEvents && isLoading') Loading events...
           
           p(ng-show='!hasEvents && !isLoading') You do not own any events at this time.
@@ -78,15 +79,10 @@ block content
               input.text(type='text', size='100', id='inputName', ng-model='editableEvent.name', required)
   
             .field
-              label(for='inputDescription') Description
-              //- input.text(type='text', size='100', id='inputDescription', ng-model='editableEvent.description', required)
-              textarea(id='inputDescription', ng-model='editableEvent.description', required)
-  
-            .field
               label(for='inputAddress') Address
               input.text(type='text', size='100', id='inputAddress', ng-model='editableEvent.address', required)
 
-            .container.event-datetime
+            .container.six.columns.event-datetime
               .two.columns
                 .field
                   label(for='inputStartDate') Start Date
@@ -100,13 +96,13 @@ block content
               .two.columns
                 .field
                   label(for='inputTimeZone') Time Zone
-                  select(id='inputTimeZone', ng-model='editableEvent.timezone')
+                  select(id='inputTimeZone', ng-model='editableEvent.timezoneOffset')
                     option(value='-8') PST
                     option(value='-7') MST
                     option(value='-6') CST
                     option(value='-5') EST
 
-            .container.event-datetime
+            .container.six.columns.event-datetime
               .two.columns
                 .field
                   label(for='inputEndDate') End Date
@@ -116,14 +112,16 @@ block content
                 .field
                   label(for='inputEndTime') Time
                   input.text(type='text', id='inputEndTime', ng-model='editableEvent.endTime', required, placeholder='h:mm AM/PM')
-              
 
             .field
               label(for='inputWebsite') Website Url
               input.text(type='url', size='100', id='inputWebsite', ng-model='editableEvent.website')
-  
-  
-            p
+
+            .field.five.columns.event-datetime
+              label(for='inputDescription') Description
+              textarea(id='inputDescription', ng-model='editableEvent.description', required)
+
+          p
             a.button.color(href='#', ng-click='saveEvent(editableEvent)', no-click) Save
             a.button.gray(href='#', ng-click='cancelEdit()', no-click) Close
             i.icon-spinner.icon-spin.icon-2x(ng-show='isWorking')
@@ -131,7 +129,7 @@ block content
         .six.columns
           .headline
             h4 Post-Event Survey
-          
+
           div(ng-show='isCurrentEventSaved && (!survey || survey.inactiveInd)')
             a.button.color(href='#', ng-click='showSurvey()', no-click) Add a Survey
           
@@ -140,8 +138,19 @@ block content
           
           div(ng-show='isCurrentEventSaved && isLoadingSurvey')
             p Looking for a survey...
-          
-          .survey(ng-show='isCurrentEventSaved && survey && !survey.inactiveInd && !isLoadingSurvey')
+
+          form.survey(ng-show='isCurrentEventSaved && survey && !survey.inactiveInd && !isLoadingSurvey')
+
+            .field
+              label(for='surveyWhenToShowType') When to show survey to attendees
+              select(id='surveyWhenToShowType', ng-model='survey.whenToShowType', ng-options='q.value as q.label for q in surveyTypes')
+
+            .field(ng-show='survey.whenToShowType == "showAfterXMins"')
+              label(for='surveyWhenToShowMins') Number of minutes
+              input.text(type='text', id='surveyWhenToShowMins', ng-model='survey.whentoShowMins')
+
+            .headline
+              h4 Survey Questions
             
             ol.survey-questions(ng-show='survey.questions && survey.questions.length > 0')
               li(ng-repeat='question in survey.questions') 
@@ -152,7 +161,7 @@ block content
             
             a.button.color(href='#', ng-click='addSurveyQuestion()', no-click) Add Question
             
-            form.form-horizontal.new-survey-question(ng-show='editableQuestion')
+            .form-horizontal.new-survey-question(ng-show='editableQuestion')
 
               .headline
                 h4 Survey Question Detail
@@ -164,7 +173,7 @@ block content
               .field
                 label(for='surveyQuestionType') Answer Type 
               
-                .container
+                .container.six.columns
                   .three.columns
                     select(ng-model='editableQuestion.type', ng-options='q.value as q.label for q in questionTypes')
               
@@ -192,17 +201,9 @@ block content
                       input.text(type='text', ng-model='multichoicePossibleAnswer', id='multichoicePossibleAnswer', required)
                     .one.column
                       i.ico-circle-plus(ng-click='saveMultichoicePossibleAnswer()')
-  
+
             p
+            
             a.button.color(href='#', ng-click='saveSurvey()', no-click) Save Survey
             a.button.gray(href='#', ng-click='removeSurvey()', no-click) Remove Survey
             i.icon-spinner.icon-spin.icon-2x(ng-show='isSurveyWorking')
-
-  
-  
-  
-
-
-
-
-

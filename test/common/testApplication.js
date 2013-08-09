@@ -285,6 +285,84 @@ describe('application class', function() {
     globalFunctions.getSessionInfo = tempGetSessionInfo;
 
     done();
+  });
+  
+  it('should get constituent data parts from a date', function() {
+    
+    var r = application.getContituentDateParts(1359840896000, -8);  // or Sat Feb 02 2013 13:34:56 GMT-0800 (PST)
+    
+    assert.equal(r.date, '2/2/2013', 'didn\'t get right date');
+    assert.equal(r.time, '1:34 PM', 'didn\'t get right time back');
+    
+  });
+
+  it('shouldn\'t bomb on bad input date', function() {
+
+    var b = 'baddate';
+    var r = application.getContituentDateParts(b, 0);
+
+  });
+
+  //
+  // Known parts that should be both converted and deconstructed when in daylight svgs time
+  //
+  var d_1 = '7/7/2013';
+  var t_1 = '3:01 PM';
+  var tz_1 = "-8";
+
+  var e_1 = 1373238060000;
+
+  it('should get constituent date parts from another date when in dst', function() {
+
+    var r = application.getContituentDateParts(e_1, tz_1);  // 
+
+    assert.equal(r.date, d_1, 'didn\'t get right date');
+    assert.equal(r.time, t_1, 'didn\'t get right time back');
+
+  });
+  
+  it('should put date and time strings together properly when in dst', function() {
+    
+    var r = application.getDatetimeFromStringParts(d_1, t_1, tz_1);
+    
+    assert.equal(r, e_1, 'didn\'t get right datetime back');
+    
+  })
+
+  //
+  // Known parts that should be both converted and deconstructed when in daylight svgs time
+  //
+  var d_2 = '11/10/2013';
+  var t_2 = '3:45 PM';
+  var tz_2 = "-8";
+
+  var e_2 = 1384127100000;
+
+  it('should get constituent date parts from another date when out of dst', function() {
+
+    // console.log('testing: ' + e_2);
+    
+    var r = application.getContituentDateParts(e_2, tz_2);  // 
+
+    assert.equal(r.date, d_2, 'didn\'t get right date');
+    assert.equal(r.time, t_2, 'didn\'t get right time back');
+
+  });
+
+  it('should put date and time strings together properly when out of dst', function() {
+
+    var r = application.getDatetimeFromStringParts(d_2, t_2, tz_2);
+
+    // console.log('testing2: ' + e_2);
+    assert.equal(r, e_2, 'didn\'t get right datetime back');
+
+  })
+  
+  it('should return null if date parts not valid', function() {
+    
+    var r = application.getDatetimeFromStringParts('dfas', 'ugga', '-8');
+    assert.ok(!r, 'didn\'t get false back');
+    
   })
 });
   

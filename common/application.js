@@ -14,6 +14,8 @@ var util = require('util')
   , check = require('validator').check
   , sanitize = require('validator').sanitize
   , CSV = require('csv-string')
+  , moment = require('moment')
+  , sprintf = require("sprintf-js").sprintf
   , thisModule = this
   ;
 
@@ -346,3 +348,74 @@ exports.buildUserExportFile = function(users, format, callback) {
   callback(null, resultData);
   
 };
+
+/*
+  Process a unix date and timezone and return local date and time. 
+   
+  Parameters:
+    dateMs: time in unix format
+    timezoneOffset: the integer timezone offset value
+    
+  Returns:
+    Object with properties:
+      date: the date string in M/D/YYYY format
+      time: the time string in h:m A format
+ */
+exports.getContituentDateParts = function(dateMs, timezoneOffset) {
+  
+  var result = {};
+  
+  var d = moment.utc(dateMs);
+  d.zone(timezoneOffset);
+  d.local();
+
+  //
+  // DST is one hour ahead of our tzoffset, let's correct for it since we're displaying
+  // in non-DST
+  //
+  if (d.isDST()) {
+    // console.log('is in DST');
+    d.subtract('hours', 1);
+  }
+  
+  result.date = d.format('M/D/YYYY');
+  result.time = d.format('h:mm A');
+  
+  return result;
+};
+
+/*
+  Take the passed date, time, and tz strings and convert to a Javascript epoch date number
+  Parameters:
+    dateStr: a date, formatted as 'm/d/yyyy'
+    timeStr: a time, formatted as 'h:mm AM'
+    tzOffset: a timezone offset, in standard time (not daylight time!)
+    
+  Returns:
+    The epoch date number (a big int) or undefined if the strings aren't parseable
+ */
+exports.getDatetimeFromStringParts = function(dateStr, timeStr, tzOffset) {
+
+  var result;
+  
+  //
+  // Check for validity of the date and time without timezone first.  Appending the timezone
+  // always makes it valid even if the strings are not.
+  //
+  var isValid = moment(dateStr + ' ' + timeStr).isValid();
+  
+  if (isValid) {
+
+    var dateTimeStr = dateStr + ' ' + timeStr + sprintf(' GMT%+02d00', parseInt(tzOffset));
+
+    result = moment(dateTimeStr).valueOf();
+    
+    //
+    // Submitted time is one hour behind our tzoffset when we're in DST.  
+    // However, moment is smart enough to correct for this.  No need to manually
+    // correct.
+    
+  } 
+  
+  return result;
+}

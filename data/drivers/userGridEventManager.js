@@ -20,7 +20,7 @@ var util = require('util')
  */
 exports.eventFromUserGridEvent = function(userGridEvent) {
 
-  return new Event({
+  var constructionData = {
     uuid: userGridEvent.get('uuid'),
     owner: userGridEvent.get('owner'),
     name: userGridEvent.get('event_name'),
@@ -29,14 +29,41 @@ exports.eventFromUserGridEvent = function(userGridEvent) {
     created: userGridEvent.get('created'),
     address: userGridEvent.get('address'),
     timezoneOffset: userGridEvent.get('timezone_offset'),
-    startDate: userGridEvent.get('start_date'),
     checkinPeriodStartTimeMins: userGridEvent.get('checkin_period_start_mins'),
-    durationHours: userGridEvent.get('duration_hours'),
     locationLat: userGridEvent.get('locationLat'),
     locationLon: userGridEvent.get('locationLon'),
     website: userGridEvent.get('website'),
     inactiveInd: userGridEvent.get('inactive_ind')
-  });
+  }
+  
+  //
+  // Break down dates to human digestible forms if we can
+  //
+  var sd = userGridEvent.get('start_date');
+  
+  if (sd && constructionData.timezoneOffset) {
+    
+    var parts = application.getContituentDateParts(sd, constructionData.timezoneOffset);
+    constructionData.startDate = parts.date;
+    constructionData.startTime = parts.time;
+    
+  } else {
+    console.log('(warning) eventFromUserGridEvent: no data to build start date');
+  }
+  
+  var ed = userGridEvent.get('end_date');
+  
+  if (ed && constructionData.timezoneOffset) {
+    
+    var parts = application.getContituentDateParts(ed, constructionData.timezoneOffset);
+    constructionData.endDate = parts.date;
+    constructionData.endTime = parts.time;
+    
+  } else {
+    console.log('(warning) eventFromUserGridEvent: no data to build end date');
+  }
+  
+  return new Event(constructionData);
 };
 
 /**
@@ -85,10 +112,10 @@ function userGridEventFromData(postedEvent) {
     event_name: postedEvent.name,
     description: postedEvent.description,
     address: postedEvent.address,
-    timzone_offset: postedEvent.timezoneOffset,
     start_date: postedEvent.startDate,
+    end_date: postedEvent.endDate,
+    timezone_offset: postedEvent.timezoneOffset,
     checkin_period_start_mins: postedEvent.checkinPeriodStartTimeMins,
-    duration_hours: postedEvent.durationHours,
     website: postedEvent.website,
     inactive_ind: postedEvent.inactiveInd 
 
@@ -309,7 +336,7 @@ exports.userGridSurveyFromData = function (postedSurvey) {
 
     event_uuid: postedSurvey.eventId,
     is_anonymous: true,
-    when_to_show_type: 1,
+    when_to_show_type: postedSurvey.whenToShowType,
     when_to_show_mins: 10,
     inactive_ind: postedSurvey.inactiveInd,
     questions: postedSurvey.questions

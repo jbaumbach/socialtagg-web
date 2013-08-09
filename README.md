@@ -88,9 +88,9 @@
   
     $ npm list
   
-  To install/update components (all the dependencies in package.json):
+  To install/update components (gets the code from npm for the version listed in package.json):
   
-    $ npm update
+    $ npm update [component]
     
   Be sure to run all the tests after updating your components.  Something may have broken.
   

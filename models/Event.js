@@ -20,14 +20,16 @@ var Event = function(values) {
   this.modified = values.modified || '';
   this.created = values.created || '';
   this.address = values.address || '';
-  this.timezoneOffset = values.timezoneOffset || '';
   this.startDate = values.startDate || '';
+  this.startTime = values.startTime || '';
+  this.endDate = values.endDate || '';
+  this.endTime = values.endTime || '';
+  this.timezoneOffset = values.timezoneOffset || '';
   this.checkinPeriodStartTimeMins = values.checkinPeriodStartTimeMins || '';
-  this.durationHours = values.durationHours || '';
   this.locationLat = values.locationLat || '';
   this.locationLon = values.locationLon || '';
   this.website = values.website || '';
-  this.inactiveDate = values.inactiveDate || '';
+  this.inactiveInd = values.inactiveInd || '';
 
   
   // Additional initialization

@@ -13,6 +13,7 @@ angular.module("eventService", ["ngResource"]).
     );
   });
 
+
 angular.module('surveyService', ['ngResource']).
   factory("Survey", function($resource) {
     return $resource(
@@ -27,7 +28,7 @@ angular.module('surveyService', ['ngResource']).
 app.requires.push('eventService');
 app.requires.push('surveyService');
 
-var eventController = app.controller('eventController', function($scope, Event, Survey) {
+var eventController = app.controller('eventController', function($scope, $dialog, Event, Survey) {
 
   $scope.isCurrentEventSaved = false;
   $scope.isLoading = true;
@@ -96,7 +97,26 @@ var eventController = app.controller('eventController', function($scope, Event, 
       }
     }
   }
-  
+
+  /*
+    Display an OK/Cancel box, and call the specified function if the user clicks OK.
+   */
+  var continueIfUserConfirms = function(title, msg, continueFunction) {
+
+    var btns = [{result:'cancel', label: 'Cancel'}, {result:'ok', label: 'OK', cssClass: 'btn-primary'}];
+
+    $dialog.messageBox(title, msg, btns)
+      .open()
+      .then(function(result){
+        
+        var shouldContinue = (result === 'ok');
+        
+        if (shouldContinue) {
+          continueFunction();
+        }
+      });
+  }
+
   $scope.showEdit = function () {
     setEdit(true, new Event());
   };
@@ -120,18 +140,27 @@ var eventController = app.controller('eventController', function($scope, Event, 
   };
 
   $scope.deleteEvent = function (event) {
-    event.isWorking = true;
-    event.$delete(function() {
+    
+    var deleteEventFunction = function() {
       
-      $scope.events = _.without($scope.events, event);
-      $scope.hasEvents = $scope.events.length > 0;
-      
-      setEdit(false, null);
-
-    }, function() {
-      
-      event.isWorking = false;
-    });
+      event.isWorking = true;
+      event.$delete(function() {
+        
+        $scope.events = _.without($scope.events, event);
+        $scope.hasEvents = $scope.events.length > 0;
+        
+        setEdit(false, null);
+  
+      }, function() {
+        
+        event.isWorking = false;
+      });
+    }
+    
+    var title = 'Confirm Delete';
+    var msg = 'Are you sure you wish to delete event "' + event.name + '"?';
+    
+    continueIfUserConfirms(title, msg, deleteEventFunction);
   };
 
   $scope.isEditVisible = false;
@@ -180,7 +209,13 @@ var eventController = app.controller('eventController', function($scope, Event, 
   $scope.showSurvey = function() {
     $scope.survey.inactiveInd = false;
   }
-  
+
+  $scope.surveyTypes = [
+    { label: 'When attendee checks in', value: 'showOnCheckin' },
+    { label: 'A specific number of minutes after event ends', value: 'showAfterXMins' },
+    { label: 'The next morning', value: 'showNextMorn' }
+  ];
+
   $scope.questionTypes = [
     { label: 'Scale of 1 to 5', value: 'scale_1to5' },
     { label: 'Multiple choice', value: 'multichoice' },
@@ -243,6 +278,7 @@ var eventController = app.controller('eventController', function($scope, Event, 
         
         // Updated ok
         $scope.isSurveyWorking = false;
+        setErr(false, null);
 
 
       }, function() {
@@ -250,8 +286,9 @@ var eventController = app.controller('eventController', function($scope, Event, 
         // Error updating
         $scope.isSurveyWorking = false;
 
-
-      })
+        // Note: "arguments" are returned from the server
+        setErr(true, arguments);
+      });
       
     } else {
       
@@ -260,6 +297,7 @@ var eventController = app.controller('eventController', function($scope, Event, 
         
         // Saved ok
         $scope.isSurveyWorking = false;
+        setErr(false, null);
 
 
       }, function() {
@@ -267,7 +305,8 @@ var eventController = app.controller('eventController', function($scope, Event, 
         // Crud, an error
         $scope.isSurveyWorking = false;
 
-
+        // Note: "arguments" are returned from the server
+        setErr(true, arguments);
       });
     }
     
@@ -278,9 +317,18 @@ var eventController = app.controller('eventController', function($scope, Event, 
   }
   
   $scope.removeSurvey = function() {
-    console.log('(info) removing survey...');
-    $scope.survey.inactiveInd = true;
-    saveSurvey($scope.survey);
+    
+    function removeIt() {
+      console.log('(info) removing survey...');
+      $scope.survey.inactiveInd = true;
+      saveSurvey($scope.survey);
+    }
+
+    var title = 'Confirm Remove Survey';
+    var msg = 'Are you sure you wish to remove the survey for this event?';
+    
+    continueIfUserConfirms(title, msg, removeIt);
+
   }
   
   
