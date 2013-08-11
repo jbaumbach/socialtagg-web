@@ -21,7 +21,8 @@
     "validator": "1.4.0",
     "underscore": "1.5.1",
     "sprintf-js": "0.0.7",
-    "moment": "2.1.0"
+    "moment": "2.1.0",
+    "memory-cache": "0.0.5"
   },
   "engines": {
     "node": "0.8.14",

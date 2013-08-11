@@ -5,6 +5,7 @@
  */
 
 var util = require('util')
+  , path = require('path')
   , thisModule = this
   ;
 
@@ -147,6 +148,15 @@ exports.convertDate = function(inputDate, defaultIfNull) {
   return result;
 };
 
+//
+// Returns the filename without extenstion for the .js file at the passed path
+// example:
+//   '/my/path/to/file.js'  => 'file'
+//
+exports.filenameNoExtension = function(pathAndName) {
+  var fileName = path.basename(pathAndName, '.js');
+  return fileName;
+}
 
 //***********************************************
 // Class extensions

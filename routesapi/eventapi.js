@@ -15,7 +15,9 @@ var userManager = require('./../data/userManager')
   , thisModule = this
   ;
 
-
+//
+// Create a validator that collects errors
+//
 function ErrorCollectingValidator() {
 
   //

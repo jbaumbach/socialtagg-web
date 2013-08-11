@@ -22,6 +22,8 @@ var
   // db = require('./drivers/mongoUserManager')
   db = require('./drivers/userGridUserManager')
   , globalFunctions = require('../common/globalfunctions')
+  , cache = require('../common/cache')
+  , User = require('../models/User')
   , thisModule = this
 ;
 
@@ -30,7 +32,26 @@ var
 //********************************************************************************
 
 exports.getUser = function(id, resultCallback) {
-  db.getUser(id, resultCallback);
+  
+  var cacheKey = User.cacheKey(id);
+  
+  cache.getFromCache(cacheKey, function(user) {
+    if (user) {
+      
+      resultCallback(user);
+      
+    } else {
+
+      db.getUser(id, function(dbUser) {
+        
+        cache.addToCache(dbUser, function() {
+          resultCallback(dbUser);
+          
+        });
+      });
+    }
+  })
+  
 };
 
 exports.getUserByUsername = function(email, resultCallback) {
@@ -42,6 +63,9 @@ exports.getUserByEmail = function(emailAddr, resultCallback) {
 }
 
 exports.upsertUser = function(user, resultCallback) {
+  
+  // todo: invalidate the cache for the user id
+  
   db.upsertUser(user, resultCallback);
 };
 

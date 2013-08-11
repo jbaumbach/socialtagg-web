@@ -126,4 +126,25 @@ describe('User model', function() {
     assert.equal(testUser.firstName, 'hello', 'didn\'t get firstname back');
     assert.equal(testUser.lastName, 'there', 'didn\'t get lastname back');
   });
+  
+  it('should return a cache key', function() {
+    var theId = 'yoda';
+    var u = new User( { id: theId } );
+    var k = 'User' + theId;
+    
+    var r = u.cacheKey;
+    
+    assert.equal(r, k, 'didn\'t get right cache key');
+  })
+  
+  it('should statically get a cache key', function() {
+    var theId = 'yoda';
+    var k = 'User' + theId;
+    
+    var r = User.cacheKey(theId);
+    
+    assert.equal(r, k, 'didn\'t get a good static cache key');
+    
+  })
+  
 });

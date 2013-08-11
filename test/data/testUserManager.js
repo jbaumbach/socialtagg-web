@@ -36,6 +36,7 @@ var existingUserPW = 'tbd';
 var changeableUserEmail = 'blah@blah.com';
 var changeableUserName = 'John\'s Test User - Dont Modify';
 var changeablePw = util.format('%d', new Date());
+var changePwBackTo = 'yodayoda';
 var verificationCode = '343434';
 
   
@@ -305,8 +306,15 @@ describe('userManager', function() {
       userManager.validateCredentials('jbtestuser', changeablePw, function(user) {
         assert.ok(user != undefined, 'didn\'t validate new credentials');
         assert.equal(user.name, changeableUserName, 'didn\'t validate credentials properly');
-        done();
-      })
+        
+        //
+        // Reset pw back to original
+        //
+        userManager.setUserPasswordWithVerificationCodeByEmail(changeableUserEmail, verificationCode, changePwBackTo, function(err) {
+
+          done();
+        });
+      });
     });
   });
 

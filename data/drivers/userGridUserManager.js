@@ -283,10 +283,8 @@ exports.populateUserContaggs = function(userContaggIdList, resultCallback) {
   var expectedResultCount = userContaggIdList.length;
   
   //
-  // Join the results of the usergrid callbacks.  Node.js is single-threaded,
-  // so no worries about making code thread safe.
-  //
-  // http://stackoverflow.com/questions/4631774/coordinating-parallel-execution-in-node-js
+  // Todo: refactor this function to use the 'async' library - that 
+  // coordinates parallel execution
   //
   function processResult(resultUser) {
     resultUsers = resultUsers || [];
@@ -426,7 +424,7 @@ exports.getUserEventsOwned = function(id, resultCallback) {
         var event = resultEvents.getNextEntity();
         var userEvent = userGridEventManager.eventFromUserGridEvent(event);
         
-        console.log('Found event: ' + util.inspect(userEvent));
+        // console.log('Found event: ' + util.inspect(userEvent));
         
         result.push(userEvent);
 

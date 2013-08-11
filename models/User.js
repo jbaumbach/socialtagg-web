@@ -54,11 +54,13 @@ var User = function(values) {
   this.company = values.company || '';
   this.title = values.title || '';
   this.twitter = values.twitter || '';
-  this.avatarId = values.avatarId;
+  this.avatarId = values.avatarId || '';
 }
 
+
+
 //
-// Properties w/getters and setters.
+// Instance properties
 //
 
 //
@@ -124,6 +126,50 @@ Object.defineProperty(User.prototype, "name", {
 });
 
 //
+// Cache support
+//
+// Todo: find a way to put this in a superclass so there's less boilerplate in each class
+//
+
+//
+// Private static functions
+//
+function buildCacheKey(id) {
+  
+  var className = globalFunctions.filenameNoExtension(__filename);
+  return className + id;
+}
+
+
+Object.defineProperty(User.prototype, "cacheKey", {
+  get: function() {
+    return buildCacheKey(this.id);
+  }
+});
+
+
+Object.defineProperty(User.prototype, "cacheTtl", {
+  get: function() { return 10; }
+});
+
+
+//
+// Public static functions
+//
+User.cacheKey = function(id) {
+  return buildCacheKey(id);
+}
+
+//
+// End cache support
+//
+
+
+
+
+//
 // Export our class
 //
 module.exports = User;
+
+
