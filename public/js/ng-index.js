@@ -20,11 +20,12 @@ var loginController = app.controller('loginController', function($scope, $http, 
   $scope.init = function(pageVars) {
 
     $scope.isLoggedIn = pageVars.isLoggedIn;
-    console.log('found value isLoggedIn: ' + $scope.isLoggedIn);
     $scope.user = pageVars.user;
     $scope.serverPath = pageVars.serverPath;
     $scope.secureProtocol = pageVars.secureProtocol;
     $scope.loginDest = pageVars.loginDest;
+
+    console.log('found value loginDest: ' + $scope.loginDest);
 
     // $scope.setLoginMessage();
   }
@@ -109,3 +110,12 @@ var loginController = app.controller('loginController', function($scope, $http, 
   */
   
 })
+
+// Directive to prevent the default html action for following # anchors
+loginController.directive('noClick', function() {
+  return function(scope, element, attrs) {
+    $(element).click(function(event) {
+      event.preventDefault();
+    });
+  }
+});

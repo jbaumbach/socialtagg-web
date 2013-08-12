@@ -147,13 +147,14 @@ exports.getSanitizedUser = function(rawUser) {
 //
 // Get common links.  Todo: parse a common 'routes' class shared with other classes
 //
-exports.links = function() {
+exports.links = function(options) {
   return {
     home: thisModule.globalVariables.applicationHomepage,
     features: '/features',
     developers: '/developers',
     contact: '/contactus',
-    login: thisModule.globalVariables.secureProtocol + '://' + thisModule.globalVariables.serverPath + '/login',
+    login: thisModule.globalVariables.secureProtocol + '://' + thisModule.globalVariables.serverPath + '/login' + 
+      ((options && options.logindest) ? '?logindest=' + options.logindest : ''),
     logout: '/logout',
     facebook: '//www.facebook.com/socialtagg',
     twitter: '//www.twitter.com/socialtagg',
@@ -220,11 +221,20 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   //
   pageVars.public.serverPath = this.globalVariables.serverPath;
   pageVars.public.secureProtocol = this.globalVariables.secureProtocol;
-  pageVars.public.loginDest = '/';  // pageVars.loginDest;
   
-  //console.log('loginDest: ' + pageVars.public.loginDest);
+  var ld = req.query.logindest || req.url;
   
-  pageVars.links = this.links();
+  if (ld.match(/login/i)) {
+    console.log('(warning) loginDest: found word "login" in url, probaby not right.  Make sure all links to the login ' +
+      'page have ?logindest=[page] on them.');
+    ld = '/';
+  }
+  
+  pageVars.public.loginDest = ld;
+    
+  console.log('loginDest: ' + pageVars.public.loginDest);
+  
+  pageVars.links = this.links({ logindest: ld});
   
   //
   // Temporary items - dark release support
@@ -233,7 +243,9 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   
   // specified in app.js for 'development'
   pageVars.showevents = this.globalVariables.showevents || req.query.showevents;
-  
+  pageVars.showsocial = this.globalVariables.showsocial || req.query.showsocial;
+
+
   function done() {
     // Encode our public objects, to be readable by the client (Angular)
     pageVars.publicPageVars = JSON.stringify(pageVars.public);

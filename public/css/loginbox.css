@@ -6,10 +6,13 @@
   width: 350px; 
 }
 
+/*
 #loginbox .button, #loginbox input[type="button"] {
   padding: 0;  
 }
+*/
 
+/*
 #loginbox h1,#loginbox h2,#loginbox h3,#loginbox h4,#loginbox h5,#loginbox h6{ font-weight:bold; font-family: 'Droid Sans', sans-serif;  color:#434853;  text-shadow:0px 1px 0px #fff; letter-spacing: -0.5px;  }
 #loginbox h1{ font-size:20px; color: #2d932b; padding: 0 0 0 0; border-bottom: 1px solid #e0e0e0;}
 #loginbox h2{ font-size:24px;}
@@ -17,11 +20,17 @@
 #loginbox h4{ font-size:14px;}
 #loginbox h5{ font-size:12px;}
 #loginbox h6{ font-size:10px;}
+*/
 
 #loginbox input, #loginbox textarea { font-family:tahoma, arial; font-size:12px; color:#57595d;}
 
-
+/*
 #loginbox a{ text-decoration:none;}
+*/
+
+#loginbox form a {
+  margin-top: 25px;
+}
 #loginbox p{ line-height:20px;}
 
 /*
@@ -44,13 +53,14 @@
 #loginbox .twitter {background: url(../images/loginbox/twitter_btn.png) no-repeat; height: 32px; width: 157px; display: block; float: left; margin-top: 10px;}
 #loginbox .twitter:hover {background: url(../images/loginbox/twitter_btn.png) no-repeat; background-position: 0 -32px;}
 #loginbox .twitter:active {margin-top: 11px}
-#loginbox .btn_1 {padding: 8px 0 0 35px; text-shadow: -1px -1px 0px #0083b3; color:#fff; font-weight: bold; font-size: 12px; height: 32px; display: block;}
+#loginbox .btn_1 {padding: 8px 0 0 32px; text-shadow: -1px -1px 0px #0083b3; color:#fff; font-weight: bold; font-size: 12px; height: 32px; display: block;}
 
-#loginbox .fb {background: url(../images/loginbox/fb_btn.png) no-repeat; height: 32px; width: 157px; display: block; float: right; margin-top: 10px;}
+#loginbox .fb {background: url(../images/loginbox/fb_btn.png) no-repeat; height: 32px; width: 157px; display: block; float: left; margin-top: 10px;}
 #loginbox .fb:hover {background: url(../images/loginbox/fb_btn.png) no-repeat; background-position: 0 -32px;}
 #loginbox .fb:active {margin-top: 11px}
 #loginbox .btn_2 {padding: 8px 0 0 31px; text-shadow: -1px -1px 0px #366c96; color:#fff; font-weight: bold; font-size: 12px; height: 32px; display: block;}
 
+/*
 #loginbox .button {-webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; display: inline-block; float: right; margin-top: 18px;}
 #loginbox .button a {padding: 9px 26px 8px 26px; color:#fff; font-weight: bold; font-size: 14px; display: block;}
 
@@ -88,6 +98,8 @@
 
 #loginbox .button.blue:hover {background: #3897cd;}
 #loginbox .button.blue:active {margin-top: 19px;}
+*/
+
 
 /** Login Fields **/
 #loginbox #login {padding: 13px 0 0 0; border-top: 1px solid #e0e0e0;}
