@@ -15,6 +15,7 @@ var util = require('util')
   , globalFunctions = require('../../common/globalfunctions')
   , application = require('../../common/application')
   , userGridEventManager = require('./userGridEventManager')
+  , https = require('https')
   , thisModule = this
   ;
 
@@ -53,6 +54,34 @@ function userFromUserGridUser(userGridUser) {
     twitter: userGridUser.get('twitter'),
     avatarId: userGridUser.get('uuid_avatar_image')
   });
+}
+
+/*
+  Takes the record from FB->UG and converts it to a SocialTagg user
+ */
+exports.userFromFBLoginUser = function(fbUser) {
+  
+  var data = {
+    id: fbUser.uuid,
+    userName: fbUser.facebook.email,
+    name: fbUser.name || fbUser.facebook.name,
+    firstName: fbUser.first_name || fbUser.facebook.first_name,
+    lastName: fbUser.last_name || fbUser.facebook.last_name,
+    address: fbUser.postal_address,
+    email: fbUser.email || fbUser.facebook.email,
+    phone: fbUser.tel,
+    pictureUrl: application.processImageUrlForLargerSize(fbUser.picture),
+    createDate: fbUser.created,
+    createDateStr: new Date(fbUser.created).toDateString(),
+    website: fbUser.website || fbUser.url,
+    bio: fbUser.bio,
+    company: fbUser.company,
+    title: fbUser.title,
+    twitter: fbUser.twitter,
+    avatarId: fbUser.uuid_avatar_image
+  }
+  
+  return new User(data);
 }
 
 //
@@ -169,6 +198,70 @@ function getUserContaggsByOptions(options, resultCallback) {
 }
 
 //***************** Public functions ********************************
+
+/*
+ Looks up the passed Facebook access token and grabs the user from the db
+ Parameters:
+   accessToken: the access token returned from Facebook when user logged into the OAuth thingy
+   resultCallback: a callback function with this signature:
+     err: populated if something bad happened
+     user: the user object if we have one
+ */
+exports.validateFacebookLogin = function(accessToken, resultCallback) {
+
+  //
+  // This magical url will go to FB and do OAuth stuff, and ultimately return a new/existing UG user
+  //
+  var url = util.format('https://api.usergrid.com/tagg/tagg/auth/facebook?fb_access_token=%s', accessToken);
+ 
+  console.log('(info) validateFacebookLogin: calling: ' + url);
+  
+  globalFunctions.getDocumentAtUrl(url, function(err, ugResponse) {
+  
+    if (err) {
+      
+      console.log('(error) validateFacebookLogin 1: err: ' + err);
+      resultCallback(err);
+      
+    } else if (ugResponse.response.statusCode != 200) {
+      
+      console.log('(error) validateFacebookLogin 2: err: ' + ugResponse.response.statusCode);
+      resultCallback(ugResponse.response.statusCode);
+      
+    } else if (!ugResponse) {
+
+      console.log('(error) validateFacebookLogin 3: no response!');
+      resultCallback('weird - no response object but all is good???');
+      
+    } else {
+      
+      var ugUserRaw = JSON.parse(ugResponse.body);
+
+      if (ugUserRaw && ugUserRaw.access_token && ugUserRaw.user) {
+
+        var user = thisModule.userFromFBLoginUser(ugUserRaw.user);
+        
+        //
+        // Todo: we should really save the created user to UG if this is the first login, otherwise the apps
+        // may have bogus data.  It should be doable if the above function returns a 'dirty' flag or something of that
+        // nature.  Maybe it can just check the user id.
+        // 
+        
+        resultCallback(null, user);
+
+      } else {
+      
+        var msgPre = 'weird - can\'t parse JSON from UG or it\'s missing stuff.';
+        var msg = msgPre + '  It was: ' + util.inspect(ugResponse);
+        console.log('(error) validateFacebookLogin 4: ' + msg);
+        
+        resultCallback(msgPre + ' Check logs for details');
+        
+      }
+    }
+  });
+}
+  
 
 exports.getUser = function(id, resultCallback) {
 

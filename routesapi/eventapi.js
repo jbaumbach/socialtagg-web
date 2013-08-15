@@ -75,8 +75,6 @@ exports.eventsOwnedByUserId = function(req, res) {
 
       if (userEvents && userEvents.length > 0) {
 
-        console.log('(info) got events: ' + userEvents.length);
-
       } else {
 
         userEvents = [];
@@ -377,7 +375,7 @@ exports.insertEventSurvey = function(req, res) {
 
       } else {
 
-        res.send(200, insertedSurvey );
+        res.send(201, insertedSurvey );
       }
     });
   }

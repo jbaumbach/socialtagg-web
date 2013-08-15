@@ -6,6 +6,8 @@
 
 var util = require('util')
   , path = require('path')
+  , http = require('http')
+  , https = require('https')
   , thisModule = this
   ;
 
@@ -158,6 +160,69 @@ exports.filenameNoExtension = function(pathAndName) {
   return fileName;
 }
 
+/*
+  Return the scheme of the passed url, or empty if nothing found.
+ */
+exports.getUrlScheme = function(url) {
+
+  var result;
+  var scheme = url.match(/(^http[s]*):/i);
+
+  if (scheme && scheme.length == 2) {
+    result = scheme[1];
+  }
+  
+  return result;
+}
+
+/*
+  Convenience function to get the document at the specified url.
+  Parameters:
+    url: the url to grab
+    resultCallback: a function with this signature:
+      err: filled in if an error
+      result: object with these values:
+        response: the response object from here: http://nodejs.org/api/http.html#http_http_request_options_callback 
+                  (e.g. response.statusCode gets the status code, response.headers gets the headers, etc)
+        body: the body of the response
+ */
+exports.getDocumentAtUrl = function (url, resultCallback) {
+
+  var scheme = thisModule.getUrlScheme(url);
+  var result = {};
+  
+  var documentRetreiver = (scheme === 'https' ? https : http);
+  
+  // 
+  // Grab the doc using either http or https
+  //
+  documentRetreiver.get(url,function (res) {
+
+    result.response = res;
+    result.body = '';
+
+    // console.log("(info) Got response: " + res.statusCode);
+
+    res.on('data',function (chunk) {
+      //console.log('got some data...');
+
+      result.body += chunk;
+
+    }).on('end', function () {
+
+      resultCallback(null, result);
+        
+    });
+
+  }).on('error', function (e) {
+      //console.log("(error) validateFacebookLogin: Got error: " + e.message);
+
+      resultCallback(e.message, null);
+
+    });
+};
+
+
 //***********************************************
 // Class extensions
 //***********************************************
@@ -189,6 +254,7 @@ String.prototype.htmlize = function() {
   var result = this.replace(/\n/g, '<br>');
   return result;
 };
+
 
 //
 // Search an array of objects for an object having a specific value in a 

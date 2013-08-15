@@ -1,6 +1,11 @@
 
 
-#fb-root
+#fb-root(data-scope='email')
+
+//- This code is found at: https://developers.facebook.com/docs/facebook-login/getting-started-web/
+
+//- The special 'email' permission ia requested when FB.login() is called on button-click, a la this page:
+//-   https://developers.facebook.com/docs/reference/javascript/FB.login/
 
 script
   window.fbAsyncInit = function() {
@@ -8,7 +13,7 @@ script
     FB.init({
       appId      : '457892080927327',                        // App ID from the app dashboard
       channelUrl : '//#{ public.serverPath }/social/channel.html', // Channel file for x-domain comms
-      status     : true,                                 // Check Facebook Login status
+      status     : false,                                 // Check Facebook Login status
       cookie     : true,                // enable cookies to allow the server to access the session
       xfbml      : true                                  // Look for social plugins on the page
     });
@@ -17,13 +22,27 @@ script
     // for any authentication related change, such as login, logout or session refresh. This means that
     // whenever someone who was previously logged out tries to log in again, the correct case below 
     // will be handled. 
+    
     FB.Event.subscribe('auth.authResponseChange', function(response) {
       // Here we specify what we do with the response anytime this event occurs. 
       if (response.status === 'connected') {
         // The response object is returned with a status field that lets the app know the current
         // login status of the person. In this case, we're handling the situation where they 
         // have logged in to the app.
-        testAPI();
+        // testAPI();
+        
+        // Post back to SocialTagg server with the user info (securely of course)
+        // This will log the user in on the server as well.
+        var xrh = $.post('/loginfb', response)
+        .done(function() {
+          var successUrl = '#{ public.loginDest }';
+          console.log('success! prolly should redirect to some page, like: ' + successUrl); 
+          window.location = successUrl;
+          
+        })
+        .fail(function() { console.log('crud, no workie') });
+        
+        
       } else if (response.status === 'not_authorized') {
         // In this case, the person is logged into Facebook, but not into the app, so we call
         // FB.login() to prompt them to do so. 
@@ -41,7 +60,7 @@ script
         // dialog right after they log in to Facebook. 
         // The same caveats as above apply to the FB.login() call here.
         // JB: FB.login();
-        console.log('in the "else", but not sure why');
+        console.log('in the "else", but not sure why. maybe user logged out.');
       }
     });
   

@@ -70,8 +70,43 @@ exports.upsertUser = function(user, resultCallback) {
 };
 
 exports.validateCredentials = function(email, password, resultCallback) {
-  db.validateCredentials(email, password, resultCallback);
+  
+  db.validateCredentials(email, password, function(user) {
+    if (user) {
+       cache.addToCache(user, function() {
+         resultCallback(user);
+       })
+    } else {
+      resultCallback(user);
+    }
+  });
+  
 };
+
+/*
+  Looks up the passed Facebook access token and grabs the user from the db
+  Parameters:
+    accessToken: the access token returned from Facebook when user logged into the OAuth thingy
+    resultCallback: a callback function with this signature:
+      err: populated if something bad happened
+      user: the user object if we have one
+ */
+exports.validateFacebookLogin = function(accessToken, resultCallback) {
+  db.validateFacebookLogin(accessToken, function(err, user) {
+    
+    if (err) {
+      
+      resultCallback(err);
+      
+    } else {
+
+      cache.addToCache(user, function() {
+        resultCallback(null, user);
+      });
+      
+    }
+  });
+}
 
 exports.deleteUser = function(id, resultCallback) {
   db.deleteUser(id, resultCallback);

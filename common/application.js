@@ -232,8 +232,6 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   
   pageVars.public.loginDest = ld;
     
-  console.log('loginDest: ' + pageVars.public.loginDest);
-  
   pageVars.links = this.links({ logindest: ld});
   
   //

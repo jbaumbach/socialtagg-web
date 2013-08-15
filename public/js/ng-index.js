@@ -25,27 +25,8 @@ var loginController = app.controller('loginController', function($scope, $http, 
     $scope.secureProtocol = pageVars.secureProtocol;
     $scope.loginDest = pageVars.loginDest;
 
-    console.log('found value loginDest: ' + $scope.loginDest);
-
     // $scope.setLoginMessage();
   }
-
-  /* Note: not yet used 
-
-   $scope.setLoginMessage = function() {
-
-    if ($scope.isLoggedIn) {
-      $scope.loginMsg = 'Logout ' + $scope.user.firstName;
-    } else {
-      $scope.loginMsg = 'Login';
-    }
-
-  }
-  
-  $scope.clearError = function() {
-    $scope.loginError = false;
-  }
-  */
 
   $scope.login = function() {
 

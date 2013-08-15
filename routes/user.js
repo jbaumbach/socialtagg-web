@@ -26,8 +26,57 @@ exports.loginForm = function(req, res) {
 
 };
 
+//
+// The site has posted Facebook login info
+//
+exports.loginfb = function(req, res) {
+  console.log('(info) login attempt for Facebook');
+  
+  var fbUser = req.body;
+  
+  // console.log('user: ' + util.inspect(fbUser));
+ 
+  var currentUserId = application.getCurrentSessionUserId(req);
+  
+  if (!currentUserId) {
+    
+    //
+    // Let's log the user in via Facebook
+    //
+    userManager.validateFacebookLogin(fbUser.authResponse.accessToken, function(err, user) {
+      
+      if (!err) {
+
+        // console.log('got user: ' + util.inspect(user));
+        //
+        // User validated successfully.  
+        //
+        globalfunctions.loginUser(req, user.id);
+
+        res.send(200, user);
+
+      } else {
+        
+        res.send(403, { msg: 'Error logging in the user, our best msg is: ' + err});
+        
+      }
+    });
+    
+  } else {
+
+    //
+    // User is already logged in - not sure what to do here...  just say "ok, bro"?
+    //
+    res.send(200);
+  }
+  
+}
+
+//
+// The site has posted login info
+//
 exports.login = function(req, res) {
-  console.log('in login func');
+  console.log('(info) in login func');
   
   var email = req.body.email;
 
@@ -344,7 +393,6 @@ exports.myAttendedEvents = function(req, res) {
   } else {
     
     userManager.getUserEventsAttended(userId, function(userEvents) {
-      console.log('got events: ' + userEvents);
 
       if (userEvents && userEvents.length > 0) {
 
@@ -384,13 +432,12 @@ exports.myOwnedEvents = function(req, res) {
   var userId = application.getCurrentSessionUserId(req);
 
   if (!userId) {
-    console.log('aint got a user id');
+    console.log('(warning) myOwnedEvents: aint got a user id');
     
     done();
   } else {
     
     userManager.getUserEventsOwned(userId, function(err, userEvents) {
-      console.log('got events: ' + userEvents);
 
       if (userEvents && userEvents.length > 0) {
 

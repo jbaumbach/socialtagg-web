@@ -1,7 +1,8 @@
 //
 // Let's test some global functions action
 //
-var assert = require('assert');
+var assert = require('assert')
+  , util = require('util');
 
 var globalFunctions = require('../../common/globalfunctions');
 
@@ -162,5 +163,44 @@ describe('globalFunctions', function() {
     
     var r = globalFunctions.convertDate(date, def);
     assert.equal(r, res, 'didn\'t get formatted date back');
+  });
+  
+  it('should getUrlScheme for http scheme from url', function() {
+    var url = 'http://www.hello.therehttpsandstuff.com';
+    var r = globalFunctions.getUrlScheme(url);
+    
+    assert.equal(r, 'http', 'did\'t find scheme ok');
+  });
+
+  it('should getUrlScheme for https scheme from url', function() {
+    var url = 'https://www.hello.therehttpsandstuff.com';
+    var r = globalFunctions.getUrlScheme(url);
+
+    assert.equal(r, 'https', 'did\'t find scheme ok');
+  });
+
+  it('should have getUrlScheme return nothing from bad url', function() {
+    var url = 'www.hello.therehttpsandstuff.com';
+    var r = globalFunctions.getUrlScheme(url);
+
+    assert.ok(!r, 'did\'t find empty ok');
+  });
+
+  // Optional
+  it('should grab a document from the web', function(done) {
+    var url = 'https://www.socialtagg.com/mobile/ios/ios_app_config.json';
+    
+    globalFunctions.getDocumentAtUrl(url, function(err, result) {
+      
+      assert.ok(!err, 'weird, got error');
+      
+      var sc = result.response.statusCode;
+      assert.equal(sc, 200, 'didn\'t get 200 as status code');
+      
+      var iosConf = JSON.parse(result.body);
+      assert.equal(iosConf.welcome_msg, 'Hello from SocialTagg!', 'didn\'t get greeting!');
+      
+      done();
+    });
   });
 }) 
