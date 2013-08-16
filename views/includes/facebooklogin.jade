@@ -15,7 +15,9 @@ script.
   var stfbWantToLogin = false;
   
   function socialTaggFbLogin(userClick) {
-    
+
+    stfbWantToLogin = stfbWantToLogin || userClick;
+
     if (!stfbResponse) {
     
       FB.login(null, {scope: "email"});
