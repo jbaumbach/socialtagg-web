@@ -9,13 +9,18 @@
           | Sign in using social network:
           br
           .fb
-            a.btn_1(href='#', onclick='FB.login(null, {scope: "email"})', no-click) Login with Facebook
+            a.btn_1(href='#', onclick='socialTaggFbLogin(true)', no-click) Login with Facebook
+            i.icon-spinner.icon-spin.icon-2x(style='display:none')
           //-
             .twitter
               a.btn_2(href='#') Login with Twitter
       // Login Fields 
       #login(ng-class='{error:loginError}')
-        | Or, sign in using your registered account:
+        if locals.showsocial
+          span Or, s
+        else
+          span S
+        | ign in using your registered account:
         br
         form(method='POST')
           input.login.user(type='text', ng-model='email', ng-class='{error: loginError}', placeholder='Email', name='username', id='username')
