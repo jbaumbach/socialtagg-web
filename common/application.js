@@ -165,7 +165,8 @@ exports.links = function(options) {
     appiphone: 'http://itunes.apple.com/app/id649747318',
     appandroid: 'https://play.google.com/store/apps/details?id=com.socialtagg&feature=search_result#?t=W251bGwsMSwyLDEsImNvbS5zb2NpYWx0YWdnIl0',
     myattendedevents: '/myattendedevents',
-    myownedevents: '/myownedevents'
+    myownedevents: '/myownedevents',
+    myprofile: '/myprofile'
   }
 };
 
@@ -222,6 +223,16 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   pageVars.public.serverPath = this.globalVariables.serverPath;
   pageVars.public.secureProtocol = this.globalVariables.secureProtocol;
   
+  //
+  // loginDest tells the login page where to go after login.  It can be set in a few ways:
+  //
+  //  1. Automatically - the logindest is appended to the .login link if you call it from Jade
+  //      provided this function is called.
+  //
+  //  2. Explicitly - set { logindest: [url] } in an object passed to application.links(), and
+  //      then grab your url to the login login page.  You don't need to call this function.
+  //
+  
   var ld = req.query.logindest || req.url;
   
   if (ld.match(/login/i)) {
@@ -242,6 +253,7 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   // specified in app.js for 'development'
   pageVars.showevents = this.globalVariables.showevents || req.query.showevents;
   pageVars.showsocial = this.globalVariables.showsocial || req.query.showsocial;
+  pageVars.showmyprofile = this.globalVariables.showmyprofile || req.query.showmyprofile;
 
 
   function done() {
@@ -429,3 +441,4 @@ exports.getDatetimeFromStringParts = function(dateStr, timeStr, tzOffset) {
   
   return result;
 }
+

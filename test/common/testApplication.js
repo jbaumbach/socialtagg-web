@@ -364,5 +364,22 @@ describe('application class', function() {
     assert.ok(!r, 'didn\'t get false back');
     
   })
+  
+  it('should return proper logindest link', function() {
+    var p = '/myprofile';
+    var o = { logindest: p};
+    var l = application.links(o);
+
+    var e = application.globalVariables.secureProtocol + 
+      '://' + 
+      application.globalVariables.serverPath + 
+      '/login?logindest=' + 
+      p;
+
+    var r = l.login;
+    
+    assert.equal(r, e, 'didn\'t build proper login link');
+  })
+  
 });
   

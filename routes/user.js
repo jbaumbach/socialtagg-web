@@ -425,7 +425,7 @@ exports.myOwnedEvents = function(req, res) {
 
   var initialPageVars = { 
     title: 'My Owned Events', 
-    loginDest: '/myownedevents',
+    loginDest: application.links.myownedevents,  //'/myownedevents',
     usesAngular: true
   };
   
@@ -449,4 +449,13 @@ exports.myOwnedEvents = function(req, res) {
       }
     });
   }
+}
+
+/*
+  Show the logged in user's profile page for editing.
+ */
+exports.myProfile = function(req, res) {
+
+  throw 'Not implemented!  Come back later!';
+  
 }

@@ -57,7 +57,10 @@
                 a(href='#{ links.myattendedevents }') My Attended Events
               li
                 a(href='#{ links.myownedevents }') My Owned Events
-
+        if locals.showmyprofile
+          li
+            a(href='#{ links.myprofile }') My Profile
+        
         //-
           li
             a(href='#{ links.developers }') Developers

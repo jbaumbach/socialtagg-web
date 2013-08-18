@@ -81,6 +81,11 @@
     a directory in a way SVN doesn't like.  To fix:
     
     $ svn update   # See: http://stackoverflow.com/questions/3298384/svn-commit-failed-directory-out-of-date
+    
+   Setting a domain name set up in Godaddy to point to a Heroku app (e.g. staging)
+   // See doc here: https://devcenter.heroku.com/articles/custom-domains
+   
+    $ heroku domains:add staging.socialtagg.com --remote staging
    
 ## Third-party Components
 
@@ -119,7 +124,7 @@
   
     $ ssh-keygen -t rsa -f ~/.ssh/identity.herokustage.tagg
     
-  Add the key to the ssh-agent (also redo this if Heroku suddenly stops working even though it was set up ok for a while):
+  Add the key to the ssh-agent (** also redo this if Heroku suddenly stops working even though it was set up ok for a while):
     
     $ ssh-add ~/.ssh/identity.herokustage.tagg
   

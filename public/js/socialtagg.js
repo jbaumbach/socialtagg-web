@@ -4,9 +4,6 @@
  * Time: 12:47 AM
  */
 
-$(document).ready(function() {
+// Add support for console.log() just in case
+if(typeof window.console == 'undefined') { window.console = {log: function (msg) {} }; }
 
-  // Show the login box when the link is clicked
-  $("a#login").fancybox();
-
-});

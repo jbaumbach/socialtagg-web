@@ -53,7 +53,6 @@ var loginController = app.controller('loginController', function($scope, $http, 
         'Content-Length': postData.length
       }
     }).success(function(data, status, headers, config) {
-      console.log('successful login' + data);
       $scope.isLoggedIn = true;
       $scope.user = data;
       $scope.loading = false;

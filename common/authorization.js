@@ -47,6 +47,7 @@
 var globalFunctions = require('./globalfunctions')
   , userManager = require('../data/userManager')
   , util = require('util')
+  , application = require('./application')
   , thisModule = this
   ;
 
@@ -205,4 +206,37 @@ exports.sessionIdAuthenticate = function(req, res, next) {
     res.json(401, { description: 'No logged in user' } );
 
   }
+}
+
+/*
+ Determine if a user is logged in.  If so, call 'next()', otherwise redirect to login page
+ and come back to this page when complete.
+ */
+exports.requireLogin = function(req, res, next) {
+
+  //var userId = application.getCurrentSessionUserId(req);
+  var sessionInfo = globalFunctions.getSessionInfo(req);
+
+  if (!sessionInfo.userId) {
+
+    var options = { logindest: req.url };
+    var l = application.links(options);
+
+    //
+    // Don't do a 301 here (permanent).  Do a 302 (temporary/GET).  302 same as 303 is in http 1.1 and later.
+    //
+    res.writeHead(302, {'Location': l.login });
+    res.end();
+    
+    console.log('sorry Charlie, you\'re going to: ' + l.login);
+    
+
+  } else {
+
+    //
+    // We're golden - continue
+    //
+    next();
+  }
+
 }
