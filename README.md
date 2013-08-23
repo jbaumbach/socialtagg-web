@@ -126,7 +126,7 @@
     
   Add the key to the ssh-agent (** also redo this if Heroku suddenly stops working even though it was set up ok for a while):
     
-    $ ssh-add ~/.ssh/identity.herokustage.tagg
+    $ ssh-add ~/.ssh/identity.herokustage.tagg  (use an easily remembered PW, you'll need it periodically)
   
   Make sure your key is in the agent:
   
