@@ -214,7 +214,6 @@ exports.sessionIdAuthenticate = function(req, res, next) {
  */
 exports.requireLogin = function(req, res, next) {
 
-  //var userId = application.getCurrentSessionUserId(req);
   var sessionInfo = globalFunctions.getSessionInfo(req);
 
   if (!sessionInfo.userId) {
@@ -225,11 +224,8 @@ exports.requireLogin = function(req, res, next) {
     //
     // Don't do a 301 here (permanent).  Do a 302 (temporary/GET).  302 same as 303 is in http 1.1 and later.
     //
-    res.writeHead(302, {'Location': l.login });
+    res.writeHead(302, { 'Location': l.login });
     res.end();
-    
-    console.log('sorry Charlie, you\'re going to: ' + l.login);
-    
 
   } else {
 

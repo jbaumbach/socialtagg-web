@@ -222,6 +222,25 @@ exports.getDocumentAtUrl = function (url, resultCallback) {
     });
 };
 
+/*
+  Generate a Twitter hashtag from the passed string
+  Parameters:
+    origString: a string (or number) with spaces and other non-alphanumeric characters
+    
+  Returns:
+    a string with no spaces, only alphanumeric characters and all lowercase
+ */
+exports.toHashtag = function(origString) {
+
+  var result = origString;
+  
+  if (origString) {
+    var temp = origString.toString();
+    result = temp.replace(/\W/g, '').toLowerCase();
+  }
+  
+  return result;
+};
 
 //***********************************************
 // Class extensions

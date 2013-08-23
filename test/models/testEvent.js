@@ -54,4 +54,18 @@ describe('Event model', function() {
     
   });
   
+  it('should generate a hashtag properly', function() {
+    var n = 'This is my events name 23';
+    var h = 'thisismyeventsname23';
+    
+    var initData = {
+      name: h
+    };
+    
+    var e = new Event(initData);
+    var r = e.hashtag;
+    
+    assert.equal(r, h, 'didn\'t get right hashtag');
+    
+  });
 });

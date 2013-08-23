@@ -171,13 +171,6 @@ exports.links = function(options) {
 };
 
 //
-// Get the url for an event detail page.
-//
-exports.getEventDetailUrlForId = function(id) {
-  return '/events/' + id;
-}
-
-//
 // Process an image url, doing stuff like adding parameter for getting a large
 // image from facebook
 //

@@ -34,7 +34,7 @@ var Event = function(values) {
   
   // Additional initialization
   
-  // Note: we are setting this member here because prototype
+  // Note: we are setting these members here because prototype
   // properties don't appear to be serialized by Express when 
   // sending the object back to the client.
   if (this.uuid) {
@@ -42,11 +42,18 @@ var Event = function(values) {
     // todo: update this when we have a urlmanager
 
     this.path = '/events/' + this.uuid;
+    this.analyticsPath = '/events/' + this.uuid + '/analytics';
+    this.printerFriendlyPath = '/events/' + this.uuid + '/printerfriendly';
     
   } else {
     
     this.path = '#';
+    this.analyticsPath = '#';
+    this.printerFriendlyPath = '#';
   }
+  
+  this.hashtag = globalFunctions.toHashtag(this.name);
+  
 };
 
 //

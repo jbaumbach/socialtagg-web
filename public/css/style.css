@@ -4070,8 +4070,19 @@ table.standard-table tr:hover td {background-color: #fafafa;}
   /* display: inline-block; */
   float: left;
 }
+.my-events .wide .desc {
+  width: 200px;
+}
 
-.event-detail li {
+.my-events .value {
+}
+
+.my-events ul.value-list li {
+  clear:both;
+}
+
+.my-event ul.no-clear  {
+  clear: none;
 }
 
 .my-events .tool-items span {

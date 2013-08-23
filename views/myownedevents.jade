@@ -50,7 +50,7 @@ block content
                 td
                   a.button.gray(href='#', ng-click='editEvent(event)', no-click) Edit
                   a.button.gray(href='#', ng-click='deleteEvent(event)', no-click) Delete
-                  a.button.color(href='{{ event.path }}', target='_blank') View
+                  a.button.color(href='{{ event.path }}') View
                   i.icon-spinner.icon-spin.icon-2x(ng-show='event.isWorking')
           
           p(ng-show='!hasEvents && isLoading') Loading events...

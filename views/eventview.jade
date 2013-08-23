@@ -1,8 +1,10 @@
+include mixins/twittertimeline
+
 extends layout
 
 block content
 
-  .container
+  //-.container
     .sixteen.columns
       #page-title
         h2 Event Details
@@ -27,7 +29,7 @@ block content
 
       .twelve.columns
         .headline.no-margin
-          h4 Event Details
+          h3 Event Details
 
         .twelve.columns
           ul
@@ -44,27 +46,33 @@ block content
               .value #{ event.startDate }
 
 
-      .twelve.columns
-        .headline
-          h4 Contaggs from Event
-        
-        //- Display the event's contaggs if we have any
-        if locals.contaggs
-          each contagg in contaggs
-            .twelve.columns.contagg-container
-              a(href=contagg.path)
-                img(src=contagg.pictureUrl).user-image
-                p #{ contagg.name }
+        .twelve.columns
+          .headline
+            h4 Your Contaggs from Event
+          
+          //- Display the event's contaggs if we have any
+          if locals.contaggs
+            each contagg in contaggs
+              .twelve.columns.contagg-container
+                a(href=contagg.path)
+                  img(src=contagg.pictureUrl).user-image
+                  p #{ contagg.name }
+  
+          else
+            .twelve.columns
+              p You do not have any contaggs from this event.
 
-        else
+      
+        if event.hashtag
           .twelve.columns
-            p You do not have any contaggs from this event.
-
-include includes/eventtools
+            .headline
+              h4 Tweets
+  
+            mixin twittertimeline(event.hashtag)
       
 
-
-
+  
+      include includes/eventtools
 
 
 

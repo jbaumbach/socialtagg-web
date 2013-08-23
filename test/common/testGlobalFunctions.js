@@ -203,4 +203,20 @@ describe('globalFunctions', function() {
       done();
     });
   });
+  
+  it('should generated a hashtag from a string with spaces and nonletters', function() {
+    
+    var o = ' &Facebooking2#@   test ;\'[]{} ';
+    var h = 'facebooking2test';
+    
+    var r = globalFunctions.toHashtag(o);
+    assert.equal(r, h, 'didn\'t get right hashtag');
+    
+    r = globalFunctions.toHashtag('');
+    assert.equal(r, '', 'didn\'t get empty hashtag');
+    
+    r = globalFunctions.toHashtag(12345);
+    assert.equal(r, '12345', 'didn\'t get numbers');
+    
+  })
 }) 

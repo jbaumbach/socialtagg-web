@@ -13,8 +13,8 @@ var userManager = require('./../data/userManager')
   ;
 
 exports.detail = function(req, res) {
-  
-  var pageVars = { 
+
+  var pageVars = {
     title: 'Event Detail'
   };
 
@@ -23,18 +23,18 @@ exports.detail = function(req, res) {
       res.render('eventview', pageVars);
     });
   };
-  
 
   var eventId = req.params.id;
+  var userId = application.getCurrentSessionUserId(req);
   
   eventManager.getEvent(eventId, function(err, event) {
-
-    console.log('(GET) event.detal - err: ' + err);
     
     if (!err) {
       
       pageVars.event = event;
       pageVars.title = pageVars.event.name + ' - Details';
+      pageVars.isEventOwner = (userId && event.owner === userId);
+      
       done();
       
     } else {
@@ -47,3 +47,32 @@ exports.detail = function(req, res) {
   });
   
 };
+
+
+exports.analytics = function(req, res) {
+  
+  var pageVars = {
+    title: 'Event Analytics'
+  };
+  
+  application.buildApplicationPagevars(req, pageVars, function(pageVars) {
+    res.render('eventanalytics', pageVars);
+  });
+  
+};
+
+
+exports.printerFriendly = function(req, res) {
+
+  var pageVars = {
+    title: 'Printer Friendly'
+  };
+
+  application.buildApplicationPagevars(req, pageVars, function(pageVars) {
+    res.render('eventprinterfriendly', pageVars);
+  });
+
+
+};
+
+
