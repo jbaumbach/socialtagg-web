@@ -11,16 +11,7 @@ block content
         #bolded-line  
   
   .container.my-events
-    if !public.isLoggedIn
-
-      .sixteen.columns
-        .headline.no-margin
-          h3 Event - Details
-
-          p Please 
-            a(href=links.login) log in.
-    
-    else if !locals.event
+    if !locals.event
 
       .sixteen.columns
         p Sorry, that event is not accessible.
@@ -46,21 +37,30 @@ block content
               .value #{ event.startDate }
 
 
+        
         .twelve.columns
           .headline
             h4 Your Contaggs from Event
-          
-          //- Display the event's contaggs if we have any
-          if locals.contaggs
-            each contagg in contaggs
-              .twelve.columns.contagg-container
-                a(href=contagg.path)
-                  img(src=contagg.pictureUrl).user-image
-                  p #{ contagg.name }
-  
+
+
+          if !public.isLoggedIn
+            p
+              a(href=links.login) Log in 
+              | to view your contaggs.
+
           else
-            .twelve.columns
-              p You do not have any contaggs from this event.
+
+            //- Display the event's contaggs if we have any
+            if locals.contaggs
+              each contagg in contaggs
+                .twelve.columns.contagg-container
+                  a(href=contagg.path)
+                    img(src=contagg.pictureUrl).user-image
+                    p #{ contagg.name }
+    
+            else
+              .twelve.columns
+                p You do not have any contaggs from this event.
 
       
         if event.hashtag
