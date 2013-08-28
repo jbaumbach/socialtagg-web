@@ -1,27 +1,26 @@
 //- Right-hand column
 .four.columns
-  .widget-alt
-    .headline.no-margin
-      h4 Tools
-    ul.tool-items
+  .headline.no-margin
+    h4 Tools
+  ul.tool-items
+    li
+      a(href=links.myownedevents + '?action=create')
+        i.ico-circle-plus
+        span Create an event
+
+    //- Items to show if this is the event owner (see event.js - exports.detail())
+    if locals.isEventOwner
       li
-        a(href=links.myownedevents + '?action=create')
-          i.ico-circle-plus
-          span Create an event
+        a(href=event.analyticsPath)
+          i.ico-stats
+          span Analytics for this event
 
-      //- Items to show if this is the event owner (see event.js - exports.detail())
-      if locals.isEventOwner
-        li
-          a(href=event.analyticsPath)
-            i.ico-stats
-            span Analytics for this event
+      li
+        a(href=links.myownedevents)
+          i.ico-edit
+          span Edit this event
 
-        li
-          a(href=links.myownedevents)
-            i.ico-edit
-            span Edit this event
-
-        li
-          a(href=event.printerFriendlyPath)
-            i.ico-print
-            span Print Check-in Page
+      li
+        a(href=event.printerFriendlyPath)
+          i.ico-print
+          span Print Check-in Page

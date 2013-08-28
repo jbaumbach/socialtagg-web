@@ -24,11 +24,10 @@ describe('mycontaggs page', function() {
 
   this.timeout(9000);
 
-  it('should have login link if not logged in', function(done) {
+  it('should redirect to login page if not logged in', function(done) {
     request(app)
       .get('/mycontaggs')
-      .expect(/a.*href.*Login/)
-      .expect(200, done);
+      .expect(302, done);
   });
 
   // todo: test contaggs after figuring out how to log a user in

@@ -30,9 +30,14 @@ exports.globalVariables = {
 };
 
 
-//
-// Grabs the current user from the session or returns an empty object to the callback.
-//
+/*
+  Grabs the current user from the session or returns an empty object to the callback.
+  
+  Parameters:
+    req: the current request. Required to access session info.
+    callback: a callback function with the signature:
+      user: the user retrieved, or null if something went wrong
+*/
 exports.getCurrentSessionUser = function(req, callback) {
   var sessionInfo = globalfunctions.getSessionInfo(req);
 
@@ -151,6 +156,7 @@ exports.links = function(options) {
   return {
     home: thisModule.globalVariables.applicationHomepage,
     features: '/features',
+    pricing: '/pricing',
     developers: '/developers',
     contact: '/contactus',
     login: thisModule.globalVariables.secureProtocol + '://' + thisModule.globalVariables.serverPath + '/login' + 
@@ -166,7 +172,8 @@ exports.links = function(options) {
     appandroid: 'https://play.google.com/store/apps/details?id=com.socialtagg&feature=search_result#?t=W251bGwsMSwyLDEsImNvbS5zb2NpYWx0YWdnIl0',
     myattendedevents: '/myattendedevents',
     myownedevents: '/myownedevents',
-    myprofile: '/myprofile'
+    editprofile: '/editprofile',
+    viewprofile: '/viewprofile'
   }
 };
 
@@ -204,6 +211,11 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   //
   // THe "public" pageVars go out to the client, do NOT put anything you don't want
   // the client to see/hack here.
+  //
+  // Generally these are for initing Angular controllers.  If you add your own, be sure
+  // to stringify them.
+  //
+  // These variables are JSON.stringify'd and you can access them in Jade by 'publicPageVars'.
   //
   pageVars.public = {};
   pageVars.public.user = {};
@@ -243,11 +255,12 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   //
   // ex: http://localhost:3000/?loginlink=1 
   
-  // specified in app.js for 'development'
+  // specified in app.js for 'development' and possibly 'staging'
   pageVars.showevents = this.globalVariables.showevents || req.query.showevents;
   pageVars.showsocial = this.globalVariables.showsocial || req.query.showsocial;
   pageVars.showmyprofile = this.globalVariables.showmyprofile || req.query.showmyprofile;
-
+  pageVars.showpricing = this.globalVariables.showpricing || req.query.showpricing;
+  
 
   function done() {
     // Encode our public objects, to be readable by the client (Angular)

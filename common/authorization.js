@@ -112,35 +112,59 @@ exports.authorizationComplete = function(error, req, res, next) {
   }
 }
 
-//
-// Authenticate and authorize an api call.  Call next() if ok, otherwise 
-// write an error to response.
-//
-exports.authorize = function(req, res, next) {
+/*
+  Determine if we know who the requester is, either by session id or by HMAC
+ */
+exports.authenticate = function(req, res, next) {
   
-  var error; 
-  
+  var sessionInfo = globalFunctions.getSessionInfo(req);
+
+  if (sessionInfo.userId) {
+
+    next();
+
+  } else {
+
+    thisModule.authenticateHmac(req, function(error, apiUser) {
+      
+      thisModule.authorizationComplete(error, req, res, next);
+
+    });
+  }
+} 
+
+/*
+  Authenticates a request using HMAC. 
+  Parameters:
+    req: the current request
+    callback: a callback with this signature:
+      error: filled in with an object to return to the response if invalid, otherwise false
+      apiUser: filled in with the api user object if credentials are good
+ */
+exports.authenticateHmac = function(req, callback) {
+  var error;
+
   //
   // Descriptive string to pass to client in an error message in case something goes wrong
   //
   var expectedDesc = 'Authorization: CustomAuth apikey=your_key, hash=sha256(your_key+your_password+seconds_since_epoch)';
-  
+
   var requestValidForMins = 5;
-  
+
   var authHeader = req.header('Authorization');
 
   if (!authHeader) {
-    
+
     error = {
       httpResponseCode: 401,
       Message: 'Missing \'Authorization\' header.  Expected: ' + expectedDesc
     }
-  } 
-  
+  }
+
   if (!error) {
 
     var userVals = thisModule.getValsFromAuthHeader(authHeader.toLowerCase());
-    
+
     if (!userVals || !userVals[1] || !userVals[2]) {
       error = {
         httpResponseCode: 401,
@@ -156,38 +180,57 @@ exports.authorize = function(req, res, next) {
     var password = userManager.getApiUser(userVals[1], function(apiUser) {
 
       if (!apiUser) {
-        
+
         error = {
           httpResponseCode: 401,
           Message: util.format('Unknown user \'%s\' or invalid password', userVals[1])
         }
-        
+
       } else {
 
         var isAuthorized = thisModule.authorizeCredentials(userVals[2], apiUser, requestValidForMins);
-        
+
         if (!isAuthorized) {
           error = {
             httpResponseCode: 401,
             Message: util.format('Unknown user \'%s\', invalid password, or invalid/expired timestamp', userVals[1])
           }
         }
-        
+
         //
         // If no error by here, we're valid!
         //
       }
 
-      thisModule.authorizationComplete(error, req, res, next);
+      //thisModule.authorizationComplete(error, req, res, next);
+      callback(error, apiUser);
     });
-    
+
   } else {
-    
+
     //
     // We have an error
     //
-    thisModule.authorizationComplete(error, req, res, next);
+    // thisModule.authorizationComplete(error, req, res, next);
+    callback(error);
   }
+  
+};
+
+//
+// Note: Deprecated: call "authenticate" instead.
+// 
+// Authenticate and authorize an api call.  Call next() if ok, otherwise 
+// write an error to response.
+//
+exports.authorize = function(req, res, next) {
+  
+  thisModule.authenticateHmac(req, function(error, apiUser) {
+
+    thisModule.authorizationComplete(error, req, res, next);
+    
+  });
+  
 }
 
 //

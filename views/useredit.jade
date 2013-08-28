@@ -1,0 +1,68 @@
+extends layout
+
+//- Include any page-specific javascript here
+block javascripts
+
+  script(type='text/javascript', src='/js/ng-useredit.js')
+
+block content
+
+  .container
+    .sixteen.columns
+      #page-title
+        h2 My Profile
+        #bolded-line  
+
+  .controllerContainer.my-profile(ng-controller='userController', ng-init='init(' + publicPageVars + ')')
+    .container
+      .twelve.columns
+
+        //- Error message, set style explicitly so it won't flash on page refresh
+        .notification(ng-show='notifyMsg', style='display: none;', ng-class='notifyClass')
+          p
+            span {{ notifyMsg }}
+            a.close(href='#', ng-click='hasError=false', no-click)
+
+        form.form-horizontal
+        
+          .field
+            label(for='firstName') First Name
+            input.text(type='text', size='100', id='firstName', ng-model='user.firstName', required)
+          
+          .field
+            label(for='lastName') Last Name
+            input.text(type='text', size='100', id='lastName', ng-model='user.lastName', required)
+            
+          .field
+            label(for='address') Address
+            input.text(type='text', size='100', id='address', ng-model='user.address')
+          
+          .field
+            label(for='phone') Phone
+            input.text(type='text', size='100', id='phone', ng-model='user.phone')
+          
+          .field
+            label(for='website') Website
+            input.text(type='text', size='100', id='website', ng-model='user.website')
+          
+          .field
+            label(for='bio') Bio
+            textarea(id='bio', ng-model='user.bio')
+          
+          .field
+            label(for='company') Company
+            input.text(type='text', size='100', id='company', ng-model='user.company')
+          
+          .field
+            label(for='title') Title
+            input.text(type='text', size='100', id='title', ng-model='user.title')
+          
+          .field
+            label(for='twitter') Twitter
+            input.text(type='text', size='100', id='twitter', ng-model='user.twitter')
+
+      .twelve.columns
+        p
+          a.button.color(href='#', ng-click='updateUser()', no-click) Save
+          i.icon-spinner.icon-spin.icon-2x.spinnerleftmargin(ng-show='isWorking')
+            

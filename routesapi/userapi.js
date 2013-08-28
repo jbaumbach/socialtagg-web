@@ -330,6 +330,48 @@ exports.detail = function(req, res) {
   });
 };
 
+exports.usersPut = function(req, res) {
+
+  var uuid = req.params.id;
+  var loggedInUser = application.getCurrentSessionUserId(req);
+  
+  var authorizedToPutThisUser = uuid === loggedInUser;
+
+  if (!authorizedToPutThisUser) {
+    res.send(403, { msg: 'Current user has insufficient permissions to edit submitted user id' });
+    return;
+  };
+  
+  var userRaw = req.body;
+  
+  // Validate info 
+  var invalidDataMsgs = [];
+
+  if (invalidDataMsgs.length > 0) {
+
+    res.send(400, { errors: invalidDataMsgs });
+
+  } else {
+
+    // Ahhh, data all good
+    
+    userManager.upsertUser(userRaw, function(err, updatedUser) {
+      
+      if (err) {
+        
+        // Huh
+        res.send(500, { msg: err });
+        
+      } else {
+        
+        // Sweet
+          res.send(200, updatedUser);
+        
+      }
+    });
+  }
+}
+
 exports.usersPost = function(req, res) {
   //
   // todo: understand how Express parses the JSON post (asynchronously?)  
@@ -360,6 +402,9 @@ exports.usersPost = function(req, res) {
   }
 };
 
+/*
+  Returns the user's contaggs as a CSV file
+ */
 exports.contaggs = function(req, res) {
 
   var requestedUserId = req.params.id;

@@ -62,11 +62,33 @@ exports.getUserByEmail = function(emailAddr, resultCallback) {
   db.getUserByEmail(emailAddr, resultCallback);
 }
 
+/*
+ Upsert the passed user in the data store.
+ Parameters:
+   user: the user object to upsert in the database
+   resultCallback: a function with signature:
+     err: filled in if something bad happened
+     user: the new or updated user object
+ */
 exports.upsertUser = function(user, resultCallback) {
   
-  // todo: invalidate the cache for the user id
-  
-  db.upsertUser(user, resultCallback);
+  db.upsertUser(user, function(err, user) {
+    cache.addToCache(user, function() {
+
+      resultCallback(err, user);
+    })
+  });
+};
+
+/* 
+  Delete a user from the DB.  Generally just for testing!
+  Parameters:
+    userId: the user to delete
+    resultCallback: a function with signature:
+      err: filled in if something bad happened
+ */
+exports.deleteUser = function(userId, resultCallback) {
+  db.deleteUser(userId, resultCallback);
 };
 
 exports.validateCredentials = function(email, password, resultCallback) {

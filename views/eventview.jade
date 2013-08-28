@@ -62,13 +62,14 @@ block content
               .twelve.columns
                 p You do not have any contaggs from this event.
 
-      
-        if event.hashtag
-          .twelve.columns
-            .headline
-              h4 Tweets
-  
-            mixin twittertimeline(event.hashtag)
+
+        //- Not going to work as it stands - see comment in the mixin
+          if event.hashtag
+            .twelve.columns
+              .headline
+                h4 Tweets
+    
+              mixin twittertimeline(event.hashtag)
       
 
   

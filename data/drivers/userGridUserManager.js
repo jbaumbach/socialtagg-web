@@ -28,7 +28,7 @@ var util = require('util')
 //
 // Maps a User Grid user to our app's user
 //
-function userFromUserGridUser(userGridUser) {
+exports.userFromUserGridUser = function(userGridUser) {
   
   var dateStr = 'n/a';
   if (userGridUser.get('created')) {
@@ -54,6 +54,14 @@ function userFromUserGridUser(userGridUser) {
     twitter: userGridUser.get('twitter'),
     avatarId: userGridUser.get('uuid_avatar_image')
   });
+}
+
+exports.isFirstFbLogin = function(fbUser) {
+  // Assumption: all new facebook records created in UG have username like 'fb_[some integers]'
+  
+  var result = fbUser.username.match(/^fb_[0-9]+$/i);
+  
+  return result;
 }
 
 /*
@@ -87,11 +95,45 @@ exports.userFromFBLoginUser = function(fbUser) {
 //
 // Maps a User Grid user to our app's user
 //
-function UserGridUserFromUser(user) {
-  // create a "data" object that can be set into the entity object with entity.set(data);
+function userGridUserFromUser(user) {
+
+  var result = {
+    
+    type: 'users',
+    
+    username: user.userName,
+    name: user.name,
+    first_name: user.firstName,
+    last_name: user.lastName,
+    postal_address: user.address,
+    email: user.email,
+    tel: user.phone,
+    // not yet: user.pictureUrl:,
+    website: user.website,
+    bio: user.bio,
+    company: user.company,
+    title: user.title,
+    twitter: user.twitter,
+    // not yet: uuid_avatar_image: user.avatarId
+  };
   
-  throw('Not implemented');
+  if (!user.uuid) {
+
+    //
+    // Must create a unique value for 'name' according to the UG docs:
+    // http://apigee.com/docs/usergrid/content/data-model
+    //
+    // It has some restrictions as far as allowed characters, which apparently
+    // are undocumented.  Let's use MD5 to be safe.
+    //
+    result.name = 'name' + globalFunctions.md5Encode(user.username + user.email + new Date());
+    
+  } else {
+    
+    result.uuid = user.uuid;
+  }
   
+  return result;
 }
 
 
@@ -106,7 +148,7 @@ function getUserFromUserGridByOptions(options, resultCallback) {
       // Crap
       
     } else {
-      result = userFromUserGridUser(existingUser);
+      result = thisModule.userFromUserGridUser(existingUser);
     }
 
     resultCallback(result);
@@ -239,16 +281,39 @@ exports.validateFacebookLogin = function(accessToken, resultCallback) {
 
       if (ugUserRaw && ugUserRaw.access_token && ugUserRaw.user) {
 
-        var user = thisModule.userFromFBLoginUser(ugUserRaw.user);
+        var isFreshlyCreatedAccount = thisModule.isFirstFbLogin(ugUserRaw.user);
         
         //
-        // Todo: we should really save the created user to UG if this is the first login, otherwise the apps
-        // may have bogus data.  It should be doable if the above function returns a 'dirty' flag or something of that
-        // nature.  Maybe it can just check the user id.
-        // 
+        // Unexpected behavior: sometimes the object comes back as my REGULAR ACCOUNT, which seems
+        // impossible.  Perhaps UG is checking email address or something??  In any case, a non-FB
+        // account can't be processed like a FB account, so do something different
+        //
+        var isFromFb = ugUserRaw.user.facebook;
         
-        resultCallback(null, user);
-
+        if (isFromFb) {
+          var user = thisModule.userFromFBLoginUser(ugUserRaw.user);
+  
+          //
+          // Todo: we should really save the created user to UG if this is the first login, otherwise the apps
+          // may have bogus data.  It should be doable if the above function returns a 'dirty' flag or something of that
+          // nature.  Maybe it can just check the user id.
+          // 
+          if (!isFreshlyCreatedAccount) {
+            
+            resultCallback(null, user);
+            
+          } else {
+            
+            thisModule.upsertUser(user, function(err, newUser) {
+              resultCallback(err, newUser);
+            }); 
+          }
+        } else {
+          
+          var user = thisModule.userFromUserGridUser(ugUserRaw.user);
+          resultCallback(null, user);
+        }
+        
       } else {
       
         var msgPre = 'weird - can\'t parse JSON from UG or it\'s missing stuff.';
@@ -289,7 +354,7 @@ exports.getUserByEmail = function(emailAddr, resultCallback) {
   
   getUserGridUserByEmail(emailAddr, function(err, userGridUser) {
     if (err === 0) {
-      result = userFromUserGridUser(userGridUser);
+      result = thisModule.userFromUserGridUser(userGridUser);
     } 
     
     resultCallback(result);
@@ -297,17 +362,52 @@ exports.getUserByEmail = function(emailAddr, resultCallback) {
   
 };
 
-//
-// Upsert the passed user in the data store.  If the user object doesn't have an
-// id, then it'll insert.
-//
+/*
+  Upsert the passed user in the data store.
+  Parameters:
+    user: the user object to upsert in the database
+    resultCallback: a function with signature:
+      err: filled in if something bad happened
+      user: the new or updated user object
+*/
 exports.upsertUser = function(user, resultCallback) {
   var result = undefined;
 
-  throw('Not implemented!');
+  var isInsert = !user.id;
+  var options = userGridUserFromUser(user);
+  
+  client().createEntity(options, function(err, ugUser) {
 
-  // eventually: resultCallback(result);
+    if (!err) {
 
+      if (isInsert) {
+
+        // The user returned is a completed new user - let's return it
+        
+        result = thisModule.userFromUserGridUser(ugUser);
+        resultCallback(err, result);
+
+      } else {
+
+        // The user returned is the old data in UG.  Overwrite it, save, and return the updated
+        // user.
+        
+        var dataToSave = userGridUserFromUser(user);
+        var result;
+
+        ugUser.set(dataToSave);
+        ugUser.save(function(err) {
+
+          result = thisModule.userFromUserGridUser(ugUser);
+          resultCallback(err, result);
+
+        })
+      }
+    } else {
+
+      resultCallback(err);
+    }
+  }); 
 };
 
 //

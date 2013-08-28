@@ -1,0 +1,22 @@
+//- Right-hand column
+.four.columns
+  .headline.no-margin
+    h4 Tools
+  ul.tool-items
+    //- Items to show if this is the event owner (see event.js - exports.detail())
+    li
+      a(href=links.editprofile)
+        i.ico-edit
+        span Edit my profile
+
+    if locals.isLoggedInUser
+      li
+        a(href=displayUser.path)
+          i.ico-qrcode
+          span Print my badge
+            
+      li
+        a(href=displayUser.path)
+          i.ico-share
+          span Link to this page
+            

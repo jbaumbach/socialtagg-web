@@ -25,7 +25,6 @@ describe('User model', function() {
     //
     var initData = { 
       id: 'blah', 
-      name: 'fred', 
       firstName: 'steve',
       lastName: 'jones',
       email: 'hello@there.com',
@@ -119,12 +118,6 @@ describe('User model', function() {
     testUser.firstName = 'Boba';
     testUser.lastName = 'Fett';
     assert.equal(testUser.name, 'Boba Fett', 'didn\'t get "Boba Fett" back');
-  });
-  
-  it('should make half-hearted attempt to get first and last names from a full name in constructor', function() {
-    var testUser = new User( { name: 'hello there' } );
-    assert.equal(testUser.firstName, 'hello', 'didn\'t get firstname back');
-    assert.equal(testUser.lastName, 'there', 'didn\'t get lastname back');
   });
   
   it('should return a cache key', function() {

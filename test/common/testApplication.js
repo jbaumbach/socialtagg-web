@@ -51,12 +51,12 @@ describe('application class', function() {
     };
 
     userManager.getUser = function(userId, callback) {
-      callback(new User( { id: userId, name: sampleName } ));  
+      callback(new User( { id: userId, firstName: sampleName } ));  
     };
     
     application.getCurrentSessionUser({}, function(retreivedUser) {
-      assert.equal(sampleUserId, retreivedUser.id, 'Didn\'t get right id back');
-      assert.equal(sampleName, retreivedUser.name, 'Did not get right name back');
+      assert.equal(retreivedUser.id, sampleUserId, 'Didn\'t get right id back');
+      assert.equal(retreivedUser.name, sampleName, 'Did not get right name back');
       
       done();
     });
@@ -79,7 +79,7 @@ describe('application class', function() {
     
     var unsafeVals = {
       userName: '<script>Lavamantis</script>',
-      name: '<br>JohnnyB',
+      firstName: '<br>JohnnyB',
       address: '12345 Yo Mama</ br>',
       email: 'hello@there.<html>com',
       phone: 'abcdef12345jklmn<header>',
@@ -116,7 +116,6 @@ describe('application class', function() {
     var safeVals = {
       id: 'blah',
       userName: 'Lavamantis',
-      name: 'JohnnyB',
       firstName: 'time',
       lastName: 'warner',
       address: '12345 Yo Mama',
@@ -225,6 +224,9 @@ describe('application class', function() {
     }));
     
     application.buildUserExportFile(users, 'csv', function(err, data) {
+      
+      assert.ok(!err, 'had an error: ' + err);
+      
       assert.ok(data.match(/^Job Title/), 'didn\'t find title header value as first thing');
       assert.ok(data.match(/"Bounty,Hunter"/), 'didn\'t get escaped title value');
       assert.ok(data.match(/""Hanfinder"" Fett/), 'didn\'t handle double quotes right');
@@ -366,7 +368,7 @@ describe('application class', function() {
   })
   
   it('should return proper logindest link', function() {
-    var p = '/myprofile';
+    var p = '/editprofile';
     var o = { logindest: p};
     var l = application.links(o);
 

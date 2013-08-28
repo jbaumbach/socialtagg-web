@@ -38,8 +38,9 @@ var User = function(values) {
   this.userName = values.userName || '';
   this.firstName = values.firstName || '';
   this.lastName = values.lastName || '';
-  this._name = undefined;
-  this.name = values.name || '';    // Call property setter after name components are declared 
+  // this._name = undefined;
+  // This is a reserved word in usergrid for some crazy reason.  Can't use this at all.
+  // this.name = values.name || '';    // Call property setter after name components are declared 
   this.address = values.address || '';
   this.email = values.email || '';
   this.phone = values.phone || '';
@@ -109,7 +110,7 @@ Object.defineProperty(User.prototype, "qrCodeUrl", {
 //
 Object.defineProperty(User.prototype, "name", {
   get: function() {
-    var result = this._name || util.format('%s %s', this.firstName, this.lastName);
+    var result = util.format('%s %s', this.firstName, this.lastName).trim();
     return result;
   },
   set: function(fullName) {
@@ -121,7 +122,7 @@ Object.defineProperty(User.prototype, "name", {
       this.firstName = names.firstName;
       this.lastName = names.lastName;
     } 
-    this._name = fullName;
+    // this._name = fullName;
   }
 });
 

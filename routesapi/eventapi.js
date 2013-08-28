@@ -253,6 +253,9 @@ exports.updateOwnedEvent = function(req, res) {
 
   } else {
 
+    //
+    // todo: fix security hole - owner id is not checked with logged in user
+    // 
     var updatedEvent = eventRaw;
 
     // update event in db

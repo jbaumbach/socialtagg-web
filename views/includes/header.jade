@@ -46,7 +46,10 @@
         li
           a(href='#{ links.about }') About Us
         li
-          a(href='#{ links.contact }') Contact
+          if locals.showpricing
+            a(href='#{ links.pricing }') Pricing
+          else
+            a(href='#{ links.contact }') Contact
         li
           a(href='#{ links.mycontaggs }') My Contaggs
         if locals.showevents
@@ -59,7 +62,7 @@
                 a(href='#{ links.myownedevents }') My Owned Events
         if locals.showmyprofile
           li
-            a(href='#{ links.myprofile }') My Profile
+            a(href='#{ links.viewprofile }') My Profile
         
         //-
           li

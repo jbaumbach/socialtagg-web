@@ -456,6 +456,32 @@ exports.myOwnedEvents = function(req, res) {
  */
 exports.myProfile = function(req, res) {
 
-  throw 'Not implemented!  Come back later!';
+  var initialPageVars = {
+    title: 'Edit My Profile',
+    loginDest: application.links.editprofile,
+    usesAngular: true
+  };
+  
+  application.buildApplicationPagevars(req, initialPageVars, function(pageVars) {
+    res.render('useredit', pageVars);
+  });
+}
+
+exports.viewProfile = function(req, res) {
+
+  application.getCurrentSessionUser(req, function(user) {
+
+    var initialPageVars = {
+      title: 'View My Profile',
+      loginDest: application.links.viewprofile,
+      displayUser: user,
+      isLoggedInUser: true
+    };
+
+    application.buildApplicationPagevars(req, initialPageVars, function(pageVars) {
+      res.render('userView', pageVars);
+    });
+  });
+  
   
 }
