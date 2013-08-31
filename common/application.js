@@ -16,6 +16,7 @@ var util = require('util')
   , CSV = require('csv-string')
   , moment = require('moment')
   , sprintf = require("sprintf-js").sprintf
+  , Validator = require('validator').Validator
   , thisModule = this
   ;
 
@@ -446,5 +447,27 @@ exports.getDatetimeFromStringParts = function(dateStr, timeStr, tzOffset) {
   } 
   
   return result;
+}
+
+//
+// Create a validator that collects errors
+//
+exports.ErrorCollectingValidator = function () {
+
+  //
+  // Set up the validator so it will collect errors rather than 
+  // throw exceptions.
+  //
+  Validator.prototype.error = function (msg) {
+    this._errors.push(msg);
+    return this;
+  }
+
+  Validator.prototype.getErrors = function () {
+    return this._errors;
+  }
+
+  return new Validator();
+
 }
 

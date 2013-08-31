@@ -9,33 +9,10 @@ var userManager = require('./../data/userManager')
   , util = require('util')
   , globalfunctions = require('./../common/globalfunctions')
   , application = require('../common/application')
-  , Validator = require('validator').Validator
   , sprintf = require("sprintf-js").sprintf
   , _ = require('underscore')
   , thisModule = this
   ;
-
-//
-// Create a validator that collects errors
-//
-function ErrorCollectingValidator() {
-
-  //
-  // Set up the validator so it will collect errors rather than 
-  // throw exceptions.
-  //
-  Validator.prototype.error = function (msg) {
-    this._errors.push(msg);
-    return this;
-  }
-
-  Validator.prototype.getErrors = function () {
-    return this._errors;
-  }
-
-  return new Validator();
-
-}
 
 //
 // Possible survey and question types.  These must match the Angular page values 
@@ -99,7 +76,7 @@ exports.eventsOwnedByUserId = function(req, res) {
 */
 exports.validateRawSurvey = function(surveyRaw) {
 
-  var v = ErrorCollectingValidator();
+  var v = application.ErrorCollectingValidator();
 
   v.check(surveyRaw.whenToShowType, 'when to show type not selected').notNull();
   
@@ -175,7 +152,7 @@ exports.validateRawSurvey = function(surveyRaw) {
  */
 exports.validateRawEventAndConvertDates = function(eventRaw) {
 
-  var v = ErrorCollectingValidator();
+  var v = application.ErrorCollectingValidator();
 
   v.check(eventRaw.owner, 'the event owner is not present').notNull();
   v.check(eventRaw.name, 'name should be between 1 and 100 chars').len(1, 100);

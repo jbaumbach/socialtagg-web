@@ -6,9 +6,15 @@
 
 //- The special 'email' permission ia requested when FB.login() is called on button-click, a la this page:
 //-   https://developers.facebook.com/docs/reference/javascript/FB.login/
-
-//- This is in a codebehind instead of a separate .js file because we insert a few variables from the 
+//- I believe it needs both the #fb-root() thing at the top, and the "scope" object passed in order to
+//- get the email addr from FB.
+//-
+//- This script is here in a codebehind instead of a separate .js file because we insert a few variables from the 
 //- server.  Tho, these variables could be written in the head and then accessed by a separate .js file - todo.
+//-
+//- The function "socialTaggFbLogin()" is designed to handle the various events that come in automagically
+//- from the FB SDK, without causing a weird user experience.  Example: the login box automatically appearing
+//- without the user even clicking anything.
 
 script.
   var stfbResponse;

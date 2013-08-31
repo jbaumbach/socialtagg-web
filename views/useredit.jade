@@ -32,7 +32,14 @@ block content
           .field
             label(for='lastName') Last Name
             input.text(type='text', size='100', id='lastName', ng-model='user.lastName', required)
-            
+
+          .field
+            label(for='email') Email
+            if !locals.public.user
+              input.text(type='text', size='100', id='email', ng-model='user.email')
+            else
+              span.read-only-input {{ user.email }}
+          
           .field
             label(for='address') Address
             input.text(type='text', size='100', id='address', ng-model='user.address')

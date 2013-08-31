@@ -4119,6 +4119,17 @@ div.field.event-datetime {
   width: 80px;
 }
 
+.read-only-input {
+  border: 1px solid #D8D8D8;
+  color: #BBBBBB;
+  display: inline-block;
+  margin: 0 0 13px;
+  padding: 9px;
+  width: 240px;
+  overflow: hidden;
+  background: none repeat scroll 0 0 #F9F9F9;
+}
+
 /**********************************
 Extracted from bootstrap CSS
 **********************************/

@@ -102,7 +102,7 @@ function userGridUserFromUser(user) {
     type: 'users',
     
     username: user.userName,
-    name: user.name,
+    //name: user.name,
     first_name: user.firstName,
     last_name: user.lastName,
     postal_address: user.address,
@@ -466,6 +466,8 @@ exports.getUserContaggs = function(id, resultCallback) {
     }
   };
 
+  console.log('getUserContaggs: ' + util.inspect(options));
+  
   getUserContaggsByOptions(options, resultCallback);
   
 };

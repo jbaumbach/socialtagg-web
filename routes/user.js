@@ -262,6 +262,10 @@ exports.detail = function(req, res) {
   
 }
 
+/*
+  (Deprecated - we use the API version now w/Angular) 
+  Take the user's returned info and update the database.
+ */
 exports.upsert = function(req, res) {
   
   //
@@ -467,6 +471,9 @@ exports.myProfile = function(req, res) {
   });
 }
 
+/*
+  Show the current session user's public profile page
+ */
 exports.viewProfile = function(req, res) {
 
   application.getCurrentSessionUser(req, function(user) {

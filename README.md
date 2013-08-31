@@ -165,3 +165,8 @@
     $ heroku accounts
     $ heroku accounts:set tagg
 
+  svn will occasionally stop working through Webstorm.  The symptom is the error
+  "The resource can only be on one place" or some such nonsense.  Then you have
+  to commit manually:
+  
+    $ svn commit -m "Added validation for user profile info."

@@ -9,6 +9,8 @@ var userManager = require('./../data/userManager')
   , check = require('validator').check
   , application = require('./../common/application')
   , email = require('./../common/email')
+  , sprintf = require("sprintf-js").sprintf
+  , _ = require('underscore')
   , thisModule = this
   ;
 
@@ -330,6 +332,28 @@ exports.detail = function(req, res) {
   });
 };
 
+exports.validateRawUser = function(userRaw) {
+  
+  var v = application.ErrorCollectingValidator();
+  
+  //
+  // These fields are required
+  //
+  v.check(userRaw.firstName, 'first name should be between 1 and 50 chars').len(1, 50);
+  v.check(userRaw.lastName, 'last name should be between 1 and 50 chars').len(1, 50);
+  v.check(userRaw.email, 'email should be present and valid').isEmail();
+  
+  if (userRaw.website) {
+    v.check(userRaw.website, 'website should be valid').isUrl();
+  }
+  
+  return v.getErrors();
+};
+
+/* 
+  Accept a user object and insert it into the database.  As of this writing, the 
+  user must be the currently logged in user.
+ */
 exports.usersPut = function(req, res) {
 
   var uuid = req.params.id;
@@ -345,7 +369,7 @@ exports.usersPut = function(req, res) {
   var userRaw = req.body;
   
   // Validate info 
-  var invalidDataMsgs = [];
+  var invalidDataMsgs = thisModule.validateRawUser(userRaw);
 
   if (invalidDataMsgs.length > 0) {
 
@@ -398,6 +422,11 @@ exports.usersPost = function(req, res) {
       thisModule.respond(res, 403, util.format('\'action\' value of \'%s\' is not allowed', actionMode)); 
     } 
   } else {
+    
+    //
+    // We're inserting a user
+    //
+    
     thisModule.respond(res, 400, 'The \'action\' parameter is missing. The request cannot be fulfilled.  Sorry.');
   }
 };
