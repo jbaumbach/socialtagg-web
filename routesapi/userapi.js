@@ -33,7 +33,6 @@ exports.respond = function(res, responseCode, response) {
 //
 // Various templates for emails to send
 //
-
 exports.sendVerificationEmail = function(emailAddr, verificationCode, resultCallback) {
 
   var params = {

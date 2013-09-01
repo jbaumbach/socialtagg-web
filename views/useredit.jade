@@ -21,7 +21,7 @@ block content
         .notification(ng-show='notifyMsg', style='display: none;', ng-class='notifyClass')
           p
             span {{ notifyMsg }}
-            a.close(href='#', ng-click='hasError=false', no-click)
+            a.close(href='#', ng-click='clearMsg()', no-click)
 
         form.form-horizontal
         

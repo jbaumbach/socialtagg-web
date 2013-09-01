@@ -17,7 +17,8 @@ exports.loginForm = function(req, res) {
   var pageVars = { 
     title: 'User Login', 
     usesAngular: true,
-    showsocial: req.query.showsocial
+    showsocial: req.query.showsocial,
+    public: { newAcctUrl: application.links().editprofile } // pass this on to Angular
   };
   
   application.buildApplicationPagevars(req, pageVars, function(pageVars) {
@@ -70,6 +71,56 @@ exports.loginfb = function(req, res) {
     res.send(200);
   }
   
+}
+
+/*
+  Attempt to create a new user account from the posted info
+*/
+exports.createNewAccount = function(req, res) {
+  
+  var email = req.body.email;
+  var pw = req.body.password;
+  
+  userManager.getUserByEmail(email, function(user) {
+    if (user) {
+
+      res.send(403, { msg: 'Sorry, that email address is already in use' } );
+      
+    } else {
+      
+      var v = application.ErrorCollectingValidator();
+      
+      v.check(email, 'Please enter a valid email address').isEmail();
+      v.check(pw, 'Please enter a password between 6 and 15 chars').len(6, 15);
+      
+      if (v.getErrors().length > 0) {
+        
+        res.send(403, { msg: v.getErrors()[0] });
+        
+      } else {
+
+        var newUser = new User({ email: email, password: pw, username: email });
+        
+        /* todo: implement this stuff
+        userManager.upsertUser(newUser, function(err, createdUser) {
+          if (err) {
+            res.send(403, { msg: 'Sorry, unknown server error.  Please try again later.'});
+          } else {
+            //
+            // Log the user in
+            //
+            globalfunctions.loginUser(req, user.id);
+
+            res.send(201, { msg: 'Success!'});
+          }
+        })
+        */
+        
+        res.send(500, { msg: 'Not implemented yet!  We are working on this!'} );
+        
+      }
+    } 
+  });
 }
 
 //
@@ -126,6 +177,9 @@ exports.login = function(req, res) {
   })
 }
 
+/*
+  Log out the currently logged in user
+ */
 exports.logout = function(req, res) {
   globalfunctions.logoutUser(req);
   res.redirect(application.globalVariables.applicationHomepage);

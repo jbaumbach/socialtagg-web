@@ -4119,6 +4119,13 @@ div.field.event-datetime {
   width: 80px;
 }
 
+/****************** Login box *****************/
+.other-login-options {
+  margin-top: 15px;
+}
+
+/* Misc useful styles */
+
 .read-only-input {
   border: 1px solid #D8D8D8;
   color: #BBBBBB;
@@ -4129,6 +4136,7 @@ div.field.event-datetime {
   overflow: hidden;
   background: none repeat scroll 0 0 #F9F9F9;
 }
+
 
 /**********************************
 Extracted from bootstrap CSS
@@ -4415,3 +4423,202 @@ Extracted from bootstrap CSS
 	}
 	
 }
+
+
+
+/*======================================================================
+  SocialTagg Pricing Page
+======================================================================*/
+
+/*Pricing Tables: General Pricing Table Styles*/
+.tab.title-column {
+  float: left;
+  margin: 1px 0 0 1px;
+}
+
+.tab.title-column h3 {
+  font-size: 16px;
+  text-align: center;
+  color: #fff;
+  padding: 6px 0;
+  margin: 0;
+  background-color: #808080;
+}
+
+.tab.title-column li {
+  color: #ffffff;
+  text-align: center;
+  padding: 11px 0;
+  border-bottom: 1px solid #fff;
+}
+
+.tab.title-column h4 {
+  padding: 15px 0;
+  color: #fff;
+  border-bottom: 1px solid #fff;
+}
+
+.tab.title-column {
+  background: #909090;
+}
+
+.six-tables .tab.title-column .ul {
+  border-bottom: 1px solid;
+}
+
+.two-line-center-single {
+  height: 37px;
+  line-height: 36px;
+  font-size: 1em;
+}
+
+.two-line-center-single img {
+  margin: auto;
+}
+
+.price-line-center-single {
+  height: 48px;
+  line-height: 48px;
+}
+
+.thicker {
+  font-weight: bold;
+}
+
+.line-filler {
+  height: 48px;
+}
+
+.price.line-filler {
+  line-height: 48px;
+}
+
+.smaller-text {
+  font-size: 0.8em;
+  display: block;
+}
+
+.tab.pricing-table {
+  padding: 0 0 15px 0;
+}
+
+/* Color - SocialTagg */
+.pricing-table .color-4 h3, .color-4 .sign-up {background-color: #1eb0ff;}
+.pricing-table .color-4 h4 {background-color: #2dbffd;}
+
+/*End General Pricing Table Styles*/
+
+/*Pricing Tables: Full Computer Screen*/
+
+.six-tables .tab.pricing-table {
+  width: 152px;
+}
+
+.five-tables .tab.pricing-table {
+  width: 183px;
+}
+
+.four-tables .tab.pricing-table {
+  width: 228px;
+}
+
+/*Separator between Title and Table*/
+
+.six-tables .tab.title-column {
+  width: 152px;
+}
+
+.six-tables .tab.title-column:nth-child(n+2) {
+  display: none;
+}
+
+.five-tables .tab.title-column {
+  width: 183px;
+}
+
+.five-tables .tab.title-column:nth-child(n+2) {
+  display: none;
+}
+
+/*End Full Screen*/
+
+/*Pricing Tables: Tablets in Portrait*/
+@media only screen and (min-width: 768px) and (max-width: 959px) {
+  .six-tables .tab.pricing-table {
+    width: 120px;
+  }
+
+  .five-tables .tab.pricing-table {
+    width: 145px;
+  }
+
+  .four-tables .tab.pricing-table {
+    width: 181px;
+  }
+
+  .six-tables .tab.title-column {
+    width: 120px;
+  }
+
+  .six-tables .tab.title-column:nth-child(n+2) {
+    display: none;
+  }
+
+  .five-tables .tab.title-column {
+    width: 145px;
+  }
+
+  .five-tables .tab.title-column:nth-child(n+2) {
+    display: none;
+  }
+}
+/*End Tablets*/
+
+/*Pricing Tables: Mobile Landscape*/
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+
+  .six-tables .tab.pricing-table,
+  .five-tables .tab.pricing-table,
+  .four-tables .tab.pricing-table,
+  .three-tables .tab.pricing-table,
+  .two-tables .tab.pricing-table {
+    width: 208px;
+  }
+
+
+  .six-tables .tab.title-column,
+  .five-tables .tab.title-column {
+    width: 208px;
+  }
+
+  .six-tables .tab.title-column:nth-child(n+2),
+  .five-tables .tab.title-column:nth-child(n+2) {
+    display: inline;
+  }
+
+}
+/*End Mobile Landscape*/
+
+/*Pricing Tables: Mobile Portrait*/
+@media only screen and (max-width: 479px) {
+
+  .six-tables .tab.pricing-table,
+  .five-tables .tab.pricing-table,
+  .four-tables .tab.pricing-table,
+  .three-tables .tab.pricing-table,
+  .two-tables .tab.pricing-table {
+    width: 148px;
+  }
+
+  .six-tables .tab.title-column,
+  .five-tables .tab.title-column {
+    width: 149px;
+  }
+
+  .six-tables .tab.title-column:nth-child(n+2),
+  .five-tables .tab.title-column:nth-child(n+2) {
+    display: inline;
+  }
+}
+/*End Mobile Portrait*/
+/*End Pricing Page*/

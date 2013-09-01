@@ -153,6 +153,8 @@ exports.getSanitizedUser = function(rawUser) {
 //
 // Get common links.  Todo: parse a common 'routes' class shared with other classes
 //
+// Remember: this is a function, so be sure to get the links like: "application.links().editprofile"
+//
 exports.links = function(options) {
   return {
     home: thisModule.globalVariables.applicationHomepage,
@@ -218,7 +220,7 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   //
   // These variables are JSON.stringify'd and you can access them in Jade by 'publicPageVars'.
   //
-  pageVars.public = {};
+  pageVars.public = pageVars.public || {};
   pageVars.public.user = {};
   pageVars.isLoggedIn = false;
   
@@ -256,11 +258,17 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   //
   // ex: http://localhost:3000/?loginlink=1 
   
+  //
+  // Dark features
   // specified in app.js for 'development' and possibly 'staging'
+  //
+  // Use these in Jade like:   if locals.showsocial ...
+  //
   pageVars.showevents = this.globalVariables.showevents || req.query.showevents;
   pageVars.showsocial = this.globalVariables.showsocial || req.query.showsocial;
   pageVars.showmyprofile = this.globalVariables.showmyprofile || req.query.showmyprofile;
   pageVars.showpricing = this.globalVariables.showpricing || req.query.showpricing;
+  pageVars.shownewuserreg = this.globalVariables.shownewuserreg || req.query.shownewuserreg;
   
 
   function done() {

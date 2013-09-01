@@ -348,6 +348,13 @@ exports.getUserByUsername = function(username, resultCallback) {
   getUserFromUserGridByOptions(options, resultCallback);
 };
 
+/*
+  Get a user by email address.  
+  Parameters:
+    emailAddr: the email address
+    resultCallback: a callback with the signature:
+      user: the user with that email, or undefined
+ */
 exports.getUserByEmail = function(emailAddr, resultCallback) {
   
   var result = undefined;
