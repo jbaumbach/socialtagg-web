@@ -4128,7 +4128,7 @@ div.field.event-datetime {
 
 .read-only-input {
   border: 1px solid #D8D8D8;
-  color: #BBBBBB;
+  color: #999;
   display: inline-block;
   margin: 0 0 13px;
   padding: 9px;

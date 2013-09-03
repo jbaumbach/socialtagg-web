@@ -64,6 +64,23 @@ exports.loginUser = function(req, userId) {
   this.setSessionInfo(req, sessionInfo);
 };
 
+/*
+  Login a temporary user so some functions that require authentication can proceed
+ */
+exports.loginTempUser = function(req, email) {
+  var sessionInfo = this.getSessionInfo(req);
+  sessionInfo.tempAuthorization = email;
+  this.setSessionInfo(req, sessionInfo);
+}
+
+/*
+  Retrieve the information passed in to .loginTempUser (at this time, an email addr)
+ */
+exports.getTempLoginInfo = function(req) {
+  var sessionInfo = this.getSessionInfo(req);
+  return sessionInfo.tempAuthorization;
+}
+
 //
 // Log out a user.
 //

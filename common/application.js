@@ -221,7 +221,7 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   // These variables are JSON.stringify'd and you can access them in Jade by 'publicPageVars'.
   //
   pageVars.public = pageVars.public || {};
-  pageVars.public.user = {};
+  pageVars.public.user = pageVars.public.user || {};
   pageVars.isLoggedIn = false;
   
   //
@@ -238,7 +238,7 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   //      provided this function is called.
   //
   //  2. Explicitly - set { logindest: [url] } in an object passed to application.links(), and
-  //      then grab your url to the login login page.  You don't need to call this function.
+  //      then grab your url to the login page.  You don't need to call this function.
   //
   
   var ld = req.query.logindest || req.url;
@@ -479,3 +479,14 @@ exports.ErrorCollectingValidator = function () {
 
 }
 
+exports.registrationValidationUrl = function(email, verificationCode) {
+  
+  var result = util.format('%s://%s/registration/verify?email=%s&code=%s',
+    this.globalVariables.secureProtocol,
+    this.globalVariables.serverPath,
+    encodeURIComponent(email),
+    verificationCode
+  );
+  
+  return result;
+}

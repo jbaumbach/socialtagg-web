@@ -30,6 +30,9 @@ var userController = app.controller('userController', function($scope, $dialog, 
   function setMsg(type, msg) {
     $scope.notifyClass = type;
     $scope.notifyMsg = msg;
+
+    //Optional - smooth scroll to the top
+    $("html, body").animate({ scrollTop: $("#page-title").offset().top }, "slow");
   };
   
   function clearMsg() {
@@ -45,26 +48,53 @@ var userController = app.controller('userController', function($scope, $dialog, 
   $scope.updateUser = function() {
     $scope.isWorking = true;
     
-    $scope.user.$update(function() {
-      $scope.isWorking = false;
-      
-      // Success
-      setMsg('success', 'Your information was updated successfully');
-      
-      //Optional - smooth scroll to the top
-      $("html, body").animate({ scrollTop: 0 }, "slow");
-      
-    }, function() {
-      $scope.isWorking = false;
-      
+    function handleResponseErrors(arguments) {
       // Error
       var msg = 'Unknown error, please try again later!';
       if (arguments.length > 0 && arguments[0].data && arguments[0].data.errors) {
         msg = 'Please correct these validation errors: ' + arguments[0].data.errors.join(', ');
       }
-      
+
       setMsg('error', msg);
-    });
+
+    }
+    
+    if (!$scope.user.id) {
+      
+      // Insert
+      
+      $scope.user.$save(function() {
+
+        $scope.isWorking = false;
+
+        // Success
+        setMsg('success', 'Your information was updated successfully');
+        
+        window.location = '/viewprofile';
+        
+      }, function() {
+        $scope.isWorking = false;
+
+        handleResponseErrors(arguments);
+      });
+      
+    } else {
+      
+      // Update
+      
+      $scope.user.$update(function() {
+        
+        $scope.isWorking = false;
+        
+        // Success
+        setMsg('success', 'Your information was updated successfully');
+        
+      }, function() {
+        $scope.isWorking = false;
+
+        handleResponseErrors(arguments);
+      });
+    }
   }
 });
 

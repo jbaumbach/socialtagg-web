@@ -134,6 +134,32 @@ exports.authenticate = function(req, res, next) {
 } 
 
 /*
+  Same as .authenticate but also checks if there is a temporary authentication
+ */
+exports.authenticateTempOk = function(req, res, next) {
+
+  var sessionInfo = globalFunctions.getSessionInfo(req);
+
+  if (sessionInfo.userId) {
+
+    next();
+
+  } else if (sessionInfo.tempAuthorization) {
+    
+    next();
+    
+  } else {
+
+    thisModule.authenticateHmac(req, function(error, apiUser) {
+
+      thisModule.authorizationComplete(error, req, res, next);
+
+    });
+  }
+  
+}
+
+/*
   Authenticates a request using HMAC. 
   Parameters:
     req: the current request

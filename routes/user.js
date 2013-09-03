@@ -76,10 +76,10 @@ exports.loginfb = function(req, res) {
 /*
   Attempt to create a new user account from the posted info
 */
-exports.createNewAccount = function(req, res) {
+exports.createRegistration = function(req, res) {
   
   var email = req.body.email;
-  var pw = req.body.password;
+  // var pw = req.body.password;
   
   userManager.getUserByEmail(email, function(user) {
     if (user) {
@@ -91,7 +91,9 @@ exports.createNewAccount = function(req, res) {
       var v = application.ErrorCollectingValidator();
       
       v.check(email, 'Please enter a valid email address').isEmail();
-      v.check(pw, 'Please enter a password between 6 and 15 chars').len(6, 15);
+      
+      // Not checking passwords in this step - they'll be on the user profile page
+      // v.check(pw, 'Please enter a password between 6 and 15 chars').len(6, 15);
       
       if (v.getErrors().length > 0) {
         
@@ -99,29 +101,102 @@ exports.createNewAccount = function(req, res) {
         
       } else {
 
-        var newUser = new User({ email: email, password: pw, username: email });
+        var valCode = globalfunctions.md5Encode('valCode' + email + new Date());
+        var regInfo = { email: email, validationCode: valCode };
         
-        /* todo: implement this stuff
-        userManager.upsertUser(newUser, function(err, createdUser) {
-          if (err) {
-            res.send(403, { msg: 'Sorry, unknown server error.  Please try again later.'});
-          } else {
-            //
-            // Log the user in
-            //
-            globalfunctions.loginUser(req, user.id);
+        userManager.upsertUserRegistration(regInfo, function(err, userReg) {
+        
+            if (err) {
+              
+              res.send(500, { msg: 'Oops!  An error has occurred.  Please try again later.'});
+              
+            } else {
+              
+              var verificationUrl = application.registrationValidationUrl(email, valCode);
+              
+              userapi.sendVerificationEmailWebsite(email, verificationUrl, function(err, info) {
 
-            res.send(201, { msg: 'Success!'});
-          }
-        })
-        */
-        
-        res.send(500, { msg: 'Not implemented yet!  We are working on this!'} );
-        
+                if (err) {
+                  console.log('(error) user.createRegistration: check the logs');  
+                }
+                
+                res.send(201, { msg: 'Success!' });
+              });
+            }
+        });
       }
     } 
   });
 }
+
+exports.registrationVerify = function(req, res) {
+  
+  var email = req.query.email;
+  var valCode = req.query.code;
+  
+  // console.log('email: ' + email + ', val: ' + valCode);
+  
+  userManager.getRegistrationInfoByEmail(email, function(err, userReg) {
+    if (err) {
+      // todo: send a better error, like actual HTML, in all these messages below
+      res.send(500, { msg: 'Sorry, there\'s been a system error.  Please try again later' });
+      
+    } else if (!userReg) {
+      
+      res.send(404, { msg: 'Sorry, that email address cannot be found.'} );
+      
+    } else {
+      
+      // OK, found the email
+      if (userReg.validationCode === valCode) {
+        
+        // Sweet!  All validated.  Make sure the email doesn't suddenly exist
+        // in the system already
+        
+        userManager.getUserByEmail(email, function(user) {
+          
+          if (user) {
+            
+            res.send(400, { msg: 'The email address corresponding to this registration' +
+              'is already in the system.  You should be able to log in to SocialTagg normally.'});
+            
+          } else {
+            
+            // Ok, legit new registration.  Go to complete-profile page.
+
+            //
+            // Set a temporary authentication flag so the user can 'post' to the
+            // /users API endpoint
+            //
+            globalfunctions.loginTempUser(req, email);
+            
+            var initialPageVars = {
+              title: 'Create My Profile',
+              usesAngular: true,
+              public: {
+                user: new User({ userName: email, email: email })
+              },
+              loginDest: application.links().viewprofile,
+              message: { text: 'You\'re almost there!  Please complete your profile information and click ' +
+                'save to complete your registration.' }
+            };
+
+            application.buildApplicationPagevars(req, initialPageVars, function(pageVars) {
+              res.render('useredit', pageVars);
+            });
+          }
+        });
+        
+      } else {
+        
+        res.send(400, { msg: 'Sorry, the validation code does not match the one ' +
+          'in our system.  If you had multiple registration emails sent, make sure ' +
+          'you click the link in the LAST one.'})
+      }
+    }
+  })
+  
+};
 
 //
 // The site has posted login info
@@ -516,7 +591,7 @@ exports.myProfile = function(req, res) {
 
   var initialPageVars = {
     title: 'Edit My Profile',
-    loginDest: application.links.editprofile,
+    //loginDest: application.links.editprofile,
     usesAngular: true
   };
   
@@ -534,7 +609,7 @@ exports.viewProfile = function(req, res) {
 
     var initialPageVars = {
       title: 'View My Profile',
-      loginDest: application.links.viewprofile,
+      //loginDest: application.links.viewprofile,
       displayUser: user,
       isLoggedInUser: true
     };

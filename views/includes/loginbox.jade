@@ -52,8 +52,9 @@
           br
           form(method='POST')
             input.login.user(type='text', ng-model='email', ng-class='{error: loginError}', placeholder='Email', id='username')
-            input.login.password(type='password', ng-model='password', ng-class='{error: loginError}', placeholder='Password (6-15 chars)', id='password')
-            input.login.password(type='password', ng-model='password2', ng-class='{error: loginError}', placeholder='Retype password', id='password2')
+            //- Not showing passwords here - they will be on the user profile edit page
+              input.login.password(type='password', ng-model='password', ng-class='{error: loginError}', placeholder='Password (6-15 chars)', id='password')
+              input.login.password(type='password', ng-model='password2', ng-class='{error: loginError}', placeholder='Retype password', id='password2')
           
             p.other-login-options
               input(type='checkbox', ng-model='readterms')
@@ -65,3 +66,22 @@
 
           p.other-login-options Already have an account? 
             a(href='#', ng-click='loginMode(loginModes.login)', no-click)  Sign In
+
+        div(ng-show='mode == loginModes.regSent', style='display: none;')
+          
+          p.other-login-options
+            | Thank you for registering with SocialTagg!  An email has been sent to:
+          
+          p.other-login-options
+            strong {{ email }}
+              
+          p.other-login-options
+            | Please check your email and click on the registration link.  This will
+            | validate your email address with SocialTagg and finalize
+            | the registration process.
+
+          p.other-login-options
+            | If you don't receive your registration email within a few minutes, please
+            | check your spam folder.  Or, you can 
+            a(href='#', ng-click='loginMode(loginModes.create)', no-click) resubmit  
+            | your registration info.

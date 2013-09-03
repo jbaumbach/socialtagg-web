@@ -61,6 +61,26 @@ exports.sendVerificationEmail = function(emailAddr, verificationCode, resultCall
   email.sendGenericEmail(params, resultCallback);
 }
 
+//
+// Various templates for emails to send
+//
+exports.sendVerificationEmailWebsite = function(emailAddr, verificationUrl, resultCallback) {
+
+  var params = {
+    subject : "Welcome to SocialTagg!",
+    plainTextBody : util.format("Hello %s!\n\nWelcome to SocialTagg!\n\n\Your " +
+      "registration is nearly complete.  Please click this link (or copy/paste it into " +
+      "your browser's url box) to complete the process:\n\n%s\n\n" +
+      "Sincerely,\nSocialTagg Team",
+      emailAddr, verificationUrl),
+    toEmail : emailAddr,
+    fromEmail : fromEmail,
+    fromName: fromName
+  };
+
+  email.sendGenericEmail(params, resultCallback);
+}
+
 
 exports.sendForgotPasswordEmail = function(emailAddr, verificationCode, resultCallback) {
   
@@ -340,7 +360,17 @@ exports.validateRawUser = function(userRaw) {
   //
   v.check(userRaw.firstName, 'first name should be between 1 and 50 chars').len(1, 50);
   v.check(userRaw.lastName, 'last name should be between 1 and 50 chars').len(1, 50);
-  v.check(userRaw.email, 'email should be present and valid').isEmail();
+  // no need to check, we ignore this value if passed: v.check(userRaw.email, 'email should be present and valid').isEmail();
+  
+  // Only check password if this is an insert
+  if (!userRaw.id) {
+
+    v.check(userRaw.password, 'password should be between 6 and 15 chars').len(6, 15);
+
+    if (userRaw.password != userRaw.password2) {
+      v.error('the passwords should match');
+    }
+  }
   
   if (userRaw.website) {
     v.check(userRaw.website, 'website should be valid').isUrl();
@@ -349,16 +379,62 @@ exports.validateRawUser = function(userRaw) {
   return v.getErrors();
 };
 
+
+function completeUserSubmission(userRaw, options) {
+
+  // Validate info 
+  var invalidDataMsgs = thisModule.validateRawUser(userRaw);
+
+  if (invalidDataMsgs.length > 0) {
+
+    options.res.send(400, { errors: invalidDataMsgs });
+
+  } else {
+
+    // Ahhh, data all good
+
+    userManager.upsertUser(userRaw, function (err, updatedUser) {
+
+      if (err) {
+
+        // Huh
+        options.res.send(500, { msg: err });
+
+      } else {
+
+        //
+        // Sweet. The user is created.
+        //
+        
+        //
+        // Hideous hack - auto log the user in if there's no logged in user and
+        // a password is passed, because we're assuming
+        // this is the registration step.
+        //
+        var loggedInUserId = application.getCurrentSessionUserId(options.req);
+        
+        if (!loggedInUserId && userRaw.password) {
+          console.log('logging user in');
+          globalfunctions.loginUser(options.req, updatedUser.id);
+        }
+        
+        options.res.send(200, updatedUser);
+
+      }
+    });
+  }
+}
+
 /* 
-  Accept a user object and insert it into the database.  As of this writing, the 
-  user must be the currently logged in user.
+ Accept a user object and insert it into the database.  As of this writing, the 
+ user must be the currently logged in user.
  */
 exports.usersPut = function(req, res) {
 
   var uuid = req.params.id;
-  var loggedInUser = application.getCurrentSessionUserId(req);
+  var loggedInUserId = application.getCurrentSessionUserId(req);
   
-  var authorizedToPutThisUser = uuid === loggedInUser;
+  var authorizedToPutThisUser = (uuid === loggedInUserId);
 
   if (!authorizedToPutThisUser) {
     res.send(403, { msg: 'Current user has insufficient permissions to edit submitted user id' });
@@ -366,33 +442,23 @@ exports.usersPut = function(req, res) {
   };
   
   var userRaw = req.body;
-  
-  // Validate info 
-  var invalidDataMsgs = thisModule.validateRawUser(userRaw);
-
-  if (invalidDataMsgs.length > 0) {
-
-    res.send(400, { errors: invalidDataMsgs });
-
-  } else {
-
-    // Ahhh, data all good
+  //
+  // We don't support changing userid or email at this time.  Just in case the user
+  // got cute and used Firebug or something to change these values in the client, let's zap 
+  // them
+  //
+  // todo: test this!
+  //
+  userManager.getUser(loggedInUserId, function(user) {
     
-    userManager.upsertUser(userRaw, function(err, updatedUser) {
-      
-      if (err) {
-        
-        // Huh
-        res.send(500, { msg: err });
-        
-      } else {
-        
-        // Sweet
-          res.send(200, updatedUser);
-        
-      }
-    });
-  }
+    userRaw.email = user.email;
+    userRaw.userName = user.email;
+
+    var options = { req: req, res: res };
+
+    completeUserSubmission(userRaw, options);
+  })
+
 }
 
 exports.usersPost = function(req, res) {
@@ -423,10 +489,22 @@ exports.usersPost = function(req, res) {
   } else {
     
     //
-    // We're inserting a user
+    // We're inserting a user.  At this point, we should have a temporary login on the site
+    // which authorized us to get at least to this point.
     //
+
+    var userRaw = req.body;
+    var tempUserEmail = globalfunctions.getTempLoginInfo(req);
     
-    thisModule.respond(res, 400, 'The \'action\' parameter is missing. The request cannot be fulfilled.  Sorry.');
+    userRaw.email = tempUserEmail;
+    userRaw.userName = tempUserEmail;
+
+    var options = { req: req, res: res };
+    completeUserSubmission(userRaw, options);
+
+
+    // old line
+    // thisModule.respond(res, 400, 'The \'action\' parameter is missing. The request cannot be fulfilled.  Sorry.');
   }
 };
 

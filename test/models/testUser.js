@@ -30,7 +30,7 @@ describe('User model', function() {
       email: 'hello@there.com',
       address: '1234 hello St.',
       phone: '(805) 123-4566',
-      password: 'mypass',
+      //password: 'mypass', // 9/2/2013 JB: Not supported any longer
       pictureUrl: 'http://mysite.com/mypic.gif',
       pictureDataBytes: 'afasfaffas',
       pictureMimeType: 'image/gif',

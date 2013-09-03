@@ -92,6 +92,45 @@ exports.userFromFBLoginUser = function(fbUser) {
   return new User(data);
 }
 
+/*
+  Get a UG user reg from a user registration object
+ */
+function userGridUserRegFromUserRegInfo(userReg) {
+  var result = {
+    
+    type: 'registrations',
+    
+    email: userReg.email,
+    validation_code: userReg.validationCode 
+  }
+
+  if (!userReg.uuid) {
+    
+    // Name is a special param - see notes in the other functions
+    result.name = 'reg' + globalFunctions.md5Encode(userReg.email + userReg.validationCode + new Date());
+    
+  } else {
+    
+    result.uuid = userReg.uuid;
+  }
+  
+  return result;
+}
+
+/*
+  Get a user registration object from a UG user reg object
+ */
+function userRegFromUserGridUserReg(ugUserReg) {
+  
+  var result = {
+    email: ugUserReg.get('email'),
+    validationCode: ugUserReg.get('validation_code'),
+    uuid: ugUserReg.get('uuid')
+  }
+  
+  return result;
+}
+
 //
 // Maps a User Grid user to our app's user
 //
@@ -115,10 +154,16 @@ function userGridUserFromUser(user) {
     title: user.title,
     twitter: user.twitter,
     // not yet: uuid_avatar_image: user.avatarId
-  };
+
+    // Adding 9/2/2013 to support password changing
+    // password: user.password
+
+};
   
   if (!user.uuid) {
 
+    //
+    // Inserting
     //
     // Must create a unique value for 'name' according to the UG docs:
     // http://apigee.com/docs/usergrid/content/data-model
@@ -327,7 +372,13 @@ exports.validateFacebookLogin = function(accessToken, resultCallback) {
   });
 }
   
-
+/*
+  Get a user from UG for the passed id
+  Parameters:
+    id: the usergrid user id, aka uuid
+    resultCallback: a function with signature:
+      user: the retreived user, or undefined if not found (or error)
+ */
 exports.getUser = function(id, resultCallback) {
 
   var options = {
@@ -370,9 +421,129 @@ exports.getUserByEmail = function(emailAddr, resultCallback) {
 };
 
 /*
+  Looks up a validation record by email address
+  Parameters:
+    email: the email address to look up
+    resultCallback: function with this signature:
+      err: filled in if there was an error
+      ugReg: an updateable usergrid registration if we found one, otherwise undefined
+ */
+exports.getUGRegistrationByEmail = function(email, resultCallback) {
+
+  var options = {
+    type: 'registrations',
+    qs: {
+      // Note - you must use SINGLE QUOTES around a string value to search for
+      ql: util.format('select * where email = \'%s\'', email),
+      limit: '100'
+    }
+  };
+
+  client().createCollection(options, function (err, existingUserReg) {
+    
+    if (err) {
+      // Crap
+      resultCallback(err);
+
+    } else {
+
+      var result;
+      
+      if (existingUserReg.hasNextEntity()) {
+
+        result = existingUserReg.getNextEntity();
+      }
+      
+      resultCallback(err, result);
+    }
+  });
+}
+
+/*
+  Get a user validation record from UG.  Similar to 'getUGRegistrationByEmail', but
+  returns JSON object rather than a usergrid object.
+  Parameters:
+    email: the email address to look up
+    resultCallback: callback with signature:
+      err: filled in if something bad happened
+      userReg: a user registration JSON object, or undefined 
+ */
+exports.getRegistrationInfoByEmail = function(email, resultCallback) {
+  
+  thisModule.getUGRegistrationByEmail(email, function(err, ugReg) {
+    if (err) {
+      resultCallback(err);
+      
+    } else {
+      var result;
+      
+      if (ugReg) {
+        result = userRegFromUserGridUserReg(ugReg);  
+      }
+      
+      resultCallback(undefined, result);
+    }
+  });
+}
+
+/*
+ Inserts a user registration record.
+ Parameters:
+   userReg: object with email, password, and reg validation code fields
+   resultCallback: function with signature:
+     err: filled in if there's an error
+     user: the user reg info
+ */
+exports.upsertUserRegistration = function(userReg, resultCallback) {
+
+  var ugOptionsToUpdateOrInsert = userGridUserRegFromUserRegInfo(userReg);
+
+  
+  thisModule.getUGRegistrationByEmail(userReg.email, function (err, existingUserReg) {
+    if (err) {
+      // Crap
+      resultCallback(err);
+
+    } else {
+
+      //
+      // Common outta-here function
+      //
+      function donezo(err, ugUser) {
+        var result;
+        if (!err) {
+          result = userRegFromUserGridUserReg(ugUser);
+        }
+        resultCallback(err, result);
+      }
+      
+      if (existingUserReg) {
+        
+        // Update
+        existingUserReg.set(ugOptionsToUpdateOrInsert);
+        existingUserReg.save(function(err) {
+
+          donezo(err, existingUserReg);
+        })
+
+      } else {
+        
+        // Insert
+        client().createEntity(ugOptionsToUpdateOrInsert, function(err, ugUserReg) {
+          
+          donezo(err, ugUserReg);
+        });
+      }
+    }
+  });
+}
+
+
+/*
   Upsert the passed user in the data store.
   Parameters:
-    user: the user object to upsert in the database
+    user: the user object to upsert in the database.  The id is the key.  If there 
+          is a .password field, the user password is also updated.
     resultCallback: a function with signature:
       err: filled in if something bad happened
       user: the new or updated user object
@@ -387,12 +558,24 @@ exports.upsertUser = function(user, resultCallback) {
 
     if (!err) {
 
+      function setPassword(ugUser, callback) {
+        
+        if (user.password && user.password.length > 0) {
+          setUserGridUserPassword(ugUser, user.password, callback);
+          
+        } else {
+          callback();
+        }
+      } 
+      
       if (isInsert) {
 
         // The user returned is a completed new user - let's return it
         
-        result = thisModule.userFromUserGridUser(ugUser);
-        resultCallback(err, result);
+        setPassword(ugUser, function() {
+          result = thisModule.userFromUserGridUser(ugUser);
+          resultCallback(err, result);
+        });
 
       } else {
 
@@ -405,10 +588,17 @@ exports.upsertUser = function(user, resultCallback) {
         ugUser.set(dataToSave);
         ugUser.save(function(err) {
 
-          result = thisModule.userFromUserGridUser(ugUser);
-          resultCallback(err, result);
-
-        })
+          if (!err) {
+            
+            setPassword(ugUser, function() {
+              result = thisModule.userFromUserGridUser(ugUser);
+              resultCallback(err, result);
+            });
+            
+          } else {
+            resultCallback(err);
+          }
+        });
       }
     } else {
 

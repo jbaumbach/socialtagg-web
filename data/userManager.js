@@ -31,6 +31,13 @@ var
 // User functions
 //********************************************************************************
 
+/*
+ Get a user from UG for the passed id
+ Parameters:
+   id: the usergrid user id, aka uuid
+   resultCallback: a function with signature:
+     user: the retreived user, or undefined if not found (or error)
+ */
 exports.getUser = function(id, resultCallback) {
   
   var cacheKey = User.cacheKey(id);
@@ -59,11 +66,11 @@ exports.getUserByUsername = function(email, resultCallback) {
 };
 
 /*
- Get a user by email address.  
- Parameters:
- emailAddr: the email address
- resultCallback: a callback with the signature:
- user: the user with that email, or undefined
+  Get a user by email address.  
+  Parameters:
+  emailAddr: the email address
+  resultCallback: a callback with the signature:
+    user: the user with that email, or undefined
 */
 exports.getUserByEmail = function(emailAddr, resultCallback) {
   db.getUserByEmail(emailAddr, resultCallback);
@@ -97,6 +104,18 @@ exports.upsertUser = function(user, resultCallback) {
 exports.deleteUser = function(userId, resultCallback) {
   db.deleteUser(userId, resultCallback);
 };
+
+/*
+  Inserts a user registration record.
+  Parameters:
+    userReg: object with email, password, and reg validation code fields
+    resultCallback: function with signature:
+      err: filled in if there's an error
+      user: the user reg info
+ */
+exports.upsertUserRegistration = function(userReg, resultCallback) {
+  db.upsertUserRegistration(userReg, resultCallback);
+}
 
 exports.validateCredentials = function(email, password, resultCallback) {
   
@@ -136,6 +155,19 @@ exports.validateFacebookLogin = function(accessToken, resultCallback) {
     }
   });
 }
+
+/*
+ Get a user validation record from UG.  Similar to 'getUGRegistrationByEmail', but
+ returns JSON object rather than a usergrid object.
+ Parameters:
+   email: the email address to look up
+   resultCallback: callback with signature:
+     err: filled in if something bad happened
+     userReg: a user registration JSON object, or undefined 
+ */
+exports.getRegistrationInfoByEmail = function(email, resultCallback) {
+  db.getRegistrationInfoByEmail(email, resultCallback);
+};
 
 exports.deleteUser = function(id, resultCallback) {
   db.deleteUser(id, resultCallback);

@@ -14,14 +14,15 @@ var loginController = app.controller('loginController', function($scope, $http, 
 
   $scope.loginModes = {
     login: 0,
-    create: 1
+    create: 1,
+    regSent: 2
   }
 
   $scope.user = {};
   
   // Don't release with this line - just for dev only!!!
   console.log('(warning) debug code!!!  - "$scope.loginModes.create"')
-  // $scope.mode = $scope.loginModes.create;
+  $scope.mode = $scope.loginModes.create;
 
 
   function setMsg(type, msg) {
@@ -57,7 +58,7 @@ var loginController = app.controller('loginController', function($scope, $http, 
     // $scope.setLoginMessage();
   }
 
-  function trySubmitUserInfo(postData, successUrl, postUrl, failFunction) {
+  function trySubmitUserInfo(postData, postUrl, successFunction, failFunction) {
     $scope.loading = true;
 
     $http({
@@ -71,7 +72,17 @@ var loginController = app.controller('loginController', function($scope, $http, 
     }).success(function (data, status, headers, config) {
         $scope.loading = false;
 
-        window.location = successUrl;
+        /*
+        if (successUrl) {
+          window.location = successUrl;
+        }
+        */
+        
+        console.log('have successfunction? ' + successFunction)
+        if (successFunction) {
+          console.log('calling success function');
+          successFunction();
+        }
 
     }).error(function (data, status, headers, config) {
 
@@ -92,6 +103,8 @@ var loginController = app.controller('loginController', function($scope, $http, 
   $scope.create = function() {
 
     fillAutocompleterFieldIfNecessary('#username', $scope.email);
+    
+    /*
     fillAutocompleterFieldIfNecessary('#password', $scope.password);
     fillAutocompleterFieldIfNecessary('#password2', $scope.password2);
     
@@ -103,17 +116,26 @@ var loginController = app.controller('loginController', function($scope, $http, 
       
       setMsg('error', 'The passwords should match each other!');
       
-    } else if (!$scope.readterms) {
+    } else 
+    */
+    
+    if (!$scope.readterms) {
       
       setMsg('error', 'Please agree to the terms and conditions.');
       
     } else {
 
-      var postData = 'email=' + $scope.email + '&password=' + $scope.password;
-      var successUrl = $scope.secureProtocol + '://' + $scope.serverPath + ($scope.newAcctUrl || '');
-      var postUrl = $scope.secureProtocol + '://' + $scope.serverPath + '/createnewaccount';
+      var postData = 'email=' + $scope.email;
+      var postUrl = $scope.secureProtocol + '://' + $scope.serverPath + '/registration/createnewaccount';
       
-      trySubmitUserInfo(postData, successUrl, postUrl, function(data) {
+      console.log('submitting create...');
+      trySubmitUserInfo(postData, postUrl, function() {
+        // Success
+        console.log('setting login mode');
+        $scope.mode = $scope.loginModes.regSent;
+        
+      }, function(data) {
+        // Fail
         setMsg('error', data.msg);
       });
       
@@ -122,7 +144,7 @@ var loginController = app.controller('loginController', function($scope, $http, 
   
   $scope.login = function() {
 
-    
+   // todo: test the new autocompleter functions 
     /*
     if (!$scope.email && !$scope.password) {
       console.log('(info) fixing possible browser autocompleter');
@@ -138,7 +160,10 @@ var loginController = app.controller('loginController', function($scope, $http, 
     var successUrl = $scope.secureProtocol + '://' + $scope.serverPath + ($scope.loginDest || '');
     var postUrl = $scope.secureProtocol + '://' + $scope.serverPath + '/login';
 
-    trySubmitUserInfo(postData, successUrl, postUrl);
+    trySubmitUserInfo(postData, postUrl, function() {
+      // Success
+      window.location = successUrl;
+    });
 
     /*
     $scope.loading = true;

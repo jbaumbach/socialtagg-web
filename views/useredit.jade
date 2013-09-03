@@ -23,23 +23,35 @@ block content
             span {{ notifyMsg }}
             a.close(href='#', ng-click='clearMsg()', no-click)
 
-        form.form-horizontal
+        if locals.message
+          p(style=locals.message.style) !{ locals.message.text }
         
-          .field
-            label(for='firstName') First Name
-            input.text(type='text', size='100', id='firstName', ng-model='user.firstName', required)
-          
-          .field
-            label(for='lastName') Last Name
-            input.text(type='text', size='100', id='lastName', ng-model='user.lastName', required)
+        form.form-horizontal
+
 
           .field
             label(for='email') Email
-            if !locals.public.user
-              input.text(type='text', size='100', id='email', ng-model='user.email')
-            else
-              span.read-only-input {{ user.email }}
+            span.read-only-input {{ user.email }}
+
+          //- Only show the password fields if this is a new user.  We can create a special
+          //- password screen later.
+          if !locals.public.user.id
+            .field
+              label(for='password') Password
+              input.text(type='password', size='100', id='password', ng-model='user.password', placeholder='(6-15 chars)', required)
+            
+            .field
+              label(for='password2') Re-enter password
+              input.text(type='password', size='100', id='password2', ng-model='user.password2', required)
+
+          .field
+            label(for='firstName') First Name
+            input.text(type='text', size='100', id='firstName', ng-model='user.firstName', placeholder='(Required)', required)
           
+          .field
+            label(for='lastName') Last Name
+            input.text(type='text', size='100', id='lastName', ng-model='user.lastName', placeholder='(Required)', required)
+
           .field
             label(for='address') Address
             input.text(type='text', size='100', id='address', ng-model='user.address')

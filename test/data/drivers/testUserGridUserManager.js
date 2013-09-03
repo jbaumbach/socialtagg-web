@@ -40,6 +40,8 @@ var fb = {
 
 describe('userGridUserManager', function() {
 
+  this.timeout(5000);
+
   it('should get a user from a FB object', function() {
     
     var r = userGridUserManager.userFromFBLoginUser(fb);
@@ -67,4 +69,60 @@ describe('userGridUserManager', function() {
     assert.ok(!r, 'couldn\'t tell second or later fb login');
   })
 
+  //
+  // Some test data
+  //
+  var emailToRegister = 'blah2@blah.com';
+  var valcode = '01234abcde';
+  var newValCode = 'fghjk45678';
+  var origReg = { email: emailToRegister, validationCode: valcode};
+
+  //
+  // Note: this test is more effective if the UG record is deleted manually first
+  // select * where email = 'blah2@blah.com'
+  //
+  it('should insert a UG registration', function(done) {
+    
+    userGridUserManager.upsertUserRegistration(origReg, function(err, newReg) {
+      assert.ok(!err, 'weird, had error');
+      
+      assert.equal(newReg.email, emailToRegister, 'didn\'t get right email back');
+      assert.equal(newReg.validationCode, valcode, 'didn\'t get right valication code back');
+      
+      done();
+    })
+  });
+  
+  it('should get a UG record for a registration', function(done) {
+    
+    userGridUserManager.getUGRegistrationByEmail(emailToRegister, function(err, ugReg) {
+      
+      assert.ok(!err, 'huh, got an error');
+      
+      var r = ugReg.get('email');
+      
+      assert.equal(r, emailToRegister, 'didn\'t get right record back');
+      
+      done();
+    })
+  });
+  
+  it('should update validation code for a registration', function(done) {
+    
+    var newRegInfo = { email: emailToRegister, validationCode: newValCode };
+    
+    userGridUserManager.upsertUserRegistration(newRegInfo, function(err, updatedUGReg) {
+      assert.ok(!err, 'weird, had error');
+      
+      userGridUserManager.getUGRegistrationByEmail(emailToRegister, function(err, updatedUGReg) {
+        
+        assert.equal(updatedUGReg.get('email'), emailToRegister, 'didn\'t get right email back');
+        assert.equal(updatedUGReg.get('validation_code'), newValCode, 'didn\'t get right new val code back');
+        
+        done();
+      });
+    });
+  });
+  
+  
 });

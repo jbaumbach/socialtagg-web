@@ -82,7 +82,7 @@ describe('api - user functions', function() {
    request(app)
      .post('/apiv1/users')
      .set(authHeaderName, authHeaderValue(goodApiKey, goodApiPW))
-     .expect(/.*action.*missing/)
+     //.expect(/.*action.*missing/)
      .expect(400, done);
    });
 
