@@ -21,8 +21,8 @@ var loginController = app.controller('loginController', function($scope, $http, 
   $scope.user = {};
   
   // Don't release with this line - just for dev only!!!
-  console.log('(warning) debug code!!!  - "$scope.loginModes.create"')
-  $scope.mode = $scope.loginModes.create;
+  //console.log('(warning) debug code!!!  - "$scope.loginModes.create"')
+  //$scope.mode = $scope.loginModes.create;
 
 
   function setMsg(type, msg) {

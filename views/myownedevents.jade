@@ -36,7 +36,7 @@ block content
               span Sorry, there was an error! &nbsp; {{ errorMsg }}
               a.close(href='#', ng-click='hasError=false', no-click)
         
-          table.standard-table(ng-show='hasEvents')
+          table.standard-table(ng-show='hasEvents', style='display: none;')
             thead
               tr
                 th Name
@@ -59,7 +59,7 @@ block content
         
           a.button.color(href='#', ng-click='showEdit()', no-click) New Event
         
-      .container(ng-show='isEditVisible')
+      .container(ng-show='isEditVisible', style='display: none;')
         
         .six.columns
           //-
