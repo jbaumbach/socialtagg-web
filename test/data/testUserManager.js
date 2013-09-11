@@ -318,8 +318,6 @@ describe('userManager', function() {
     });
   });
 
-  
-
   // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   // All new tests should go above this line
 });

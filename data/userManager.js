@@ -209,6 +209,23 @@ exports.getUserContaggsFromEvent = function(userId, eventId, resultCallback) {
   db.getUserContaggsFromEvent(userId, eventId, resultCallback);
 }
 
+/*
+ Sets a user profile picture.
+
+ Parameters:
+   options: an object holding the upload info.  The fields are:
+     userId: the user id to set the picture for
+     data: the picture data
+     fileName: the image name
+     mime: the mime type
+    
+   resultCallback: callback function with signature:
+     err: filled in if something went wrong
+     --
+ */
+exports.setUserProfilePicture = function(options, resultCallback) {
+  db.setUserProfilePicture(options, resultCallback);
+}
 
 //********************************************************************************
 // API user functions

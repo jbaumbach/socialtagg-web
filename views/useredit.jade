@@ -4,6 +4,7 @@ extends layout
 block javascripts
 
   script(type='text/javascript', src='/js/ng-useredit.js')
+  script(type='text/javascript', src='/js/ng-upload.min.js')
 
 block content
 
@@ -15,7 +16,7 @@ block content
 
   .controllerContainer.my-profile(ng-controller='userController', ng-init='init(' + publicPageVars + ')')
     .container
-      .twelve.columns
+      .six.columns
 
         //- Error message, set style explicitly so it won't flash on page refresh
         .notification(ng-show='notifyMsg', style='display: none;', ng-class='notifyClass')
@@ -80,8 +81,28 @@ block content
             label(for='twitter') Twitter
             input.text(type='text', size='100', id='twitter', ng-model='user.twitter')
 
-      .twelve.columns
+        .clear
         p
           a.button.color(href='#', ng-click='updateUser()', no-click) Save
           i.icon-spinner.icon-spin.icon-2x.spinnerleftmargin(ng-show='isWorking')
             
+      //- Show the profile picture if the account is created
+      if locals.public.user.id
+        .six.columns
+          h4 Profile Picture
+  
+          img(src=public.user.pictureUrl).user-image
+          .clear
+          p
+          if (false)
+            form(action='/apiv1/users/' + public.user.id + '/profilepicture', ng-upload)
+              .field
+                input(type='file', name='uploadFile')
+              
+              a.button.color(class='upload-submit:uploadingProfilePic(contents, completed)', href='#', no-click) Change
+              i.icon-spinner.icon-spin.icon-2x.spinnerleftmargin(ng-show='isWorkingOnPicture')
+          else
+            p Changing the profile picture is only supported in the mobile apps at this time.
+              | You can log into the iOS or Android app with your credentials and change it there.
+              
+            p This functionality is coming to the web soon, please check back later!

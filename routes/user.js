@@ -285,103 +285,54 @@ exports.detail = function(req, res) {
     return;
   }
   
-  var editMode = req.query['mode'] === 'edit';
   var requestedUserIsSessionUser = sessionInfo.userId === requestedUserId;
   
   application.getCurrentSessionUser(req, function(currentSessionUser) {
 
     userManager.getUser(requestedUserId, function (user) {
       if (user) {
-        if (editMode) {
-          //
-          // Edit the user's info
-          // 
-          if (requestedUserIsSessionUser) {
-            //
-            // Must reenter password in this version of the site.
-            //
-            user.password = '';
+        //
+        // View user's info
+        //
+        var safeUser = application.getSanitizedUser(user);
 
-            //
-            // This may or may not be an example of a "closure" in Javascript.  The 
-            // consensus seems to be that's when a function inside another function 
-            // uses local variables from the outside function.  This can cause 
-            // memory leaks in some circumstances, so be careful.
-            //
-            var renderPage = function (apiUser) {
+        var pageVars = {
+          title: util.format('%s\'s Profile', user.name),
+          
+          displayUser: safeUser,
+          showQrCode: requestedUserIsSessionUser
+        }
 
-              apiUser = apiUser || new ApiUser();
+        function renderIt() {
+          
+          application.buildApplicationPagevars(req, pageVars, function(pageVars) {
+            res.render('userView', pageVars);
+          });
+        }
 
-              //
-              // todo: call a ".Sanitize()" method here to htmlencode the user info for display
-              //
-
-              var pageVars = {
-                title: 'Edit Profile',
-                user: user,
-                currentSessionUser: currentSessionUser,
-                apiuser: apiUser
-              }
-
-              res.render('userAddEdit', pageVars);
-            }
-
-            var action = req.param('action');
-
-            if (action === 'createapikey') {
-              userManager.upsertApiUser(new ApiUser({ associatedUserId:user.id }), renderPage);
-            } else {
-              userManager.getApiUserByUserId(sessionInfo.userId, renderPage);
-            }
-
-          } else {
-            throw 'Editing other users not implemented';
-          }
-        } else 
-        {
-          //
-          // View user's info
-          //
-          var safeUser = application.getSanitizedUser(user);
-
-          var pageVars = {
-            title: util.format('%s\'s Profile', user.name),
+        if (requestedUserIsSessionUser) {
+          userManager.getUserContaggs(currentSessionUser.id, function(userContaggIdList) {
             
-            displayUser: safeUser,
-            showQrCode: requestedUserIsSessionUser
-          }
-
-          function renderIt() {
-            
-            application.buildApplicationPagevars(req, pageVars, function(pageVars) {
-              res.render('userView', pageVars);
-            });
-          }
-
-          if (requestedUserIsSessionUser) {
-            userManager.getUserContaggs(currentSessionUser.id, function(userContaggIdList) {
+            if (userContaggIdList && userContaggIdList.length > 0) {
               
-              if (userContaggIdList && userContaggIdList.length > 0) {
+              var safeContaggs = [];
+              
+              userManager.populateUserContaggs(userContaggIdList, function(userContaggs) {
                 
-                var safeContaggs = [];
-                
-                userManager.populateUserContaggs(userContaggIdList, function(userContaggs) {
-                  
-                  userContaggs.forEach(function(userContagg) {
-                    safeContaggs.push(application.getSanitizedUser(userContagg));
-                  });
-                
-                  pageVars.contaggs = safeContaggs;
-                  
-                  renderIt();
+                userContaggs.forEach(function(userContagg) {
+                  safeContaggs.push(application.getSanitizedUser(userContagg));
                 });
-              } else {
+              
+                pageVars.contaggs = safeContaggs;
+                
                 renderIt();
-              }
-            });
-          } else {
-            renderIt();
-          }
+              });
+            } else {
+              renderIt();
+            }
+          });
+        } else {
+          renderIt();
         }
       } else {
         res.send(404, 'Sorry, that user is not found.');
@@ -591,7 +542,6 @@ exports.myProfile = function(req, res) {
 
   var initialPageVars = {
     title: 'Edit My Profile',
-    //loginDest: application.links.editprofile,
     usesAngular: true
   };
   
@@ -602,6 +552,8 @@ exports.myProfile = function(req, res) {
 
 /*
   Show the current session user's public profile page
+  Note: this is confusing - there's also the user detail page.  These should be 
+  combined.
  */
 exports.viewProfile = function(req, res) {
 
@@ -609,15 +561,13 @@ exports.viewProfile = function(req, res) {
 
     var initialPageVars = {
       title: 'View My Profile',
-      //loginDest: application.links.viewprofile,
       displayUser: user,
-      isLoggedInUser: true
+      isLoggedInUser: true,
+      showQrCode: true
     };
 
     application.buildApplicationPagevars(req, initialPageVars, function(pageVars) {
       res.render('userView', pageVars);
     });
   });
-  
-  
 }

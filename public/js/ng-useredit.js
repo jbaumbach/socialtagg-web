@@ -16,6 +16,7 @@ angular.module("userService", ["ngResource"]).
 
 // Add services dependencies to main app
 app.requires.push('userService');
+app.requires.push('ngUpload');
 
 var userController = app.controller('userController', function($scope, $dialog, User) {
   $scope.user = {};
@@ -96,8 +97,32 @@ var userController = app.controller('userController', function($scope, $dialog, 
       });
     }
   }
+  
+  $scope.uploadingProfilePic = function(content, completed) {
+    
+    if (completed) {
+    
+      if (content && content.length > 0) {
+        
+        console.log('content: ' + content); // process content
+        
+      } else {
+        
+        console.log('completed, but no content');
+        
+      }
+      
+    } else {
+      
+      // 1. ignore content and adjust your model to show/hide UI snippets; or
+      // 2. show content as an _operation progress_ information
+      console.log('completed: ' + completed);
+    }
+  }
+  
 });
 
+// todo: find a way to move these to a "ng-common" file or something 
 
 // Directive to prevent the default html action for following # anchors
 userController.directive('noClick', function() {
@@ -107,3 +132,8 @@ userController.directive('noClick', function() {
     });
   }
 });
+
+// drag and drop option: 
+//  http://buildinternet.com/2013/08/drag-and-drop-file-upload-with-angularjs/
+//  http://jsfiddle.net/lsiv568/fsfPe/10/
+

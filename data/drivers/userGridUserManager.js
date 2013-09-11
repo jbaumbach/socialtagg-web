@@ -20,6 +20,12 @@ var util = require('util')
   ;
 
 
+/*
+  Constants
+ */
+
+exports.publicUri = 'https://api.usergrid.com/tagg/tagg';
+
 
 //********************************************************************************
 // User functions
@@ -238,6 +244,11 @@ function getUserGridUserByEmail(email, resultCallback) {
 // Callback params: err  (true if error)
 //
 function setUserGridUserPassword(existingUser, newPw, resultCallback) {
+  
+  //
+  // How to make generic calls: https://github.com/apigee/usergrid-node-module
+  //
+  
   var options = {
     method:'PUT',
     endpoint:'users/' + existingUser.get('username') + '/password',
@@ -283,8 +294,19 @@ function getUserContaggsByOptions(options, resultCallback) {
   });
 
 }
-
 //***************** Public functions ********************************
+
+
+exports.getUuidOfNewEntity = function(userGridRestResponse) {
+  
+  var result;
+  
+  if (userGridRestResponse && userGridRestResponse.entities && userGridRestResponse.entities.length > 0) {
+    result = userGridRestResponse.entities[0].uuid;
+  }
+  
+  return result;
+}
 
 /*
  Looks up the passed Facebook access token and grabs the user from the db
@@ -895,6 +917,93 @@ exports.setUserPasswordWithVerificationCodeByEmail = function(email, originalCod
   });
 };
 
+/*
+ Sets a user profile picture.
+  
+ Parameters:
+   options: an object holding the upload info.  The fields are:
+      userId: the user id to set the picture for
+      data: the picture data
+      fileName: the image name
+      mime: the mime type
+      
+   resultCallback: callback function with signature:
+     err: filled in if something went wrong
+     --
+ */
+exports.setUserProfilePicture = function(options, resultCallback) {
+
+  // First, create an 'assets' record
+  
+  var ugOptions = {
+    method:'POST',
+    endpoint:'assets',
+    body:{ 
+      name: options.fileName,
+      owner: options.userId,
+      'content-type': options.mime,
+      path: '/assets/profile_avatars/' + globalFunctions.md5Encode(options.fileName + options.userId + new Date())
+    }
+  };
+
+  console.log('about to write: ' + util.inspect(ugOptions));
+  
+  client().request(ugOptions, function (err, data) {
+    
+    if (err) {
+      
+      resultCallback(err);
+      
+    } else {
+
+      console.log('got back from UG: ' + util.inspect(data));
+      
+      var newUuid = thisModule.getUuidOfNewEntity(data);
+      
+      if (!newUuid) {
+        
+        resultCallback('couldn\'t get uuid from new entity');
+        
+      } else {
+        
+        // Then, upload the image
+        
+        var targetUrl = '/assets/' + newUuid + '/data';
+
+        var imgOptions = {
+          method: 'POST',
+          endpoint: targetUrl,
+          body: options.data,
+          contentType: 'application/octet-stream' // <- failed experiment
+        }
+
+        //console.log('about to write: ' + util.inspect(imgOptions));
+
+        client().request(imgOptions, function(err, imgData) {
+          
+          if (err) {
+            
+            resultCallback(err);
+            
+          } else {
+
+            console.log('ok, now got: ' + imgData);
+            
+            // Finally, delete any other assets
+
+
+            // Outta here
+
+            var resultUrl = thisModule.publicUri + targetUrl;
+            
+            resultCallback(undefined, resultUrl);
+            
+          }
+        });
+      }
+    }
+  });
+}
 
 //********************************************************************************
 // API user functions

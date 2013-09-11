@@ -205,6 +205,10 @@ exports.processImageUrlForLargerSize = function(url) {
 // session info.  Pass an optional callback in order to populate the
 // user object as well.
 //
+// Access the user's info in Jade like so:
+//
+//    img(src=public.user.pictureUrl).user-image
+// 
 exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
 
   if (!pageVars) {

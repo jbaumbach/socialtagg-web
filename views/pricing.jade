@@ -5,17 +5,20 @@
 extends layout
 
 block content
-
   .container
     .sixteen.columns
       //
          Headline 
       .headline.no-margin
         h3 SocialTagg Pricing
-      
-      p
-        | We should have some fun text here and probably also mention the 30-day free trial.
-      
+      a(href=links.myownedevents)
+        img.screen-960(src='/images/30-Day-Trial-Banner-960.png')
+      a(href=links.myownedevents)
+        img.screen-768(src='/images/30-Day-Trial-Banner-768.png')
+      a(href=links.myownedevents)
+        img.screen-480(src='/images/30-Day-Trial-Banner-480.png')
+      a(href=links.myownedevents)
+        img.screen-300(src='/images/30-Day-Trial-Banner-300.png')
       //
          Tabs Navigation 
       ul.tabs-nav
@@ -59,10 +62,10 @@ block content
                       li.two-line-center-single Social Function
                       li.two-line-center-single
                         img(src='/images/checkmark.png')
-                      li.two-line-center-single -
-                    a.sign-up(href='#')
+                      li.two-line-center-single
+                        img(src='/images/xMark.png')
+                    a.sign-up(href=links.myownedevents)
                       span Sign Up
-                .headline.no-margin
                 .tab.title-column
                   //
                     TP 2/5
@@ -90,7 +93,7 @@ block content
                         img(src='/images/checkmark.png')
                       li.two-line-center-single
                         img(src='/images/checkmark.png')
-                    a.sign-up(href='#')
+                    a.sign-up(href=links.myownedevents)
                       span Sign Up
                 .tab.title-column
                   //
@@ -119,7 +122,7 @@ block content
                         img(src='/images/checkmark.png')
                       li.two-line-center-single
                         img(src='/images/checkmark.png')
-                    a.sign-up(href='#')
+                    a.sign-up(href=links.myownedevents)
                       span Sign Up
                 .tab.title-column
                   //
@@ -143,12 +146,12 @@ block content
                       span.price.line-filler $99.99
                     ul
                       li.two-line-center-single 5000
-                      li.two-line-center-single Small Social Function
+                      li.two-line-center-single Conference
                       li.two-line-center-single
                         img(src='/images/checkmark.png')
                       li.two-line-center-single
                         img(src='/images/checkmark.png')
-                    a.sign-up(href='#')
+                    a.sign-up(href=links.myownedevents)
                       span Sign Up
                 .tab.title-column
                   //
@@ -172,12 +175,12 @@ block content
                       span.price.line-filler $299.99
                     ul
                       li.two-line-center-single Unlimited
-                      li.two-line-center-single Large Conference
+                      li.two-line-center-single Expo
                       li.two-line-center-single
                         img(src='/images/checkmark.png')
                       li.two-line-center-single
                         img(src='/images/checkmark.png')
-                    a.sign-up(href='#')
+                    a.sign-up(href=links.myownedevents)
                       span Sign Up
           //
             End Tab1 Content
@@ -187,11 +190,43 @@ block content
           .container
             .sixteen.columns
               //
-                 Number of Tables / From 2 to 5 / 
-              .five-tables
+                 Number of Tables / From 2 to 6 / 
+              .six-tables
                 .tab.title-column
                   //
-                    TP 1/4
+                    TP 1/5
+                  .color-1
+                    h3 Event Size
+                    h4
+                      span.price Price
+                      span.time per month
+                    ul
+                      li
+                        span.thicker Max Check-Ins
+                        span.smaller-text Attendees
+                      li.thicker.two-line-center-single Event Type
+                      li.thicker.two-line-center-single Analytics
+                      li.thicker.two-line-center-single Survey
+                      li.thicker.two-line-center-single Unlimited Events
+                .tab.pricing-table
+                  .color-2
+                    h3 Free Event
+                    h4
+                      span.price.line-filler Free
+                    ul
+                      li.two-line-center-single 50
+                      li.two-line-center-single Social Function
+                      li.two-line-center-single
+                        img(src='/images/checkmark.png')
+                      li.two-line-center-single
+                        img(src='/images/xMark.png')
+                      li.two-line-center-single
+                        img(src='/images/checkmark.png')
+                    a.sign-up(href=links.myownedevents)
+                      span Sign Up
+                .tab.title-column
+                  //
+                    TP 2/5
                   .color-1
                     h3 Event Size
                     h4
@@ -219,11 +254,11 @@ block content
                         img(src='/images/checkmark.png')
                       li.two-line-center-single
                         img(src='/images/checkmark.png')
-                    a.sign-up(href='#')
+                    a.sign-up(href=links.myownedevents)
                       span Sign Up
                 .tab.title-column
                   //
-                    TP 2/4
+                    TP 3/5
                   .color-1
                     h3 Event Size
                     h4
@@ -251,11 +286,11 @@ block content
                         img(src='/images/checkmark.png')
                       li.two-line-center-single
                         img(src='/images/checkmark.png')
-                    a.sign-up(href='#')
+                    a.sign-up(href=links.myownedevents)
                       span Sign Up
                 .tab.title-column
                   //
-                    TP 3/4
+                    TP 4/5
                   .color-1
                     h3 Event Size
                     h4
@@ -284,11 +319,11 @@ block content
                         img(src='/images/checkmark.png')
                       li.two-line-center-single
                         img(src='/images/checkmark.png')
-                    a.sign-up(href='#')
+                    a.sign-up(href=links.myownedevents)
                       span Sign Up
                 .tab.title-column
                   //
-                    TP 4/4
+                    TP 5/5
                   .color-1
                     h3 Event Size
                     h4
@@ -316,9 +351,5 @@ block content
                         img(src='/images/checkmark.png')
                       li.two-line-center-single
                         img(src='/images/checkmark.png')
-                    a.sign-up(href='#')
+                    a.sign-up(href=links.myownedevents)
                       span Sign Up
-            //
-              End Tab2 Content
-  //
-    End Content

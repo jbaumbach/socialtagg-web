@@ -10,6 +10,7 @@ var userManager = require('./../data/userManager')
   , application = require('./../common/application')
   , email = require('./../common/email')
   , sprintf = require("sprintf-js").sprintf
+  , fs = require('fs')
   , _ = require('underscore')
   , thisModule = this
   ;
@@ -554,3 +555,88 @@ exports.contaggs = function(req, res) {
 
 }
 
+/*
+  Accept the submitted profile picture and upload it to the user's account.
+  
+  Notes:
+  This doesn't appear possible with the current node.js component from usergrid.  The
+  request bombs out with strange error.  See comment here:
+    http://apigee.com/docs/usergrid/content/storing-and-retrieving-binary-data#comment-1381
+  
+  You'll probably have to roll your own API client:
+    http://apigee.com/docs/usergrid/content/authentication-and-access-usergrid 
+    
+  todo: delete sample usergrid /assets records:
+    select * where owner = "b66a00ee-73d3-11e2-95c4-02e81ae640dc"
+  
+ */
+exports.uploadProfilePicture = function(req, res) {
+
+  var maxFileSize = 350000;
+  var fileInfo = req.files.uploadFile;
+  var errStatus = 403;
+  var err;
+  var userId = req.params.id;
+  var loggedInUserId = application.getCurrentSessionUserId(req);
+  
+  // Validate the file
+  if (userId != loggedInUserId) {
+    
+    err = 'you are not authorized to do that';
+    errStatus = 401;
+    
+  } else if (fileInfo.size == 0) {
+    
+    err = 'the file size is zero';
+    
+  } else if (fileInfo.size > maxFileSize) {
+    
+    err = 'the file size is larger than the maximum size (' + maxFileSize + ')';
+    
+  };
+  
+  
+  if (err) {
+    res.send(errStatus, { msg: err });
+    
+  } else {
+
+    // Read the file, and send the bytes to the database
+
+    fs.readFile(fileInfo.path, 'ascii', function(err, data) {
+      
+      if (err) {
+        
+        console.log('(error) userApi.uploadProfilePicture: there was an error reading the file: ' + err);
+        
+        res.send(500, { msg: 'there was an error saving the uploaded file, please try again later'});
+        
+      //} else if (fileInfo.size != ) {
+        
+      } else {
+
+        // set the data to the user's picture
+        
+        var options = {
+          userId: userId,
+          data: data,
+          fileName: fileInfo.name,
+          mime: fileInfo.type
+        }
+
+        userManager.setUserProfilePicture(options, function(err, newImgUrl) {
+          
+          if (err) {
+
+            res.send(500, { msg: 'there was an error processing the uploaded file, please try again later'});
+
+          } else {
+
+            res.send(200, { msg: 'hello there, the file has been submitted.' });
+          }
+        })
+      }
+    });
+    
+  }
+}

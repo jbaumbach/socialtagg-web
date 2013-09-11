@@ -55,7 +55,7 @@ block content
           
           p(ng-show='!hasEvents && isLoading') Loading events...
           
-          p(ng-show='!hasEvents && !isLoading') You do not own any events at this time.
+          p(ng-show='!hasEvents && !isLoading', style='display: none;') You do not own any events at this time.
         
           a.button.color(href='#', ng-click='showEdit()', no-click) New Event
         

@@ -4620,5 +4620,109 @@ Extracted from bootstrap CSS
     display: inline;
   }
 }
+
+/*Second Staging*/
+
+.trial-header {
+  text-align: center;
+}
+
+.trial-header h3 {
+  font-size: 3em;
+  padding: 15px 0;
+}
+
+.trial-header p {
+  padding: 0 0 15px 0;
+}
+
+.two-line-center-single img {
+  width: 20px;
+  height: 20px;
+}
+
+.two-line-center-single img {
+  padding: 8px 0 0 0;
+}
+
+
+/*Pricing Banner*/
+.screen-960 {
+  display: block;
+  padding: 0;
+  margin: 0;
+}
+
+.screen-768 {
+  display: none;
+}
+
+.screen-480 {
+  display: none;
+}
+
+.screen-300 {
+  display: none;
+}
+
+@media only screen and (min-width: 768px) and (max-width: 959px) {
+
+  .screen-960 {
+    display: none;
+  }
+
+  .screen-768 {
+    display: block;
+    padding: 0;
+    margin: 0;
+  }
+
+  .screen-480 {
+    display: none;
+  }
+
+  .screen-300 {
+    display: none;
+  }
+}
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+  .screen-960 {
+    display: none;
+  }
+
+  .screen-768 {
+    display: none;
+  }
+
+  .screen-480 {
+    display: block;
+    padding: 0;
+    margin: 0;
+  }
+
+  .screen-300 {
+    display: none;
+  }
+
+}
+@media only screen and (max-width: 479px) {
+  .screen-960 {
+    display: none;
+  }
+
+  .screen-768 {
+    display: none;
+  }
+
+  .screen-480 {
+    display: none;
+  }
+
+  .screen-300 {
+    display: block;
+    padding: 0;
+    margin: 0;
+  }
+}
 /*End Mobile Portrait*/
 /*End Pricing Page*/

@@ -54,12 +54,11 @@ block content
           //- Unescape this value with the "!" instead of "#".  Jade escapes everything by default.
           | !{ displayUser.bio }
     
-      //- Todo: only display the badge on the printer friendly page? 
-        .container.user-view
-          .sixteen.columns
-            .headline.no-margin
-              h3 Badge
-            img(src=displayUser.qrCodeUrl)
+      
+      - if (locals.showQrCode)
+        .headline
+          h3 Badge
+        img(src=displayUser.qrCodeUrl)
 
 
     include includes/profiletools

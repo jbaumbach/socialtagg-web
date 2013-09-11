@@ -123,6 +123,43 @@ describe('userGridUserManager', function() {
       });
     });
   });
-  
-  
+
+  it('should be able to get uuid from a UG REST response', function() {
+
+    // Actual response
+
+    var ug = { 
+      action: 'post',
+      application: '94ec5f09-d908-11e1-afad-12313b01d5c1',
+      params:
+      { client_secret: [ 'b3U6z-d4_iF8UbxNt9aqNqtzHDSBV9s' ],
+        client_id: [ 'b3U6dEm4a9j5EeGvrRIxOwHVwQ' ] },
+      path: '/assets',
+      uri: 'http://api.usergrid.com/tagg/tagg/assets',
+      entities:
+        [ { uuid: '17503c00-1927-11e3-acda-f72a7901be3c',
+          type: 'asset',
+          name: 'fyf-schedule-weekend.jpg',
+          created: 1378714143679,
+          modified: 1378714143679,
+          owner: 'b66a00ee-73d3-11e2-95c4-02e81ae640dc',
+          path: '/assets/profile_avatars/0b1ac591207dafca537ce0bf88cd7408',
+          'content-type': 'image/jpeg',
+          metadata: [Object] } ],
+      timestamp: 1378714143676,
+      duration: 92,
+      organization: 'tagg',
+      applicationName: 'tagg' }
+
+    // From the first item in 'entities' above
+    var e = '17503c00-1927-11e3-acda-f72a7901be3c';
+
+    var r = userGridUserManager.getUuidOfNewEntity(ug);
+    
+    assert.equal(r, e, 'didn\'t get right uuid back');
+    
+  });
+
+
+
 });
