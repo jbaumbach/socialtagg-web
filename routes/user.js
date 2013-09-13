@@ -17,7 +17,6 @@ exports.loginForm = function(req, res) {
   var pageVars = { 
     title: 'User Login', 
     usesAngular: true,
-    showsocial: req.query.showsocial,
     public: { newAcctUrl: application.links().editprofile } // pass this on to Angular
   };
   

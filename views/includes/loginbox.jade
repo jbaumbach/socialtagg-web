@@ -3,17 +3,16 @@
   #box_bg
     #content
       h1 Sign In
-      if locals.showsocial
-        // Social Buttons
-        .social
-          | Sign in using social network:
-          br
-          .fb
-            a.btn_1(href='#', onclick='socialTaggFbLogin(true)', no-click) Login with Facebook
-            i.icon-spinner.icon-spin.icon-2x(style='display:none')
-          //-
-            .twitter
-              a.btn_2(href='#') Login with Twitter
+      // Social Buttons
+      .social
+        | Sign in using social network:
+        br
+        .fb
+          a.btn_1(href='#', onclick='socialTaggFbLogin(true)', no-click) Login with Facebook
+          i.icon-spinner.icon-spin.icon-2x(style='display:none')
+        //-
+          .twitter
+            a.btn_2(href='#') Login with Twitter
       // Login Fields 
       #login(ng-class='{error:loginError}')
 
@@ -25,11 +24,7 @@
 
         
         div(ng-show='!mode || mode == loginModes.login')
-          if locals.showsocial
-            span Or, s
-          else
-            span S
-          | ign in using your registered account:
+          span Or, sign in using your registered account:
 
           br
           form(method='POST')
@@ -39,9 +34,8 @@
             a.button.color(href='#', ng-click='login()', no-click) Sign In
             i.icon-spinner.icon-spin.icon-2x(ng-show='loading')
 
-          if locals.shownewuserreg
-            p.other-login-options Don't have an account? 
-              a(href='#', ng-click='loginMode(loginModes.create)', no-click)  Create one
+          p.other-login-options Don't have an account? 
+            a(href='#', ng-click='loginMode(loginModes.create)', no-click)  Create one
           
             //- todo: implement this: p.other-login-options Forgot your password? 
               a(href='#', ng-click='forgotPw()', no-click)  Reset it 
