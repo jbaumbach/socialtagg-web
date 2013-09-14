@@ -51,14 +51,55 @@ exports.detail = function(req, res) {
 
 exports.analytics = function(req, res) {
   
-  var pageVars = {
-    title: 'Event Analytics'
+  function done() {
+    application.buildApplicationPagevars(req, pageVars, function(pageVars) {
+      res.render('eventanalytics', pageVars);
+    });
   };
-  
-  application.buildApplicationPagevars(req, pageVars, function(pageVars) {
-    res.render('eventanalytics', pageVars);
+
+  var eventId = req.params.id;
+  var userId = application.getCurrentSessionUserId(req);
+
+  var pageVars = {
+    title: 'Event Analytics',
+    usesAngular: true
+  };
+
+
+  eventManager.getEvent(eventId, function(err, event) {
+
+    if (!err) {
+
+      pageVars.event = event;
+      
+      var dataForAngularInit = {
+        uuid: event.uuid
+      }
+      
+      pageVars.publicEvent = JSON.stringify(dataForAngularInit);
+      
+      pageVars.title = pageVars.event.name + ' - Analytics';
+      
+      var isEventOwner = (userId && event.owner === userId);
+      
+      if (isEventOwner) {
+
+        done();
+
+      } else {
+
+        res.send(403, 'Sorry, you do not have access to this page');
+        
+      }
+
+    } else {
+
+      res.send(404, 'Sorry, that event is not found');
+    }
+
   });
-  
+
+
 };
 
 

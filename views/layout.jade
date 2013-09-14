@@ -5,10 +5,13 @@
 
 head
   //-********* Head Control
+  //- Note: you can include 'block javascripts' in your jade to include additional javascript in 
+  //- the head section
   include includes/head
 
 
 body
+  //- Include stuff here that goes in the body, but before anything else (e.g. Facebook scripts)
   block prebodyContent
   
   // Wrapper Start 

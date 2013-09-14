@@ -1,0 +1,13 @@
+mixin eventanalyticschart(width, height, headline, type)
+
+  .headline
+    h4 #{ headline }
+  
+  .chartcontainer(style='width:' + width + 'px;height:' + height + 'px')
+    
+    .placeholder(ng-show='isLoading["' + type + '"]') {{ isLoadingMsg["#{ type }"] }}
+    
+    //- todo: grab height and width from the server - based on device?
+    //- Maybe set from Angular?
+    .chart(ng-show='!isLoading[' + type + ']', style='display:none;')
+      canvas(id=type, width=width, height=height)

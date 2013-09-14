@@ -390,3 +390,78 @@ exports.updateEventSurvey = function(req, res) {
   }
   
 }
+
+/*
+  Get event analytics data from the database and return it to the client
+ */
+exports.eventAnalyticsData = function(req, res) {
+
+  var type = req.query.type;
+  
+  var data;
+  
+  var done = function(err, data) {
+    
+    if (err) {
+
+      var statusCode = err.statusCode || 500;
+      var statusMsg = err.statusMsg || 'Unknown error';
+      
+      res.send(statusCode, { msg: statusMsg });
+      
+    } else {
+
+      res.send(200, data);
+    }
+
+  };
+  
+  switch(type) {
+    case 'checkinTimeSummary':
+      
+      // Test out the async nature of the responses
+      setTimeout(function() {
+
+        data = {
+          labels: ['5pm', '6pm', '7pm', '8pm', '9pm'],
+          datasets: [
+            {
+              data: [7, 10, 20, 15, 11]
+            }
+          ]
+        }
+
+        done(undefined, data);
+      }, 500);
+      
+      break;
+    
+    case 'companySummary':
+      data = {
+        labels: ['Microsoft', 'Google', 'Facebook', 'SocialTagg'],
+        datasets: [
+          {
+            data: [75, 60, 45, 12]
+          }]
+      }
+      
+      done(undefined, data);
+      break;
+
+
+    case 'titlesSummary':
+      data = {
+        labels: ['CEO', 'CTO', 'Director of Sys. Dev.', 'QA'],
+        datasets: [
+          {
+            data: [34, 60, 48, 22]
+          }]
+      }
+
+      done(undefined, data);
+      break;
+
+    default:
+      done({ statusCode: 404, statusMsg: 'Unknown type: ' + type} );
+  }
+}

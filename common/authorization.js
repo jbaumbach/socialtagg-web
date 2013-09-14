@@ -134,7 +134,9 @@ exports.authenticate = function(req, res, next) {
 } 
 
 /*
-  Same as .authenticate but also checks if there is a temporary authentication
+  Same as .authenticate but also checks if there is a temporary authentication.
+  This is useful for pages like 'Confirm Registration' where the user clicked
+  a valid link sent by us via email but there's no user account yet.
  */
 exports.authenticateTempOk = function(req, res, next) {
 

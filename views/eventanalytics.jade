@@ -1,12 +1,46 @@
+include mixins/eventanalyticschart
+
 extends layout
+
+block javascripts
+  script(src='/js/Chart.min.js')
+  script(src='/js/ng-eventanalytics.js')
 
 block content
 
-  .container.my-events
-    .twelve.columns
+  .container.event-analytics(ng-controller='analyticsController', ng-init='init(' + publicEvent + ')')
+    
+    .sixteen.columns
       #page-title
-        h2 Event Analytics
-        #bolded-line  
-          
-      p There are no analytics for the event at this time.
+        h2 Event Analytics for #{ event.name }
+        #bolded-line
+
+      .headline
+        h3 Your Event: At a Glance
+
+      p Stuff from Tim here hopefully...
+
+      .headline
+        h4 Summary of Check-in Times
+      
+      .chartcontainer(style='width:500px;height:300px')
         
+        .placeholder(ng-show='isLoading["checkinTimeSummary"]') {{ isLoadingMsg["checkinTimeSummary"] }}
+        
+        //- todo: grab height and width from the server - based on device?
+        //- Maybe set from Angular?
+        .chart(ng-show='!isLoading["checkinTimeSummary"]', style='display:none;')
+          canvas(id='checkinTimeSummary', width='500', height='300')
+
+
+      .headline
+        h3 Attendee Demographics
+    
+      mixin eventanalyticschart(500, 300, 'Companies Represented', 'companySummary')
+
+      mixin eventanalyticschart(500, 300, 'Job Titles Represented', 'titlesSummary')
+
+//- Todo: change to mixin and pass in array of stuff to show?  right now, the tools
+    //- don't make much sense
+    //-include includes/eventtools
+  

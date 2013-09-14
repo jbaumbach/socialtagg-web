@@ -252,9 +252,77 @@ describe('Event API', function() {
       assert.ok(!msgs || msgs.length == 0, 'huh, got errors');
 
     })
+    
   });
- 
-  
+
+  it('should return 404 for analytics data if bad type', function(done) {
+
+    //
+    // This function may time out if there's an error
+    //
+    var steps = { calledSend: false };
+
+    function quitIfDone() {
+      var outtaHere = steps.calledSend;
+
+      if (outtaHere) {
+        done();
+      } else {
+        console.log('not done yet...');
+      }
+    }
+
+    var req = { query: { type: 'checkinTimeSummaryxxx' } };
+
+    var res = {
+      send: function(code, data) {
+        steps.calledSend = true;
+        assert.equal(code, 404, 'didn\'t get right status code');
+
+        quitIfDone();
+      }
+    }
+
+    eventapi.eventAnalyticsData(req, res);
+  })
+
+
+  it('should return analytics data for checkinTimeSummary', function(done) {
+
+    //
+    // This function may time out if there's an error
+    //
+    var steps = { calledSend: false };
+
+    function quitIfDone() {
+      var outtaHere = steps.calledSend;
+      
+      if (outtaHere) {
+        done();
+      } else {
+        console.log('not done yet...');
+      }
+    }
+
+    // todo: make this an array and call all the funcs in a loop
+    
+    var req = { query: { type: 'checkinTimeSummary' } };
+
+    var res = {
+      send: function(code, data) {
+        steps.calledSend = true;
+        assert.equal(code, 200, 'didn\'t get right status code');
+        assert.ok(data, 'didn\'t get any data!');
+        assert.ok(data.labels, 'didnt get data labels');
+
+        quitIfDone();
+      }
+    }
+
+    eventapi.eventAnalyticsData(req, res);
+  })
+
+
 });
     
     
