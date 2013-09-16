@@ -20,27 +20,27 @@ block content
 
       p Stuff from Tim here hopefully...
 
-      .headline
-        h4 Summary of Check-in Times
-      
-      .chartcontainer(style='width:500px;height:300px')
-        
-        .placeholder(ng-show='isLoading["checkinTimeSummary"]') {{ isLoadingMsg["checkinTimeSummary"] }}
-        
-        //- todo: grab height and width from the server - based on device?
-        //- Maybe set from Angular?
-        .chart(ng-show='!isLoading["checkinTimeSummary"]', style='display:none;')
-          canvas(id='checkinTimeSummary', width='500', height='300')
-
 
       .headline
         h3 Attendee Demographics
-    
+
+      
+      //- todo: grab height and width from the server - based on device?
+      //- Maybe set from Angular?
+
       mixin eventanalyticschart(500, 300, 'Companies Represented', 'companySummary')
 
       mixin eventanalyticschart(500, 300, 'Job Titles Represented', 'titlesSummary')
 
-//- Todo: change to mixin and pass in array of stuff to show?  right now, the tools
-    //- don't make much sense
-    //-include includes/eventtools
-  
+      mixin eventanalyticschart(500, 300, 'Summary of Check-in Times', 'checkinTimeSummary')
+
+      .headline
+        h3 Survey Results
+          
+      - if (locals.survey)
+        - each question in survey.questions
+          mixin eventanalyticschart(300, 300, question.text, 'sq-' + question.questionId)
+
+      - else
+        
+        p No attendee survey was used for this event.

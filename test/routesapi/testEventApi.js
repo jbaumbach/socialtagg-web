@@ -322,7 +322,15 @@ describe('Event API', function() {
     eventapi.eventAnalyticsData(req, res);
   })
 
-
+  it('should be able to get a survey question number from a text description', function() {
+    
+    var e = '12';
+    var t = 'sq-' + e;
+    
+    var r = eventapi.getSurveyQuestionNumberFromString(t);
+    assert.equal(r, e, 'didn\'t get right number');
+    
+  })
 });
     
     

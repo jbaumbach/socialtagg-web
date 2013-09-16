@@ -65,26 +65,40 @@ exports.analytics = function(req, res) {
     usesAngular: true
   };
 
-
   eventManager.getEvent(eventId, function(err, event) {
 
     if (!err) {
 
-      pageVars.event = event;
-      
-      var dataForAngularInit = {
-        uuid: event.uuid
-      }
-      
-      pageVars.publicEvent = JSON.stringify(dataForAngularInit);
-      
-      pageVars.title = pageVars.event.name + ' - Analytics';
-      
       var isEventOwner = (userId && event.owner === userId);
       
       if (isEventOwner) {
 
-        done();
+        // 
+        // OK, we can display the page
+        //
+        pageVars.event = event;
+
+        var dataForAngularInit = {
+          uuid: event.uuid
+        }
+
+        pageVars.title = pageVars.event.name + ' - Analytics';
+
+        eventManager.getSurveyByEventId(event.uuid, function(err, survey) {
+
+          if(!err && survey) {
+
+            console.log('survey found');
+            pageVars.survey = survey;
+            dataForAngularInit.surveyQuestions = survey.questions;
+          } else {
+            console.log('no survey found');
+          }
+
+          pageVars.publicEvent = JSON.stringify(dataForAngularInit);
+
+          done();
+        });
 
       } else {
 

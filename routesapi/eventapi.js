@@ -392,12 +392,27 @@ exports.updateEventSurvey = function(req, res) {
 }
 
 /*
+  Gets the '12' in a string like 'sq-12'
+ */
+exports.getSurveyQuestionNumberFromString = function(surveyQuestionValue) {
+  var result;
+  var surveyQuestionId = surveyQuestionValue.match(/sq-([0-9]*)/i);
+
+  console.log(util.inspect(surveyQuestionId));
+  
+  if (surveyQuestionId && surveyQuestionId.length > 1) {
+    result = surveyQuestionId[1];
+  }
+  
+  return result;
+}
+
+/*
   Get event analytics data from the database and return it to the client
  */
 exports.eventAnalyticsData = function(req, res) {
 
   var type = req.query.type;
-  
   var data;
   
   var done = function(err, data) {
@@ -462,6 +477,97 @@ exports.eventAnalyticsData = function(req, res) {
       break;
 
     default:
-      done({ statusCode: 404, statusMsg: 'Unknown type: ' + type} );
+      
+      var surveyQuestionNumber = thisModule.getSurveyQuestionNumberFromString(type);
+      
+      if (surveyQuestionNumber) {
+        
+        // Get data from the db
+        var err, data;
+        
+        switch (surveyQuestionNumber) {
+          case '1':
+            // multichoice
+            data = {
+              type: 'multichoice',
+              datapoints: [
+                {
+                  label: 'The ice sculpture',
+                  value: 30
+                },
+                {
+                  label: 'The open bar',
+                  value : 50
+                },
+                {
+                  label: 'The live band',
+                  value : 100
+                },
+                {
+                  label: 'None of the above',
+                  value : 15
+                }
+              ]
+            }
+            break;
+          
+          case '2':
+            // scale_1to5
+            data = {
+              type: 'scale_1to5',
+              datapoints: [
+                {
+                  label: '1',
+                  value: 100
+                },
+                {
+                  label: '2',
+                  value : 50
+                },
+                {
+                  label: '3',
+                  value : 30
+                },
+                {
+                  label: '4',
+                  value : 15
+                },
+                {
+                  label: '5',
+                  value : 15
+                }
+              ]
+            }
+            break;
+          
+          case '3':
+            // freeform
+            data = {
+              type: 'freeform',
+                datapoints: [
+                'ice sculpture',
+                'ice sculpture',
+                'bowling',
+                'bowling',
+                'free booze',
+                'ice sculpture',
+                'ice sculpture',
+                'Metallica'
+              ]
+            }
+            break;
+          
+          default:
+            err = { statusCode: 404, statusMsg: 'Bad question id: ' + surveyQuestionNumber};
+        }
+        
+        done(err, data);
+        
+        
+        
+      } else {
+
+        done({ statusCode: 404, statusMsg: 'Unknown type: ' + type} );
+      }
   }
 }

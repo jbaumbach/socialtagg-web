@@ -245,7 +245,11 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   //      then grab your url to the login page.  You don't need to call this function.
   //
   
-  var ld = req.query.logindest || req.url;
+  //
+  // 2013-09-15 JB: land on mycontaggs page by default after login, unless we clicked a page that requires
+  // a login.  In that case, go to the page the user wants to go to.
+  //
+  var ld = req.query.logindest || thisModule.links().mycontaggs;   // was: req.url;
   
   if (ld.match(/login/i)) {
     console.log('(warning) loginDest: found word "login" in url, probaby not right.  Make sure all links to the login ' +

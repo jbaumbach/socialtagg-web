@@ -67,10 +67,10 @@ exports.getEvent = function(eventId, callback) {
  Get the survey associated with the passed event id
 
  Parameters:
- eventId: the event id
- callback: a function to callback on with signature:
- err: filled in if something bad happened
- survey: the found survey if we have one, otherwise undefined
+   eventId: the event id
+   callback: a function to callback on with signature:
+     err: filled in if something bad happened
+     survey: the found survey if we have one, otherwise undefined
  */
 exports.getSurveyByEventId = function(eventId, callback) {
   db.getSurveyByEventId(eventId, callback);

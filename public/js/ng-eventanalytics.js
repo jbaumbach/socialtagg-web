@@ -19,6 +19,44 @@ var analyticsController = app.controller('analyticsController', function ($scope
   $scope.dataResults = [];
   $scope.isLoading = [];
   $scope.isLoadingMsg = [];
+  $scope.displayType = [];
+
+  /* First try
+  var dataColors = [
+    '#434343',    
+    '#0713B7',    
+    '#9501AF',    
+    '#CCCCCC', //brown   
+    '#434343',
+    '#0713B7',
+    '#5B2B63',
+    '#C7CCCC', //brown
+    '#434343',
+    '#2F3367',
+    '#5B2B63',
+    '#363636',  //brown
+    '#424242',
+    '#000648',
+    '#3A0044',
+    '#363636'   // brown   
+  ];
+  */
+  
+  // Thanks: http://stackoverflow.com/questions/236936/how-pick-colors-for-a-pie-chart
+  var dataColors = [
+    '#56e2cf',
+    '#5668e2',
+    '#8a56e2',
+    '#e256ae',
+    '#e28956',
+    '#aee256',
+    '#cf56e2',
+    '#68e256',
+    '#56e289',
+    '#e25668',
+    '#e2cf56',
+    '#56aee2'
+  ];
 
   //
   // Adds presentation style to the raw data
@@ -36,45 +74,77 @@ var analyticsController = app.controller('analyticsController', function ($scope
 
   };
 
-  var loadChartType = function (type) {
+  var loadChartType = function (dataSetType, chartType) {
 
-    console.log('loading ' + type + '...');
+    console.log('loading ' + dataSetType + '...');
 
-    $scope.isLoading[type] = true;
-    $scope.isLoadingMsg[type] = 'Loading...';
+    $scope.isLoading[dataSetType] = true;
+    $scope.isLoadingMsg[dataSetType] = 'Loading...';
 
-    var ctxCTS = document.getElementById(type).getContext('2d');
+    var ctxCTS = document.getElementById(dataSetType).getContext('2d');
 
-    var options = { eventId: $scope.eventId, type: type };
+    var options = { eventId: $scope.eventId, type: dataSetType };
 
     var data = EventAnalyticsData.get(options, function () {
       // Success
 
       console.log('success');
 
-      $scope.isLoading[type] = false;
+      $scope.isLoading[dataSetType] = false;
 
-      //
-      // The data is returned from the service unstyled because it's data.  Let's 
-      // style it the way we want.
-      //
-      applyStyleToChartData(data, type);
-
-      var options = {
-        // Put some space between the bars
-        barValueSpacing: 20
+      if (chartType === 'bar') {
+        //
+        // The data is returned from the service unstyled because it's data.  Let's 
+        // style it the way we want.
+        //
+        applyStyleToChartData(data, dataSetType);
+  
+        var options = {
+          // Put some space between the bars
+          barValueSpacing: 20
+        }
+  
+        var chrtCTS = new Chart(ctxCTS).Bar(data, options);
+          
+      } else if (chartType === 'sq') {
+        
+        console.log('setting displaytype for ' + dataSetType + ' to ' + data.type);
+        
+        $scope.displayType[dataSetType] = data.type;
+        
+        // The chart type is dependent on the question type
+        if (data.type === 'multichoice' || data.type === 'scale_1to5') {
+          
+          //
+          // Put in some colors.  These are used by the pie chart AND the legend.
+          //
+          data.datapoints.forEach(function(datapoint, index) {
+            var colorIndex = index % dataColors.length;
+            var color = dataColors[colorIndex];
+            console.log('colorIndex: ' + colorIndex + ', color: ' + color);
+            datapoint.color = color;
+          });
+          
+          var chrtCTS = new Chart(ctxCTS).Pie(data.datapoints, {});
+          $scope.dataResults[dataSetType] = data.datapoints;
+          
+        } else if (data.type === 'freeform') {
+          
+          console.log('gonna do freeform');
+        } else {
+          console.log('(error) survey question ' + chartType + ' has an unknown type: ' + data.type);
+          
+        }
+      } else {
+        
+        console.log('(error) unknown chart type: ' + chartType);
       }
-
-      var chrtCTS = new Chart(ctxCTS);
-
-      // May need to 'eval()' this, tbd
-      chrtCTS.Bar(data, options);
-
+      
     }, function () {
       // Error
 
       console.log('error!');
-      $scope.isLoadingMsg[type] = 'Oops, error loading chart.';
+      $scope.isLoadingMsg[dataSetType] = 'Oops, error loading chart.';
 
     });
   }
@@ -83,9 +153,15 @@ var analyticsController = app.controller('analyticsController', function ($scope
 
     $scope.eventId = pageVars.uuid;
 
-    loadChartType('checkinTimeSummary');
-    loadChartType('companySummary');
-    loadChartType('titlesSummary');
+    loadChartType('checkinTimeSummary', 'bar');
+    loadChartType('companySummary', 'bar');
+    loadChartType('titlesSummary', 'bar');
+    
+    if (pageVars.surveyQuestions) {
+      pageVars.surveyQuestions.forEach(function(question) {
+        loadChartType('sq-' + question.questionId, 'sq');
+      })
+    }
   }
 });
 
