@@ -412,7 +412,7 @@ function hasMomentBug() {
    
   Parameters:
     dateMs: time in unix format
-    timezoneOffset: the integer timezone offset value
+    timezoneOffset: the timezone offset value
     
   Returns:
     Object with properties:
@@ -424,13 +424,23 @@ exports.getContituentDateParts = function(dateMs, timezoneOffset) {
   var result = {};
   
   var d = moment.utc(dateMs);
-  d.zone(timezoneOffset);
-
+  
+  if (timezoneOffset) {
+    d.zone(timezoneOffset.toString());  // Must be a string now for some reason
+  }
+  
   //
   // Note: after upgrade to new version of Node, this line no longer
   // works:
   //
-  d.local();
+  // d.local();
+
+  //
+  // Horrible ugly hack to just get this stupid code working again.  Somehow 'moment'
+  // broke on my computer and there's no good reason why.  Thank god I had unit
+  // tests that identified the issue before it got released.
+  //
+  d.add('hours', timezoneOffset);
 
   //
   // DST is one hour ahead of our tzoffset, let's correct for it since we're displaying
@@ -440,15 +450,6 @@ exports.getContituentDateParts = function(dateMs, timezoneOffset) {
     d.subtract('hours', 1);
   }
   
-  //
-  // Horrible ugly hack to just get this stupid code working again.  Somehow 'moment'
-  // broke on my computer and there's no good reason why.  Thank god I had unit
-  // tests that identified the issue before it got released.
-  //
-  if (hasMomentBug()) {
-    d.add('hours', timezoneOffset);
-  }
-
   result.date = d.format('M/D/YYYY');
   result.time = d.format('h:mm A');
 
