@@ -440,7 +440,7 @@ exports.getContituentDateParts = function(dateMs, timezoneOffset) {
   // broke on my computer and there's no good reason why.  Thank god I had unit
   // tests that identified the issue before it got released.
   //
-  d.add('hours', timezoneOffset);
+  d.add('hours', timezoneOffset.toString());
 
   //
   // DST is one hour ahead of our tzoffset, let's correct for it since we're displaying
