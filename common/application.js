@@ -423,7 +423,7 @@ exports.getContituentDateParts = function(dateMs, timezoneOffset) {
 
   var result = {};
   
-  var d = moment.utc(dateMs);
+  var d = moment(dateMs);
   
   if (timezoneOffset) {
     d.zone(timezoneOffset.toString());  // Must be a string now for some reason
