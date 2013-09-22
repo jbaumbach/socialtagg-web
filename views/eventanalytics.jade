@@ -1,4 +1,5 @@
 include mixins/eventanalyticschart
+include mixins/eventanalyticsnonchart
 
 extends layout
 
@@ -20,27 +21,29 @@ block content
 
       p Stuff from Tim here hopefully...
 
-
       .headline
         h3 Attendee Demographics
-
       
       //- todo: grab height and width from the server - based on device?
       //- Maybe set from Angular?
 
       mixin eventanalyticschart(500, 300, 'Companies Represented', 'companySummary')
-
       mixin eventanalyticschart(500, 300, 'Job Titles Represented', 'titlesSummary')
-
       mixin eventanalyticschart(500, 300, 'Summary of Check-in Times', 'checkinTimeSummary')
 
       .headline
         h3 Survey Results
-          
-      - if (locals.survey)
-        - each question in survey.questions
-          mixin eventanalyticschart(300, 300, question.text, 'sq-' + question.questionId)
 
+      - if (locals.surveyQuestions)
+
+        - if (surveyQuestions.chartable)
+          - each question in surveyQuestions.chartable
+            mixin eventanalyticschart(300, 300, question.text, 'sq-' + question.questionId, question.description)
+
+        - if (surveyQuestions.nonChartable)
+          - each question in surveyQuestions.nonChartable
+            mixin eventanalyticsnonchart(question.text, 'sq-' + question.questionId, question.description)
+      
       - else
         
         p No attendee survey was used for this event.

@@ -100,7 +100,7 @@
   Be sure to run all the tests after updating your components.  Something may have broken.
   
   When adding a new component, be sure to update the package.json file with the dependency.  Otherwise, Heroku won't
-  load it, and the site will be sad.  The pacakge.json file should match npm list. I
+  load it, and the site will be sad.  The package.json file should match npm list. I
   can't confirm, but I think that Heroku only cares about the version of Node.  The
   other modules are loaded by npm and you can use what you want.
   

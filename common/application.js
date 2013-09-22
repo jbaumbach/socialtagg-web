@@ -17,6 +17,7 @@ var util = require('util')
   , moment = require('moment')
   , sprintf = require("sprintf-js").sprintf
   , Validator = require('validator').Validator
+  , _ = require('underscore')
   , thisModule = this
   ;
 
@@ -391,6 +392,21 @@ exports.buildUserExportFile = function(users, format, callback) {
   
 };
 
+function hasMomentBug() {
+  //
+  // Note: after upgrade to new version of Node, this sample code from
+  // the Moment documentation doesn't work:
+  //
+  // http://momentjs.com/docs/#/parsing/utc/
+  //
+  var a = moment.utc([2011, 0, 1, 8]);
+  // here, a.hours() would be: // 8 UTC
+  a.local();
+  var r = a.hours();  // should be: 0 PST
+  
+  return (r != 0);
+}
+
 /*
   Process a unix date and timezone and return local date and time. 
    
@@ -404,11 +420,16 @@ exports.buildUserExportFile = function(users, format, callback) {
       time: the time string in h:m A format
  */
 exports.getContituentDateParts = function(dateMs, timezoneOffset) {
-  
+
   var result = {};
   
   var d = moment.utc(dateMs);
   d.zone(timezoneOffset);
+
+  //
+  // Note: after upgrade to new version of Node, this line no longer
+  // works:
+  //
   d.local();
 
   //
@@ -416,13 +437,21 @@ exports.getContituentDateParts = function(dateMs, timezoneOffset) {
   // in non-DST
   //
   if (d.isDST()) {
-    // console.log('is in DST');
     d.subtract('hours', 1);
   }
   
+  //
+  // Horrible ugly hack to just get this stupid code working again.  Somehow 'moment'
+  // broke on my computer and there's no good reason why.  Thank god I had unit
+  // tests that identified the issue before it got released.
+  //
+  if (hasMomentBug()) {
+    d.add('hours', timezoneOffset);
+  }
+
   result.date = d.format('M/D/YYYY');
   result.time = d.format('h:mm A');
-  
+
   return result;
 };
 
@@ -495,3 +524,4 @@ exports.registrationValidationUrl = function(email, verificationCode) {
   
   return result;
 }
+

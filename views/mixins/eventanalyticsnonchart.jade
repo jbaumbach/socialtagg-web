@@ -1,0 +1,21 @@
+mixin eventanalyticsnonchart(headline, type, legendSupplement)
+
+  .container
+    .headline
+      h4 "#{ headline }" 
+        - if (legendSupplement)
+          | (#{ legendSupplement })
+  
+    //- Display area for the result data
+    .eight.columns
+      .nonchartcontainer(id=type)
+
+        .placeholder(ng-show='isLoading["' + type + '"]') {{ isLoadingMsg["#{ type }"] }}
+        
+        .nonchart(ng-show='!isLoading[' + type + ']', style='display:none;')
+          table.standard-table
+            tbody
+              tr
+                th Responses
+              tr(ng-repeat='response in dataResults["' + type + '"]')
+                td {{ response }}

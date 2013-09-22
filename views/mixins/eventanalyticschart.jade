@@ -1,24 +1,28 @@
-mixin eventanalyticschart(width, height, headline, type)
+mixin eventanalyticschart(width, height, headline, id, legendSupplement)
 
   .container
     .headline
-      h4 #{ headline }
+      h4 "#{ headline }" 
+        - if (legendSupplement)
+          | (#{ legendSupplement })
     
+    //- Display area for the result data
     .eight.columns
       .chartcontainer(style='width:' + width + 'px;height:' + height + 'px')
         
-        .placeholder(ng-show='isLoading["' + type + '"]') {{ isLoadingMsg["#{ type }"] }}
+        .placeholder(ng-show='isLoading["' + id + '"]') {{ isLoadingMsg["#{ id }"] }}
         
-        .chart(ng-show='!isLoading[' + type + ']', style='display:none;')
-          canvas(id=type, width=width, height=height)
+        .chart(ng-show='!isLoading[' + id + ']', style='display:none;')
+          canvas(id=id, width=width, height=height)
   
-    .six.columns(ng-show='displayType["' + type + '"] == "multichoice" || displayType["' + type + '"] == "scale_1to5"', style='display:none;')
+    //- This is only displayed if we need a legend, like for a pie chart
+    .six.columns(ng-show='displayType["' + id + '"] == "multichoice" || displayType["' + id + '"] == "scale_1to5"', style='display:none;')
       .headline.no-margin
-        h4 Legend
+        h4 Legend 
       
       .pie-items
         ul
-          li(ng-repeat='datapoint in dataResults["' + type + '"] | orderBy:"value":true')
+          li(ng-repeat='datapoint in dataResults["' + id + '"] | orderBy:"value":true')
             .color-block(style='background-color: {{ datapoint.color}};')
             | {{ datapoint.label }} ({{datapoint.value}})
             .clear

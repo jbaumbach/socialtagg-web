@@ -20,6 +20,7 @@ var analyticsController = app.controller('analyticsController', function ($scope
   $scope.isLoading = [];
   $scope.isLoadingMsg = [];
   $scope.displayType = [];
+  //$scope.surveyResults = [];
 
   /* First try
   var dataColors = [
@@ -74,6 +75,28 @@ var analyticsController = app.controller('analyticsController', function ($scope
 
   };
 
+  var loadNonChartType = function(dataSetType) {
+    console.log('loading ' + dataSetType + '...');
+
+    $scope.isLoading[dataSetType] = true;
+    $scope.isLoadingMsg[dataSetType] = 'Loading...';
+
+    var options = { eventId: $scope.eventId, type: dataSetType };
+
+    var data = EventAnalyticsData.get(options, function () {
+      // Success
+      // note: the display timing is a little funky here, maybe fix in future versions.
+      $scope.isLoading[dataSetType] = false;
+      $scope.dataResults[dataSetType] = data.datapoints;
+      
+    }, function() {
+      // Fail!
+
+      console.log('error!');
+      $scope.isLoadingMsg[dataSetType] = 'Oops, error loading data.';
+    });
+  }
+  
   var loadChartType = function (dataSetType, chartType) {
 
     console.log('loading ' + dataSetType + '...');
@@ -107,7 +130,9 @@ var analyticsController = app.controller('analyticsController', function ($scope
         var chrtCTS = new Chart(ctxCTS).Bar(data, options);
           
       } else if (chartType === 'sq') {
-        
+        //
+        // Survey questions
+        //
         console.log('setting displaytype for ' + dataSetType + ' to ' + data.type);
         
         $scope.displayType[dataSetType] = data.type;
@@ -158,9 +183,23 @@ var analyticsController = app.controller('analyticsController', function ($scope
     loadChartType('titlesSummary', 'bar');
     
     if (pageVars.surveyQuestions) {
-      pageVars.surveyQuestions.forEach(function(question) {
-        loadChartType('sq-' + question.questionId, 'sq');
-      })
+      //
+      // I feel there's a more elegant way to do this.  But my brain hurts right now.
+      //
+      if (pageVars.surveyQuestions.chartable) {
+
+        pageVars.surveyQuestions.chartable.forEach(function(question) {
+          loadChartType('sq-' + question.questionId, 'sq');
+        });
+      }
+      
+      if (pageVars.surveyQuestions.nonChartable) {
+
+        pageVars.surveyQuestions.nonChartable.forEach(function(question) {
+          //$scope.dataResults['sq-' + question.questionId] = 'Baddabing!';
+          loadNonChartType('sq-' + question.questionId);
+        });
+      }
     }
   }
 });

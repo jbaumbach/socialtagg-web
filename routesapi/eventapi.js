@@ -11,24 +11,19 @@ var userManager = require('./../data/userManager')
   , application = require('../common/application')
   , sprintf = require("sprintf-js").sprintf
   , _ = require('underscore')
+  , SurveyQuestion = require('../models/SurveyQuestion')
   , thisModule = this
   ;
 
 //
 // Possible survey and question types.  These must match the Angular page values 
+// Todo: move these to a "Survey" model
 //
 var surveyTypes = [
   { label: 'When attendee checks in', value: 'showOnCheckin' },
   { label: 'A specific number of minutes after event ends', value: 'showAfterXMins' },
   { label: 'The next morning', value: 'showNextMorn' }
 ];
-
-var questionTypes = [
-  { label: 'Scale of 1 to 5', value: 'scale_1to5' },
-  { label: 'Multiple choice', value: 'multichoice' },
-  { label: 'Freeform Input', value: 'freeform' }
-];
-
 
 /*
   Return a list of events owned by the logged in user
@@ -103,7 +98,7 @@ exports.validateRawSurvey = function(surveyRaw) {
       var displayIndex = index + 1;
       v.check(question.text, 'please enter some text for question ' + displayIndex).notNull().notEmpty();
 
-      if (!_.find(questionTypes, function(qtype) { return question.type === qtype.value; })) {
+      if (!_.find(SurveyQuestion.questionTypes, function(qtype) { return question.type === qtype.value; })) {
         v.error('please enter a valid type for question ' + displayIndex);
       };
 
@@ -414,41 +409,40 @@ exports.eventAnalyticsData = function(req, res) {
 
   var type = req.query.type;
   var data;
+  var randomWaitTime = Math.floor((Math.random() * 1000) + 250);
   
   var done = function(err, data) {
     
-    if (err) {
-
-      var statusCode = err.statusCode || 500;
-      var statusMsg = err.statusMsg || 'Unknown error';
-      
-      res.send(statusCode, { msg: statusMsg });
-      
-    } else {
-
-      res.send(200, data);
-    }
-
+    setTimeout(function() {
+      if (err) {
+  
+        var statusCode = err.statusCode || 500;
+        var statusMsg = err.statusMsg || 'Unknown error';
+        
+        res.send(statusCode, { msg: statusMsg });
+        
+      } else {
+  
+        res.send(200, data);
+      }
+    }, randomWaitTime);
   };
+
   
   switch(type) {
     case 'checkinTimeSummary':
       
       // Test out the async nature of the responses
-      setTimeout(function() {
+      data = {
+        labels: ['5pm', '6pm', '7pm', '8pm', '9pm'],
+        datasets: [
+          {
+            data: [7, 10, 20, 15, 11]
+          }
+        ]
+      }
 
-        data = {
-          labels: ['5pm', '6pm', '7pm', '8pm', '9pm'],
-          datasets: [
-            {
-              data: [7, 10, 20, 15, 11]
-            }
-          ]
-        }
-
-        done(undefined, data);
-      }, 500);
-      
+      done(undefined, data);
       break;
     
     case 'companySummary':
@@ -505,7 +499,7 @@ exports.eventAnalyticsData = function(req, res) {
                 },
                 {
                   label: 'None of the above',
-                  value : 15
+                  value : 17
                 }
               ]
             }
@@ -534,7 +528,7 @@ exports.eventAnalyticsData = function(req, res) {
                 },
                 {
                   label: '5',
-                  value : 15
+                  value : 17
                 }
               ]
             }
@@ -552,7 +546,8 @@ exports.eventAnalyticsData = function(req, res) {
                 'free booze',
                 'ice sculpture',
                 'ice sculpture',
-                'Metallica'
+                'Metallica is the best band of all time, rivaled possibly by Blink 182.  It\'s a personal ' +
+                  'opinion, but it\'s the correct opinion.'
               ]
             }
             break;

@@ -10,6 +10,7 @@ var userManager = require('./../data/userManager')
   , User = require('../models/User')
   , application = require('../common/application')
   , eventManager = require('../data/eventManager')
+  , SurveyQuestion = require('../models/SurveyQuestion')
   ;
 
 exports.detail = function(req, res) {
@@ -89,8 +90,25 @@ exports.analytics = function(req, res) {
           if(!err && survey) {
 
             console.log('survey found');
-            pageVars.survey = survey;
-            dataForAngularInit.surveyQuestions = survey.questions;
+
+            //
+            // Let's apply descriptions to each question for Jade to use to apply Legends to 
+            // the chartable items.
+            //
+            SurveyQuestion.addDescriptionToQuestions(survey.questions);
+
+            //
+            // Let's split the questions into chartable and non-chartable.  Makes it easier
+            // on the front end.
+            //
+            var surveyQs = {
+              chartable: SurveyQuestion.surveyQuestionsChartable(survey.questions, true),
+              nonChartable: SurveyQuestion.surveyQuestionsChartable(survey.questions, false)
+            }
+
+            dataForAngularInit.surveyQuestions = surveyQs;
+            pageVars.surveyQuestions = surveyQs;
+            
           } else {
             console.log('no survey found');
           }

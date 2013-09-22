@@ -289,7 +289,7 @@ describe('application class', function() {
     done();
   });
   
-  it('should get constituent data parts from a date', function() {
+  it('should get constituent date parts from a date', function() {
     
     var r = application.getContituentDateParts(1359840896000, -8);  // or Sat Feb 02 2013 13:34:56 GMT-0800 (PST)
     
@@ -382,6 +382,6 @@ describe('application class', function() {
     
     assert.equal(r, e, 'didn\'t build proper login link');
   })
-  
+
 });
   
