@@ -430,6 +430,31 @@ exports.eventAnalyticsData = function(req, res) {
 
   
   switch(type) {
+    case 'totalCheckins':
+      data = {
+        datapoints: 28
+      }
+      
+      done(undefined, data);
+      break;
+
+    case 'contaggsExchanged':
+      data = {
+        datapoints: 518
+      }
+
+      done(undefined, data);
+      break;
+
+    case 'averageContaggsPerAttendee':
+      data = {
+        datapoints: 5
+      }
+
+      done(undefined, data);
+      break;
+
+
     case 'checkinTimeSummary':
       
       // Test out the async nature of the responses

@@ -1,5 +1,6 @@
 include mixins/eventanalyticschart
 include mixins/eventanalyticsnonchart
+include mixins/eventanalyticssummary
 
 extends layout
 
@@ -19,7 +20,10 @@ block content
       .headline
         h3 Your Event: At a Glance
 
-      p Stuff from Tim here hopefully...
+      .container
+        mixin eventanalyticssummary('icon_checkin.png', 'totalCheckins', 'Total Checkins')
+        mixin eventanalyticssummary('icon_exchange.png', 'contaggsExchanged', 'Total Contaggs Exchanged at Event')
+        mixin eventanalyticssummary('icon_avg.png', 'averageContaggsPerAttendee', 'Average Number of Contaggs per Attendee')
 
       .headline
         h3 Attendee Demographics

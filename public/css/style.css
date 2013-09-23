@@ -4137,6 +4137,28 @@ div.field.event-datetime {
   margin-right:15px;
 }
 
+.event-analytics .at-glance {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.event-analytics img.at-glance {
+  margin-top: 20px;
+}
+
+.event-analytics .at-glance.value {
+  font-size: 4.5em;
+  line-height: normal;
+  margin: 10px;
+}
+
+.event-analytics .at-glance.desc {
+  font-size: 1.7em;
+  line-height: normal;
+  padding: 0 50px;
+}
+
 /* Misc useful styles */
 
 .read-only-input {

@@ -82,6 +82,10 @@
     
     $ svn update   # See: http://stackoverflow.com/questions/3298384/svn-commit-failed-directory-out-of-date
     
+   * Edit ignored directories in SVN (must have 'export SVN_EDITOR=pico' (no quotes) in ~/.bash_profile):
+   
+    $ svn propget -R svn:ignore .
+   
    Setting a domain name set up in Godaddy to point to a Heroku app (e.g. staging)
    // See doc here: https://devcenter.heroku.com/articles/custom-domains
    

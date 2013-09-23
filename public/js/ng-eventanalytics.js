@@ -176,8 +176,28 @@ var analyticsController = app.controller('analyticsController', function ($scope
 
   $scope.init = function (pageVars) {
 
+    /* 
+      General logic:
+      
+      loadChartType(d, t) - loads data onto a predefined canvas on the page
+        d: dataset to load
+          '[string]' - pre-defined dataset param to pass to the API
+          'sq-[int]' - survey question id to pass to API
+        t: type:
+          'bar' - bar chart
+          'pie' - pie chart
+
+      loadNonChartType(d) - similar to loadChartType, but for a table of text values
+     
+      This section is getting close to refactor time.  It's beyond it's original design
+      capacity.
+     */
     $scope.eventId = pageVars.uuid;
 
+    loadNonChartType('totalCheckins');
+    loadNonChartType('contaggsExchanged');
+    loadNonChartType('averageContaggsPerAttendee');
+    
     loadChartType('checkinTimeSummary', 'bar');
     loadChartType('companySummary', 'bar');
     loadChartType('titlesSummary', 'bar');
@@ -196,7 +216,6 @@ var analyticsController = app.controller('analyticsController', function ($scope
       if (pageVars.surveyQuestions.nonChartable) {
 
         pageVars.surveyQuestions.nonChartable.forEach(function(question) {
-          //$scope.dataResults['sq-' + question.questionId] = 'Baddabing!';
           loadNonChartType('sq-' + question.questionId);
         });
       }
