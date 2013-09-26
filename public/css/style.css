@@ -4261,7 +4261,25 @@ Extracted from bootstrap CSS
     margin-left: 0;
 }
 
-
+/* =================================================================== */
+/* Event checkin page
+====================================================================== */
+.checkin-page {
+  text-align: center;
+}
+.checkin-page img {
+  margin: 0 auto;
+}
+.checkin-page img.logo {
+  max-width: 300px;
+}
+.checkin-page .leader {
+  line-height: normal;
+  font-size: 8em;
+}
+.checkin-page img.qr-code {
+  page-break-before: always;
+}
 
 /* =================================================================== */
 /* Media Queries

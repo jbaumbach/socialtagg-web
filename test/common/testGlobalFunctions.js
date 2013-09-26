@@ -219,4 +219,12 @@ describe('globalFunctions', function() {
     assert.equal(r, '12345', 'didn\'t get numbers');
     
   })
+  
+  it('should generate a qr code url from google ok', function() {
+    var u = 'http://yomama.com';
+    var e = 'http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl=http%3A%2F%2Fyomama.com';
+    
+    var r = globalFunctions.qrCodeUrl(u);
+    assert.equal(r, e, 'didn\'t get right code');
+  });
 }) 

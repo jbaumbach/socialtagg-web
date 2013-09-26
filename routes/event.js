@@ -19,9 +19,11 @@ exports.detail = function(req, res) {
     title: 'Event Detail'
   };
 
+  var viewToRender = req.query.prn ? 'eventprinterfriendly' : 'eventview';
+  
   function done() {
     application.buildApplicationPagevars(req, pageVars, function(pageVars) {
-      res.render('eventview', pageVars);
+      res.render(viewToRender, pageVars);
     });
   };
 
@@ -135,16 +137,43 @@ exports.analytics = function(req, res) {
 };
 
 
-exports.printerFriendly = function(req, res) {
+exports.checkInPage = function(req, res) {
 
   var pageVars = {
-    title: 'Printer Friendly'
+    title: 'Event Checkin Page'
   };
 
-  application.buildApplicationPagevars(req, pageVars, function(pageVars) {
-    res.render('eventprinterfriendly', pageVars);
-  });
+  function done() {
+    application.buildApplicationPagevars(req, pageVars, function(pageVars) {
+      res.render('eventcheckinpage', pageVars);
+    });
+  };
 
+  var eventId = req.params.id;
+  var userId = application.getCurrentSessionUserId(req);
+
+  eventManager.getEvent(eventId, function(err, event) {
+
+    if (!err) {
+
+      if (userId && event.owner === userId) {
+
+        pageVars.event = event;
+        pageVars.title = pageVars.event.name + ' - Details';
+
+        done();
+      } else {
+
+        res.send(401, 'Sorry you are not authorized to view this page');
+      }
+
+    } else {
+  
+      res.send(404, 'Page not found');
+
+    }
+
+  });
 
 };
 

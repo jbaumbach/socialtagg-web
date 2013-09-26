@@ -409,6 +409,20 @@ exports.eventAnalyticsData = function(req, res) {
 
   var type = req.query.type;
   var data;
+  
+  //
+  // Function that can return our required data
+  //
+  var dataRetreiver;
+  
+  var eventId;
+  var surveyId;
+  var surveyQuestionId;
+  
+  // todo: start implementing data calls
+  
+  // Note: randomWaitTime is just to simulate waiting for results in the front end.  Take this out
+  // when data is real.
   var randomWaitTime = Math.floor((Math.random() * 1000) + 250);
   
   var done = function(err, data) {
@@ -457,7 +471,6 @@ exports.eventAnalyticsData = function(req, res) {
 
     case 'checkinTimeSummary':
       
-      // Test out the async nature of the responses
       data = {
         labels: ['5pm', '6pm', '7pm', '8pm', '9pm'],
         datasets: [
@@ -582,8 +595,6 @@ exports.eventAnalyticsData = function(req, res) {
         }
         
         done(err, data);
-        
-        
         
       } else {
 

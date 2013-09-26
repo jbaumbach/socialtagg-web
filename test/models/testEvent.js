@@ -7,6 +7,7 @@
 var assert = require('assert')
   , Event = require('../../models/Event')
   , User = require('../../models/User')
+  , application = require('../../common/application')
 ;
 
 describe('Event model', function() {
@@ -68,4 +69,20 @@ describe('Event model', function() {
     assert.equal(r, h, 'didn\'t get right hashtag');
     
   });
+  
+  it('should generate a production qr code', function() {
+    var initData = {
+      uuid: 'yoda'
+    }
+
+    application.globalVariables.productionServerPath = 'www.socialtagg.com';
+    application.globalVariables.productionSecureProtocol = 'https';
+
+    var event = new Event(initData);
+    var e = 'http://chart.apis.google.com/chart?cht=qr&chs=500x500&chl=https%3A%2F%2Fwww.socialtagg.com%2Fevents%2Fyoda';
+    
+    var r = event.qrCodeUrl;
+    
+    assert.equal(r, e, 'didn\'t get right url back');
+  })
 });

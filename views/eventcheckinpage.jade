@@ -1,0 +1,40 @@
+doctype
+html
+    
+  head
+    title #{ title }
+    link(rel='stylesheet', type='text/css', href='/css/style.css')
+
+    //-
+      style(type='text/css').
+        .checkin-page {
+          text-align: center;
+        }
+  
+        .checkin-page img {
+          margin: 0 auto;
+          max-width: 300px;
+        }
+        .checkin-page .leader {
+          line-height: normal;
+          font-size: 10em;
+        }
+  
+    body.checkin-page
+    
+    h1.leader #{ event.name }
+      
+    h1 #{ event.description }
+      
+    h3 Brought to you by
+
+    img(class='logo', src='/images/weblogo2.png')
+
+    h1 Scan the QR code below with your SocialTagg app to check in to the event, or to install SocialTagg.
+      
+    img(class='qr-code', src=event.qrCodeUrl)
+      
+    h3 Install SocialTagg now!  
+      a(href='http://socialtagg.com') http://socialtagg.com
+      
+      

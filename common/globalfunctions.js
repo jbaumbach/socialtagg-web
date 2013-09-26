@@ -259,6 +259,24 @@ exports.toHashtag = function(origString) {
   return result;
 };
 
+/*
+  Build a url to a QR code image for the passed url and option.
+  
+  Parameters:
+    urlToUse: the url that will be linked to
+    options: (optional) object with KVs:
+      size: int - the width and height dimension in pixels; the default is 300
+ */
+exports.qrCodeUrl = function(urlToUse, options) {
+  var options = options || {
+    size: 300
+  }
+  var urlEncodedPath = encodeURIComponent(urlToUse);
+  var result = util.format('http://chart.apis.google.com/chart?cht=qr&chs=' +
+    options.size + 'x' + options.size + '&chl=%s', urlEncodedPath);
+  return result;
+}
+
 //***********************************************
 // Class extensions
 //***********************************************

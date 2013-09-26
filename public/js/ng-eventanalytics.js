@@ -76,7 +76,8 @@ var analyticsController = app.controller('analyticsController', function ($scope
   };
 
   var loadNonChartType = function(dataSetType) {
-    console.log('loading ' + dataSetType + '...');
+    
+    console.log('loading nct: ' + dataSetType + '...');
 
     $scope.isLoading[dataSetType] = true;
     $scope.isLoadingMsg[dataSetType] = 'Loading...';
@@ -99,7 +100,7 @@ var analyticsController = app.controller('analyticsController', function ($scope
   
   var loadChartType = function (dataSetType, chartType) {
 
-    console.log('loading ' + dataSetType + '...');
+    console.log('loading ct: ' + dataSetType + '...');
 
     $scope.isLoading[dataSetType] = true;
     $scope.isLoadingMsg[dataSetType] = 'Loading...';
@@ -110,8 +111,6 @@ var analyticsController = app.controller('analyticsController', function ($scope
 
     var data = EventAnalyticsData.get(options, function () {
       // Success
-
-      console.log('success');
 
       $scope.isLoading[dataSetType] = false;
 
@@ -168,7 +167,7 @@ var analyticsController = app.controller('analyticsController', function ($scope
     }, function () {
       // Error
 
-      console.log('error!');
+      console.log('error! for ' + dataSetType);
       $scope.isLoadingMsg[dataSetType] = 'Oops, error loading chart.';
 
     });
@@ -187,7 +186,8 @@ var analyticsController = app.controller('analyticsController', function ($scope
           'bar' - bar chart
           'pie' - pie chart
 
-      loadNonChartType(d) - similar to loadChartType, but for a table of text values
+      loadNonChartType(d) - similar to loadChartType, but just putting the results in 
+        Angular for display however the frontend wants.
      
       This section is getting close to refactor time.  It's beyond it's original design
       capacity.

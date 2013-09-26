@@ -8,6 +8,7 @@
 
 var util = require('util')
   , globalFunctions = require('../common/globalfunctions')
+  , application = require('../common/application')
 ;
 
 var Event = function(values) {
@@ -43,7 +44,7 @@ var Event = function(values) {
 
     this.path = '/events/' + this.uuid;
     this.analyticsPath = '/events/' + this.uuid + '/analytics';
-    this.printerFriendlyPath = '/events/' + this.uuid + '/printerfriendly';
+    this.checkInPage = '/events/' + this.uuid + '/checkinpage';
     
   } else {
     
@@ -55,6 +56,22 @@ var Event = function(values) {
   this.hashtag = globalFunctions.toHashtag(this.name);
   
 };
+
+//
+// The QR code is derived; build it on-demand.
+//
+Object.defineProperty(Event.prototype, "qrCodeUrl", {
+  get: function() {
+    //
+    // The mobile apps only know what the production server is
+    //
+    var fullProductionPath = application.globalVariables.productionSecureProtocol + '://' + 
+      application.globalVariables.productionServerPath +
+      this.path;
+    return globalFunctions.qrCodeUrl(fullProductionPath, { size: 500 });
+  }
+});
+
 
 //
 // Export our class

@@ -2,7 +2,16 @@ doctype
 html
     
   head
-    title
+    title Event Details - #{ event.name }
     
+  style(type='text/css').
+    body {
+      text-align: center;
+      margin: 0 auto;
+    }
+  
   body
-    p Not sure what we're going to do here yet.  Check back soon.
+    img(src='/images/weblogo2.png')
+    
+    h1 #{ event.name }
+      
