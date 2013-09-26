@@ -68,6 +68,7 @@ Object.defineProperty(Event.prototype, "qrCodeUrl", {
     var fullProductionPath = application.globalVariables.productionSecureProtocol + '://' + 
       application.globalVariables.productionServerPath +
       this.path;
+    
     return globalFunctions.qrCodeUrl(fullProductionPath, { size: 500 });
   }
 });

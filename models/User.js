@@ -22,6 +22,7 @@
 
 var util = require('util')
   , globalFunctions = require('../common/globalfunctions')
+  , application = require('../common/application')
   ;
 
 //
@@ -99,9 +100,14 @@ Object.defineProperty(User.prototype, "path", {
 //
 Object.defineProperty(User.prototype, "qrCodeUrl", {
   get: function() {
-    var urlEncodedPath = encodeURIComponent(this.path);
-    var result = util.format('http://chart.apis.google.com/chart?cht=qr&chs=300x300&chl=%s', urlEncodedPath);
-    return result;
+    //
+    // The mobile apps only know what the production server is
+    //
+    var fullProductionPath = application.globalVariables.productionSecureProtocol + '://' +
+      application.globalVariables.productionServerPath +
+      this.path;
+
+    return globalFunctions.qrCodeUrl(fullProductionPath, { size: 500 });
   }  
 });
 

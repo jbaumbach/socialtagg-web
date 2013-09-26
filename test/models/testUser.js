@@ -10,6 +10,7 @@
 //
 var assert = require('assert')
   , User = require('../../models/User')
+  , application = require('../../common/application')
   ;
 
 describe('User model', function() {
@@ -139,5 +140,21 @@ describe('User model', function() {
     assert.equal(r, k, 'didn\'t get a good static cache key');
     
   })
-  
+
+  it('should generate a production qr code', function() {
+    var initData = {
+      id: 'yoda'
+    }
+
+    application.globalVariables.productionServerPath = 'www.socialtagg.com';
+    application.globalVariables.productionSecureProtocol = 'https';
+
+    var user = new User(initData);
+    var e = 'http://chart.apis.google.com/chart?cht=qr&chs=500x500&chl=https%3A%2F%2Fwww.socialtagg.com%2Fusers%2Fyoda';
+
+    var r = user.qrCodeUrl;
+
+    assert.equal(r, e, 'didn\'t get right url back');
+  })
+
 });
