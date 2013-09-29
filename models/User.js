@@ -100,13 +100,16 @@ Object.defineProperty(User.prototype, "path", {
 //
 Object.defineProperty(User.prototype, "qrCodeUrl", {
   get: function() {
+    /*
     //
     // The mobile apps only know what the production server is
     //
+     */
     var fullProductionPath = application.globalVariables.productionSecureProtocol + '://' +
       application.globalVariables.productionServerPath +
       this.path;
-
+    
+    // var fullProductionPath = this.path;
     return globalFunctions.qrCodeUrl(fullProductionPath, { size: 500 });
   }  
 });

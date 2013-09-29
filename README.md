@@ -84,7 +84,8 @@
     
    * Edit ignored directories in SVN (must have 'export SVN_EDITOR=pico' (no quotes) in ~/.bash_profile):
    
-    $ svn propget -R svn:ignore .
+    $ svn propget -R svn:ignore .   # view
+    $ svn propedit svn:ignore .     # edit w/current editor from ~/.bash_profile
    
    Setting a domain name set up in Godaddy to point to a Heroku app (e.g. staging)
    // See doc here: https://devcenter.heroku.com/articles/custom-domains

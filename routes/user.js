@@ -293,46 +293,17 @@ exports.detail = function(req, res) {
         //
         // View user's info
         //
-        var safeUser = application.getSanitizedUser(user);
-
         var pageVars = {
           title: util.format('%s\'s Profile', user.name),
           
-          displayUser: safeUser,
+          displayUser: user,
           showQrCode: requestedUserIsSessionUser
         }
 
-        function renderIt() {
-          
-          application.buildApplicationPagevars(req, pageVars, function(pageVars) {
-            res.render('userView', pageVars);
-          });
-        }
-
-        if (requestedUserIsSessionUser) {
-          userManager.getUserContaggs(currentSessionUser.id, function(userContaggIdList) {
-            
-            if (userContaggIdList && userContaggIdList.length > 0) {
-              
-              var safeContaggs = [];
-              
-              userManager.populateUserContaggs(userContaggIdList, function(userContaggs) {
-                
-                userContaggs.forEach(function(userContagg) {
-                  safeContaggs.push(application.getSanitizedUser(userContagg));
-                });
-              
-                pageVars.contaggs = safeContaggs;
-                
-                renderIt();
-              });
-            } else {
-              renderIt();
-            }
-          });
-        } else {
-          renderIt();
-        }
+        application.buildApplicationPagevars(req, pageVars, function(pageVars) {
+          res.render('userView', pageVars);
+        });
+        
       } else {
         res.send(404, 'Sorry, that user is not found.');
       }

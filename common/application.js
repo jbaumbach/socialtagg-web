@@ -9,7 +9,6 @@
 
 var util = require('util')
   , userManager = require('../data/userManager')
-  , User = require('../models/User')
   , globalfunctions = require('./globalfunctions')
   , check = require('validator').check
   , sanitize = require('validator').sanitize
@@ -21,6 +20,8 @@ var util = require('util')
   , thisModule = this
   ;
 
+//*** Note: do not reference any /models directly from this class.  Models include this
+//*** module, causing a circular reference that doesn't always get caught by the unit tests!
 
 //
 // Global variables accessible throughout the application.
@@ -125,7 +126,8 @@ exports.getAndSetVerificationCodeForUserByEmail = function(userEmail, callback) 
   });
 };
 
-
+/*
+See note in testApplication/should return a sanitized user from bad values for why this is removed.
 //
 // Sanitization functions
 //
@@ -150,6 +152,7 @@ exports.getSanitizedUser = function(rawUser) {
   return new User(sanitizedData);
   
 };
+*/
 
 //
 // Get common links.  Todo: parse a common 'routes' class shared with other classes

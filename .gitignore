@@ -16,3 +16,4 @@ results
 node_modules
 .svn
 projectFilesBackup
+*.rdb
