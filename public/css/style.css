@@ -4262,25 +4262,62 @@ Extracted from bootstrap CSS
 }
 
 /* =================================================================== */
-/* Event checkin page
+/* Event checkin page (not printer friendly!  although it is)
 ====================================================================== */
+
+body.checkin-page {
+  margin: 0;
+  padding: 0;
+}
 .checkin-page {
   text-align: center;
+  font-family: Arial,sans-serif;
 }
 .checkin-page img {
   margin: 0 auto;
 }
 .checkin-page img.logo {
-  max-width: 300px;
 }
 .checkin-page .leader {
   line-height: normal;
-  font-size: 8em;
+  font-size: 4em;
+  line-height: 0.95em;
 }
+.checkin-page .description {
+  line-height: normal;
+  margin: 10px 0;
+}
+/*
 .checkin-page img.qr-code {
   page-break-before: always;
 }
-
+*/
+.checkin-page .dates {
+  margin: 10px;
+}
+.checkin-page .instructions {
+  margin: 35px 0 0;
+}
+.checkin-page .instructions h1 {
+  font-size: 2.5em;
+}
+.checkin-page .instructions h4 {
+  font-size: 1.3em;
+}
+.checkin-page .tag-line img {
+  max-width: 150px;
+  left: -140px;
+  max-width: 150px;
+  position: relative;
+}
+.checkin-page .tag-line p {
+  left: 80px;
+  position: relative;
+  top: -35px;
+}
+.checkin-page .tag-line h2 {
+  margin-top: -40px;
+}
 /* =================================================================== */
 /* Media Queries
 ====================================================================== */

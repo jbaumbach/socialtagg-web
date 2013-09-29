@@ -158,6 +158,8 @@ exports.checkInPage = function(req, res) {
 
       if (userId && event.owner === userId) {
 
+        console.log('event: ' + util.inspect(event));
+        
         pageVars.event = event;
         pageVars.title = pageVars.event.name + ' - Details';
 

@@ -15,5 +15,5 @@ logs
 results
 node_modules
 .svn
-projectFilesBackup
+projectFilesBackup*
 *.rdb
