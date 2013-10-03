@@ -14,8 +14,10 @@ var util = require('util')
   , ApiUser = require('../../models/ApiUser.js')
   , globalFunctions = require('../../common/globalfunctions')
   , application = require('../../common/application')
+  , eventManager = require('../eventManager')
   , userGridEventManager = require('./userGridEventManager')
   , https = require('https')
+  , async = require('async')
   , thisModule = this
   ;
 
@@ -158,7 +160,7 @@ function userGridUserFromUser(user) {
     bio: user.bio,
     company: user.company,
     title: user.title,
-    twitter: user.twitter,
+    twitter: user.twitter
     // not yet: uuid_avatar_image: user.avatarId
 
     // Adding 9/2/2013 to support password changing
@@ -760,22 +762,81 @@ exports.addUserContagg = function(user, userIdToAdd, resultCallback) {
   });
 };
 
+/**
+ * Call UserGrid with the passed options, and run each result through the converter function,
+ * returning the result array to the callback function
+ * @param {object} options the usergrid "options" object
+ * @param {function} converterFunc the function to call passing each data row.  This function must return a model. 
+ * @param {function} resultCallback the function to call once all the rows are converted.  The signature is:
+ *  err {string} if something bad happened
+ *  results {array} the resulting models
+ */
+var getUGResultSetAndConvertRowsToObjects =
+exports.getUGResultSetAndConvertRowsToObjects = function(options, converterFunc, resultCallback) {
+  
+  client().createCollection(options, function(err, resultRows) {
+    
+    var result = undefined;
+
+    if (err) {
+      console.log('(error) getUGResultSetAndConvertRowsToObjects (' + util.inspect(options) + '): ' + err);
+    } else {
+      result = [];
+      
+      while(resultRows.hasNextEntity()) {
+        var ugRow = resultRows.getNextEntity();
+        var model = converterFunc(ugRow);
+        result.push(model);
+      }
+    }
+    
+    resultCallback(err, result);
+  });
+}
+
 //
 // Get the events this user has attended
 //
 exports.getUserEventsAttended = function(id, resultCallback) {
-  var events = [];
-  /*
-  var sampleEvent = {
-    event_uuid: 1234,
-    checkin_date: Date.parse('2013-07-05 16:45')
-  };
-  events.push(sampleEvent);
-  */
+  
+  var options = {
+    type: 'event_users',
+    qs: {
+      ql: util.format('select * where user_uuid = %s order by created DESC', id),
+      limit: '100'
+    }
+  }
 
+  var converterFunc = userGridEventManager.eventUserFromUserGridEventUser;
+  
+  getUGResultSetAndConvertRowsToObjects(options, converterFunc, resultCallback);
+}
 
-  resultCallback(events);
-};
+/**
+ * For each of the passed eventUser objects, add an 'Event' property
+ * @param {array} array of eventUser objects
+ * @param {function} resultCallback, with parameters:
+ *  err {object} filled in if something bad happened
+ */ 
+exports.populateEvents = function(eventUserList, resultCallback) {
+  //
+  // Let's run a bunch of queries in parallel
+  //
+  var iterator = function(item, callBack) {
+    
+    eventManager.getEvent(item.eventUuid, function(err, event) {
+      //
+      // Yes, we are ignoring errors in the list.  If one bombs, we can still
+      // show the rest, right?
+      //
+      item.event = event;
+      callBack();
+    });
+  }
+  
+  async.each(eventUserList, iterator, resultCallback);
+}
+
 
 //
 // Gets user contaggs for the specified event
@@ -836,7 +897,7 @@ exports.getUserEventsOwned = function(id, resultCallback) {
       while(resultEvents.hasNextEntity()) {
 
         var event = resultEvents.getNextEntity();
-        var userEvent = userGridEventManager.eventFromUserGridEvent(event);
+        var userEvent = eventManager.eventFromUserGridEvent(event);
         
         // console.log('Found event: ' + util.inspect(userEvent));
         

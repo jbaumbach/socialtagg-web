@@ -15,6 +15,7 @@ var assert = require('assert')
   , ApiUser = require('../../models/ApiUser')
   , User = require('../../models/User')
   , util = require('util')
+  , _ = require('underscore')
 ;
 
 //
@@ -318,6 +319,26 @@ describe('userManager', function() {
     });
   });
 
+  it('should get user events attended', function(done) {
+    var sampleUuid = '5b07c30a-082e-11e3-b923-dbfd8bf6ac23';  // Louis'; change this, it may not be reliable
+    
+    userManager.getUserEventsAttended(sampleUuid, function(err, events) {
+
+      assert.ok(events.length > 0, 'didn\'t get any events back');
+      console.log('got events: ' + events.length);
+      
+      var rowUuidWithBothCheckinAndRegisteredDates = 'f2ccd41a-2b1e-11e3-965c-ebabed62c9b3';
+      var goodEvent = _.find(events, function(event) { return event.uuid === rowUuidWithBothCheckinAndRegisteredDates});
+      
+      assert.equal(goodEvent.checkinDate, '1380689770779', 'didn\'t get right checkin date');
+      assert.equal(goodEvent.registrationDate, '1380689770779', 'didn\'t get right registration date');
+      
+      done();
+    });
+    
+  })
+  
+  
   // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   // All new tests should go above this line
 });

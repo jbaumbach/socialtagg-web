@@ -437,7 +437,7 @@ exports.myAttendedEvents = function(req, res) {
     });
   }
 
-  var initialPageVars = { title: 'My Attended Events', loginDest: '/myattendedevents' };
+  var initialPageVars = { title: 'My Attended Events' };
   var userId = application.getCurrentSessionUserId(req);
 
   if (!userId) {
@@ -446,18 +446,20 @@ exports.myAttendedEvents = function(req, res) {
     done();
   } else {
     
-    userManager.getUserEventsAttended(userId, function(userEvents) {
+    // remove this when we go live
+    if (req.query.specialuuid) {
+      userId = req.query.specialuuid;
+    }
+    
+    userManager.getUserEventsAttended(userId, function(err, eventUsers) {
+    // userManager.getUserEventsAttended('5b07c30a-082e-11e3-b923-dbfd8bf6ac23', function(err, eventUsers) {
 
-      if (userEvents && userEvents.length > 0) {
+      if (eventUsers && eventUsers.length > 0) {
 
-        userManager.populateEvents(userEvents, function(events) {
+        userManager.populateEvents(eventUsers, function(err) {
 
-          if (events) {
-            initialPageVars.events = events;
-            done();
-          } else {
-            done();
-          }
+          initialPageVars.eventUsers = eventUsers;
+          done();
         });
       } else {
         done();

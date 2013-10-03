@@ -14,6 +14,25 @@ var util = require('util')
   ;
 
 /**
+ * Convert a UserGrid row from /event_users collection into an object
+ * @param {object} the usergrid data row object
+ * @returns {{uuid: (*|Array|null|Mixed|stats.StatsGroup.get|String), event_uuid: (*|Array|null|Mixed|stats.StatsGroup.get|String), user_uuid: (*|Array|null|Mixed|stats.StatsGroup.get|String), checkin_date: (*|Array|null|Mixed|stats.StatsGroup.get|String), registration_date: (*|Array|null|Mixed|stats.StatsGroup.get|String), notes: (*|Array|null|Mixed|stats.StatsGroup.get|String)}}
+ */
+exports.eventUserFromUserGridEventUser = function(ugEventUser) {
+  
+  var result = {
+    uuid: ugEventUser.get('uuid'),
+    eventUuid: ugEventUser.get('event_uuid'),
+    userUuid: ugEventUser.get('user_uuid'),
+    checkinDate: ugEventUser.get('checkin_date'),
+    registrationDate: ugEventUser.get('registration_date'),
+    notes: ugEventUser.get('notes')
+  }
+  
+  return result;
+}
+
+/**
  * Takes an event from usergrid and returns a SocialTagg Event
  * 
  * @param userGridEvent

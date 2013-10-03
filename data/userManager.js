@@ -201,8 +201,14 @@ exports.getUserEventsOwned = function(id, resultCallback) {
   db.getUserEventsOwned(id, resultCallback);
 }
 
-exports.populateEvents = function(eventIdList, resultCallback) {
-  db.populateEvents(eventIdList, resultCallback);
+/**
+ * For each of the passed eventUser objects, add an 'Event' property
+ * @param {array} array of eventUser objects
+ * @param {function} resultCallback, with parameters:
+ *  err {object} filled in if something bad happened
+ */
+exports.populateEvents = function(eventUserList, resultCallback) {
+  db.populateEvents(eventUserList, resultCallback);
 }
 
 exports.getUserContaggsFromEvent = function(userId, eventId, resultCallback) {
