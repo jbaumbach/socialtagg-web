@@ -897,7 +897,7 @@ exports.getUserEventsOwned = function(id, resultCallback) {
       while(resultEvents.hasNextEntity()) {
 
         var event = resultEvents.getNextEntity();
-        var userEvent = eventManager.eventFromUserGridEvent(event);
+        var userEvent = userGridEventManager.eventFromUserGridEvent(event);
         
         // console.log('Found event: ' + util.inspect(userEvent));
         
