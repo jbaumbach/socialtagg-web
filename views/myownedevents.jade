@@ -4,7 +4,10 @@ extends layout
 block javascripts
 
   script(type='text/javascript', src='/js/ng-events.js')
-  //- This is awesome, but kind of a pain.  Todo. script(type='text/javascript', src='//cdnjs.cloudflare.com/ajax/libs/jstimezonedetect/1.0.4/jstz.min.js')
+  script(type='text/javascript', src='//cdnjs.cloudflare.com/ajax/libs/moment.js/2.2.1/moment.min.js')
+  script(type='text/javascript', src='/js/pikaday.js')
+  link(rel='stylesheet', type='text/css', href='/css/pikaday.css')
+
 
 block content
 
@@ -93,14 +96,18 @@ block content
                   label(for='inputStartTime') Time
                   input.text(type='text', id='inputStartTime', ng-model='editableEvent.startTime', required, placeholder='h:mm AM/PM')
 
-              .two.columns
-                .field
-                  label(for='inputTimeZone') Time Zone
-                  select(id='inputTimeZone', ng-model='editableEvent.timezoneOffset')
-                    option(value='-8') PST
-                    option(value='-7') MST
-                    option(value='-6') CST
-                    option(value='-5') EST
+              //-
+                .two.columns
+                  .field
+                    label(for='inputTimeZone') Time Zone
+                    input.text(type='text', ng-model='editableEvent.timezoneOffset')
+                    a.button.color(href='#', ng-click='calculateTzOffset(editableEvent)', no-click) Calc
+                    
+                    select(id='inputTimeZone', ng-model='editableEvent.timezoneOffset')
+                      option(value='-8') PST
+                      option(value='-7') MST
+                      option(value='-6') CST
+                      option(value='-5') EST
 
             .container.six.columns.event-datetime
               .two.columns

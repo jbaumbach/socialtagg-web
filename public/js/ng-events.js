@@ -28,11 +28,42 @@ angular.module('surveyService', ['ngResource']).
 app.requires.push('eventService');
 app.requires.push('surveyService');
 
-var eventController = app.controller('eventController', function($scope, $dialog, Event, Survey) {
+// We're using this too
+// app.requires.push('ui.bootstrap');
+
+//  $dialog,
+var eventController = app.controller('eventController', function($scope, Event, Survey, $dialog) {
 
   $scope.isCurrentEventSaved = false;
   $scope.isLoading = true;
   $scope.hasError = false;
+  
+  var standardDateFormat = 'MM/DD/YYYY';
+  var standardTimeFormat = 'h:mm a';
+  var startDatePicker;
+  var endDatePicker;
+
+  function pickerOptions(element, event, property) {
+    return {
+      field: document.getElementById(element),
+      firstDay: 0,
+      minDate: new Date('2000-01-01'),
+      maxDate: new Date('2020-12-31'),
+      defaultDate: event[property] ? new Date(event[property]) : new Date(),
+      yearRange: [2000,2020],
+      setDefaultDate: true,
+      format: standardDateFormat,
+      onSelect: function() {
+        $scope.$apply(function() {
+          //
+          // Make Angular aware of the new data
+          //
+          event[property] = document.getElementById(element).value;
+          $scope.calculateTzOffset(event);
+        });
+      }
+    }
+  }
   
   var createEvent = function (newEvent) {
 
@@ -79,10 +110,21 @@ var eventController = app.controller('eventController', function($scope, $dialog
     $scope.editableEvent = editableEvent;
     setErr(false, null);
     
-    // Load up survey questions
+    // Load up survey questions and other event initialization
     if (isEditVisible) {
       $scope.isCurrentEventSaved = editableEvent.uuid ? true : false;
       initSurvey(editableEvent);
+
+      if (startDatePicker) {
+        startDatePicker.destroy();
+      }
+      
+      if (endDatePicker) {
+        endDatePicker.destroy();
+      }
+      
+      startDatePicker = new Pikaday(pickerOptions('inputStartDate', editableEvent, 'startDate'));
+      endDatePicker = new Pikaday(pickerOptions('inputEndDate', editableEvent, 'endDate'));
     }
   }
   
@@ -105,6 +147,9 @@ var eventController = app.controller('eventController', function($scope, $dialog
 
     var btns = [{result:'cancel', label: 'Cancel'}, {result:'ok', label: 'OK', cssClass: 'btn-primary'}];
 
+    //
+    // Note: $dialog goes away in angular-ui 0.6.0 and higher.
+    //
     $dialog.messageBox(title, msg, btns)
       .open()
       .then(function(result){
@@ -163,11 +208,20 @@ var eventController = app.controller('eventController', function($scope, $dialog
     continueIfUserConfirms(title, msg, deleteEventFunction);
   };
 
+  $scope.calculateTzOffset = function(event) {
+    var str = event.startDate + ' ' + event.startTime;
+    var fmt = standardDateFormat + ' ' +  standardTimeFormat;
+    var dm = moment(str, fmt);
+    
+    event.timezoneOffset = dm.zone() / -60; 
+  };
+  
   $scope.isEditVisible = false;
   $scope.events = Event.query(function() {
     // query complete
     $scope.isLoading = false;
     $scope.hasEvents = $scope.events && $scope.events.length > 0;
+    
   });
 
   //********

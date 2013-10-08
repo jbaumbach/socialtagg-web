@@ -333,9 +333,15 @@ describe('application class', function() {
     var r = application.getDatetimeFromStringParts(d_1, t_1, tz_1);
     
     assert.equal(r, e_1, 'didn\'t get right datetime back');
-    
-  })
+  
+  });
 
+  it('should handle PDT when passed in from the client correctly', function() {
+  
+    var r = application.getDatetimeFromStringParts('10/2/2013', '10:20 AM', "-7");    // Note: PDT instead of PST
+    assert.equal(r, 1380734400000, 'didn\'t handle PDT properly');
+  });
+  
   //
   // Known parts that should be both converted and deconstructed when in daylight svgs time
   //
