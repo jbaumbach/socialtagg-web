@@ -4318,6 +4318,12 @@ body.checkin-page {
 .checkin-page .tag-line h2 {
   margin-top: -40px;
 }
+
+/*** Angular hiding support - works in all browsers except IE7 and below */
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
 /* =================================================================== */
 /* Media Queries
 ====================================================================== */

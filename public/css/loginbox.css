@@ -6,45 +6,14 @@
   width: 350px; 
 }
 
-/*
-#loginbox .button, #loginbox input[type="button"] {
-  padding: 0;  
-}
-*/
-
-/*
-#loginbox h1,#loginbox h2,#loginbox h3,#loginbox h4,#loginbox h5,#loginbox h6{ font-weight:bold; font-family: 'Droid Sans', sans-serif;  color:#434853;  text-shadow:0px 1px 0px #fff; letter-spacing: -0.5px;  }
-#loginbox h1{ font-size:20px; color: #2d932b; padding: 0 0 0 0; border-bottom: 1px solid #e0e0e0;}
-#loginbox h2{ font-size:24px;}
-#loginbox h3{ font-size:17px;}
-#loginbox h4{ font-size:14px;}
-#loginbox h5{ font-size:12px;}
-#loginbox h6{ font-size:10px;}
-*/
-
 #loginbox input, #loginbox textarea { font-family:tahoma, arial; font-size:12px; color:#57595d;}
 
-/*
-#loginbox a{ text-decoration:none;}
-*/
 
 #loginbox form a {
   margin-top: 25px;
 }
 #loginbox p{ line-height:20px;}
 
-/*
-#loginbox #box_bg {
-  border: 1px solid #d5d5d5;
-  background: #f9f9f9;
-  width: 380px; display: block;
-  margin: 100px auto 0 auto;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  box-shadow:  0px 0px 2px #dadada, inset 0px -3px 0px #e6e6e6;
-}
-*/
 
 #loginbox .social {padding: 13px 0 0 0; height: 75px;}
 #loginbox .blue {color: #2b83b6;}
@@ -59,47 +28,6 @@
 #loginbox .fb:hover {background: url(../images/loginbox/fb_btn.png) no-repeat; background-position: 0 -32px;}
 #loginbox .fb:active {margin-top: 11px}
 #loginbox .btn_2 {padding: 8px 0 0 31px; text-shadow: -1px -1px 0px #366c96; color:#fff; font-weight: bold; font-size: 12px; height: 32px; display: block;}
-
-/*
-#loginbox .button {-webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; display: inline-block; float: right; margin-top: 18px;}
-#loginbox .button a {padding: 9px 26px 8px 26px; color:#fff; font-weight: bold; font-size: 14px; display: block;}
-
-#loginbox .button.green {
-  background-image: linear-gradient(bottom, #2D922B 0%, #58BD56 100%);
-  background-image: -o-linear-gradient(bottom, #2D922B 0%, #58BD56 100%);
-  background-image: -moz-linear-gradient(bottom, #2D922B 0%, #58BD56 100%);
-  background-image: -webkit-linear-gradient(bottom, #2D922B 0%, #58BD56 100%);
-  background-image: -ms-linear-gradient(bottom, #2D922B 0%, #58BD56 100%);
-  background-image: -webkit-gradient(linear,left bottom,left top,color-stop(0, #2D922B),color-stop(1, #58BD56));
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#58BD56, endColorstr=#2D922B)";
-  border: 1px solid #309230;
-  border-bottom: 2px solid #166d16;
-  box-shadow: inset 0px 1px 0px #a1daa0;
-  text-shadow: -1px -1px 0px #369135;
-  background-color: #49ac47;
-}
-
-#loginbox .button.green:hover {background: #49ac47;}
-#loginbox .button.green:active {margin-top: 19px;}
-
-#loginbox .button.blue {
-  background-image: linear-gradient(bottom, #1F7FB6 0%, #4EABE0 100%);
-  background-image: -o-linear-gradient(bottom, #1F7FB6 0%, #4EABE0 100%);
-  background-image: -moz-linear-gradient(bottom, #1F7FB6 0%, #4EABE0 100%);
-  background-image: -webkit-linear-gradient(bottom, #1F7FB6 0%, #4EABE0 100%);
-  background-image: -ms-linear-gradient(bottom, #1F7FB6 0%, #4EABE0 100%);
-  background-image: -webkit-gradient(linear,left bottom,left top,color-stop(0, #1F7FB6),color-stop(1, #4EABE0));
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#4EABE0, endColorstr=#1F7FB6)";
-  border: 1px solid #2a76a2; border-bottom: 2px solid #215f82;
-  box-shadow: inset 0px 1px 0px #9cd0ee;
-  text-shadow: -1px -1px 0px #246c95;
-  background-color: #3897cd;
-}
-
-#loginbox .button.blue:hover {background: #3897cd;}
-#loginbox .button.blue:active {margin-top: 19px;}
-*/
-
 
 /** Login Fields **/
 #loginbox #login {padding: 13px 0 0 0; border-top: 1px solid #e0e0e0;}
@@ -183,4 +111,8 @@
 
 #loginbox .icon-spinner {
   padding: 25px 20px;
+}
+#loginbox .social .icon-spinner {
+  padding: 15px;
+  display: none;
 }

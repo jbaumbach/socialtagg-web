@@ -104,21 +104,6 @@ var loginController = app.controller('loginController', function($scope, $http, 
 
     fillAutocompleterFieldIfNecessary('#username', $scope.email);
     
-    /*
-    fillAutocompleterFieldIfNecessary('#password', $scope.password);
-    fillAutocompleterFieldIfNecessary('#password2', $scope.password2);
-    
-    if (!$scope.password) {
-      
-      setMsg('error', 'Please enter a password.');
-      
-    } else if ($scope.password != $scope.password2) {
-      
-      setMsg('error', 'The passwords should match each other!');
-      
-    } else 
-    */
-    
     if (!$scope.readterms) {
       
       setMsg('error', 'Please agree to the terms and conditions.');
@@ -144,15 +129,6 @@ var loginController = app.controller('loginController', function($scope, $http, 
   
   $scope.login = function() {
 
-   // todo: test the new autocompleter functions 
-    /*
-    if (!$scope.email && !$scope.password) {
-      console.log('(info) fixing possible browser autocompleter');
-      $scope.email = $('#username').val();
-      $scope.password = $('#password').val();
-    };
-    */
-
     fillAutocompleterFieldIfNecessary('#username', $scope.email);
     fillAutocompleterFieldIfNecessary('#password', $scope.password);
 
@@ -164,37 +140,6 @@ var loginController = app.controller('loginController', function($scope, $http, 
       // Success
       window.location = successUrl;
     });
-
-    /*
-    $scope.loading = true;
-
-    $http({
-      url: postUrl,
-      method: 'POST',
-      data: postData,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Content-Length': postData.length
-      }
-    }).success(function(data, status, headers, config) {
-      $scope.isLoggedIn = true;
-      $scope.user = data;
-      $scope.loading = false;
-
-      window.location = successUrl;
-
-    }).error(function(data, status, headers, config) {
-      console.log('oops, failure! ' + data);
-      console.log('status: ' + status);
-      console.log('headers: ' + headers);
-      console.log('config: ' + config);
-        
-      $scope.loginError = true;
-      $scope.loading = false;
-
-    });
-    */
-      
   }
 
   $scope.loginMode = function(newMode) {

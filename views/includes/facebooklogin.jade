@@ -30,12 +30,16 @@ script.
       
     } else if (stfbWantToLogin) {
     
+      $('#social-spinner').css('display', 'inline-block');
       var xrh = $.post('/loginfb', stfbResponse)
       .done(function() {
         var successUrl = '#{ public.loginDest }';
         window.location = successUrl;
       })
-      .fail(function() { console.log('crud, no workie') });
+      .fail(function() { 
+        console.log('crud, no workie');
+        $('#social-spinner').css('display', 'none');
+      });
     }
   };
   
