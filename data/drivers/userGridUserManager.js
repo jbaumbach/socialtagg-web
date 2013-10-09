@@ -676,7 +676,6 @@ exports.deleteUser = function(id, resultCallback) {
 };
 
 exports.getUserContaggs = function(id, resultCallback) {
-  var result = undefined;
 
   var options = {
     type: 'contaggs',
@@ -1065,6 +1064,48 @@ exports.setUserProfilePicture = function(options, resultCallback) {
     }
   });
 }
+
+
+exports.getEventUsers = function(eventId, type, callback) {
+
+  if (type != 'checkedin') {
+
+    callback('Unsupported type: ' + type);
+
+  } else {
+
+    var options = {
+      type: 'event_users',
+      qs: {
+        // Note - you must use SINGLE QUOTES around a string value to search for
+        ql: util.format('select * where event_uuid = %s order by created DESC', eventId),
+        limit: '100'
+      }
+    }
+
+    client().createCollection(options, function (err, resultUsers) {
+      if (err) {
+
+        callback(err);
+
+      } else {
+        var result = [];
+
+        //
+        // Let's build a list of user ids
+        //
+        while (resultUsers.hasNextEntity()) {
+          var contagg = resultUsers.getNextEntity();
+          var userId = contagg.get('user_uuid');
+          result.push({ userId: userId });
+        }
+
+        callback(null, result);
+      }
+    });
+  }
+}
+
 
 //********************************************************************************
 // API user functions

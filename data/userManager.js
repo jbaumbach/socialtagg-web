@@ -233,6 +233,10 @@ exports.setUserProfilePicture = function(options, resultCallback) {
   db.setUserProfilePicture(options, resultCallback);
 }
 
+exports.getEventUsers = function(eventId, type, callback) {
+  db.getEventUsers(eventId, type, callback);
+}
+
 //********************************************************************************
 // API user functions
 //********************************************************************************

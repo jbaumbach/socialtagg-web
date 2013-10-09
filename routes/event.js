@@ -19,8 +19,13 @@ exports.detail = function(req, res) {
     title: 'Event Detail'
   };
 
-  var viewToRender = req.query.prn ? 'eventprinterfriendly' : 'eventview';
+  var printerFriendly = req.query.prn;
+  var viewToRender = printerFriendly ? 'eventprinterfriendly' : 'eventview';
   
+  if (!printerFriendly) {
+    pageVars.usesAngular = true;
+  }
+
   function done() {
     application.buildApplicationPagevars(req, pageVars, function(pageVars) {
       res.render(viewToRender, pageVars);

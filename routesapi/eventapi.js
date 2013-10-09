@@ -12,6 +12,7 @@ var userManager = require('./../data/userManager')
   , sprintf = require("sprintf-js").sprintf
   , _ = require('underscore')
   , SurveyQuestion = require('../models/SurveyQuestion')
+  , async = require('async')
   , thisModule = this
   ;
 
@@ -601,4 +602,89 @@ exports.eventAnalyticsData = function(req, res) {
         done({ statusCode: 404, statusMsg: 'Unknown type: ' + type} );
       }
   }
+}
+
+/*
+  Return list of users for the event
+ */
+exports.usersList = function(req, res) {
+  
+  // console.log('event: ' + req.params.id + ', type: ' + req.query.type);
+  
+  //
+  // Let's do some tasks
+  //
+  async.waterfall([
+    function(cb) {
+      if (!req.query.type) {
+        
+        cb({ status: 400, msg: 'Missing \'type\' parameter.' });
+      } else {
+        
+        cb(null, req.query.type)
+      }
+    }, 
+    function(type, cb) {
+
+      switch (type) {
+        case 'checkedin':
+          
+          var eventId = req.params.id;
+
+          // For testing - remove this before going live
+          if (req.query.test) {
+            eventId = '2ad0769a-2abc-11e3-8462-4b5f96a08764';
+          }
+          
+          userManager.getEventUsers(eventId, type, function(err, result) {
+            if (err) {
+              cb({ status: 500, msg: err });
+            } else {
+              
+              //
+              // Let's build a list of users
+              //
+              var iterator = function(item, callback) {
+                
+                userManager.getUser(item.userId, function(user) {
+                  
+                  if (user) {
+                    item.user = user;
+                  }
+                  callback();
+                })
+              }
+              
+              async.each(result, iterator, function(err) {
+                if (err) {
+                  cb(err);
+                } else {
+                  cb(null, result);
+                } 
+              });
+            }
+          });
+          break;
+        default: 
+          cb({ status: 400, msg: 'Unknown type: ' + type });
+      }
+    }
+  ], function(err, result) {
+    
+    if (err) {
+      res.send(err.status, { msg: err.msg });
+      
+    } else {
+      // need to filter our user objects these for privacy
+      var users = _.map(result, function(user) { 
+        return { 
+          pictureUrl: user.user.pictureUrl,
+          firstName: user.user.firstName
+        };
+      });
+      
+      res.send(200, users);
+    }
+  });
+  
 }

@@ -2,6 +2,9 @@ include mixins/twittertimeline
 
 extends layout
 
+block javascripts
+  script(src='/js/ng-eventview.js')
+
 block content
 
   //-.container
@@ -10,7 +13,7 @@ block content
         h2 Event Details
         #bolded-line  
   
-  .container.my-events
+  .container.my-events(ng-controller="eventViewController")
     if !locals.event
 
       .sixteen.columns
@@ -40,27 +43,23 @@ block content
         
         .twelve.columns
           .headline
-            h4 Your Contaggs from Event
+            h4 Who's Checked In
 
 
-          if !public.isLoggedIn
-            p
-              a(href=links.login) Log in 
-              | to view your contaggs.
-
-          else
-
-            //- Display the event's contaggs if we have any
-            if locals.contaggs
-              each contagg in contaggs
-                .twelve.columns.contagg-container
-                  a(href=contagg.path)
-                    img(src=contagg.pictureUrl).user-image
-                    p #{ contagg.name }
-    
-            else
+          div(ng-show="loadingEventUsers")
+            p Finding users...
+          
+          div(ng-show="!loadingEventUsers", ng-cloak)
+            
+            div(ng-show="checkedInUsers.length > 0")
+              //- Display the event's contaggs if we have any
+              .one.column(ng-repeat="users in checkedInUsers")
+                img(src="{{ users.pictureUrl}}").user-image
+                p {{ users.firstName }}
+            
+            div(ng-show="!checkedInUsers || checkedInUsers.length == 0")
               .twelve.columns
-                p You do not have any contaggs from this event.
+                p No one has checked in yet!  Please check back later.
 
 
         //- Not going to work as it stands - see comment in the mixin

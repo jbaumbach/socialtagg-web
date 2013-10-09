@@ -10,6 +10,7 @@ var util = require('util')
   , globalFunctions = require('../../common/globalfunctions')
   , application = require('../../common/application')
   , Event = require('../../models/Event')
+  , async = require('async')
   , thisModule = this
   ;
 
