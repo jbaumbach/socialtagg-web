@@ -15,12 +15,10 @@ var app = myApp.app();
 
 describe('api - documentation', function() {
 
-  it('should load up ok', function(done) {
+  it('should redirect to authentication page', function(done) {
     request(app)
       .get('/api/documentation')
-      .expect(200, done);
+      .expect(302, done);
   });
-  
-  
   // END
 });

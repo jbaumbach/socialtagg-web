@@ -1121,6 +1121,7 @@ exports.getApiUserByUserId = function(userId, resultCallback) {
 
   if (userId === 'b66a00ee-73d3-11e2-95c4-02e81ae640dc' // Lavamantis
     || userId === '3d86497b-66c4-11e2-8b37-02e81ac5a17b' // jeff@socialtagg.com
+    || userId === '9c1f4cda-e2d3-11e2-a4b4-3ba51af19848' // Dubem test
     || userId === 'aabaf634-6eed-11e2-81cf-02e81ac5a17b') { // karim FB account
     
     thisModule.getApiUser('63f54fd4-7cb2-11e2-b6ef-02e81ac5a17b', resultCallback);
