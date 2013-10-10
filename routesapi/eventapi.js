@@ -610,7 +610,7 @@ exports.eventAnalyticsData = function(req, res) {
 exports.usersList = function(req, res) {
   
   // console.log('event: ' + req.params.id + ', type: ' + req.query.type);
-  
+  // todo: add some unit testing for this stuff, prolly the API call at least
   //
   // Let's do some tasks
   //
@@ -631,7 +631,7 @@ exports.usersList = function(req, res) {
           
           var eventId = req.params.id;
 
-          // For testing - remove this before going live
+          // todo: remove this when testing is done
           if (req.query.test) {
             eventId = '2ad0769a-2abc-11e3-8462-4b5f96a08764';
           }
@@ -682,7 +682,12 @@ exports.usersList = function(req, res) {
           firstName: user.user.firstName
         };
       });
-      
+
+      // todo: delete this when testing is done!
+      if (req.query.test) {
+        users = users.concat(users, users, users, users, users, users, users);
+      }
+
       res.send(200, users);
     }
   });

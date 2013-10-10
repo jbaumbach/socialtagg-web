@@ -28,10 +28,10 @@
 #tagline {
 	color: #888;
 	border-left: 1px solid #e9e9e9;
-	margin: 0 0 0 20px;
+	margin: 10px 0 0 20px;
 	padding: 5px 0 5px 20px;
 	float: left;
-  width: 150px; /* JB: allow wrapping of longer taglines */
+  width: 200px; /* JB: allow wrapping of longer taglines */
 }
 
 /* Contact Details
@@ -4115,6 +4115,14 @@ div.field.event-datetime {
   margin-left: 0;
 }
 
+.my-events #check-ins .user-image {
+  float: left;
+  margin: 10px 20px 0 0;
+  max-width: 65px;
+  text-align: center;
+  height: 125px;
+}
+
 .event-datetime .field input {
   width: 80px;
 }
@@ -4517,7 +4525,19 @@ body.checkin-page {
 	.two-tables .pricing-table {
 		width: 299px;
 	}
-	
+
+  /* SocialTagg - let's tighten up the top of the page a bit on phones */
+  #logo {
+    margin-top: 10px;
+  }
+
+  #contact-details {
+    margin-top: 10px;
+  }
+
+  .selectnav {
+    margin: 5px 0 10px;
+  }
 }
 
 

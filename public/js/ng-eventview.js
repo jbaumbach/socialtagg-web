@@ -12,7 +12,6 @@ angular.module("eventUserService", ["ngResource"]).
     );
   });
 
-
 app.requires.push('eventUserService');
 
 var eventViewController = app.controller('eventViewController', function($scope, EventUser) {
@@ -25,7 +24,7 @@ var eventViewController = app.controller('eventViewController', function($scope,
   $scope.checkedInUsers = EventUser.query({ 
     eventId: eventId, 
     type: 'checkedin', 
-    test: window.location.search.slice(1)   // todo: get rid of this before going live
+    test: window.location.search.slice(1)   // todo: get rid of this 'url parameter grabber' before going live
   }, function() {
     // success
     console.log('success');

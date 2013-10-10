@@ -39,23 +39,25 @@ block content
               .desc Date
               .value #{ event.startDate }
 
+            li
+              .desc Time
+              .value #{ event.startTime }
 
-        
         .twelve.columns
           .headline
             h4 Who's Checked In
-
 
           div(ng-show="loadingEventUsers")
             p Finding users...
           
           div(ng-show="!loadingEventUsers", ng-cloak)
             
-            div(ng-show="checkedInUsers.length > 0")
+            div#check-ins(ng-show="checkedInUsers.length > 0")
               //- Display the event's contaggs if we have any
-              .one.column(ng-repeat="users in checkedInUsers")
-                img(src="{{ users.pictureUrl}}").user-image
+              .user-image(ng-repeat="users in checkedInUsers")
+                img(src="{{ users.pictureUrl }}")
                 p {{ users.firstName }}
+              .clear
             
             div(ng-show="!checkedInUsers || checkedInUsers.length == 0")
               .twelve.columns

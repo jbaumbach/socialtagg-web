@@ -12,7 +12,7 @@ describe('features page', function() {
   it('should display some features', function(done) {
     request(app)
       .get('/features')
-      .expect(/Connecting people at events/)  // A class with a feature section.  \s is whitespace.
+      .expect(/What is SocialTagg/)  // A class with a feature section.  \s is whitespace.
       .expect(200, done);
   });
 });

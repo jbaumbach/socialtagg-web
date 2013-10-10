@@ -284,7 +284,7 @@ describe('Event API', function() {
     }
 
     eventapi.eventAnalyticsData(req, res);
-  })
+  });
 
 
   it('should return analytics data for checkinTimeSummary', function(done) {
@@ -320,7 +320,7 @@ describe('Event API', function() {
     }
 
     eventapi.eventAnalyticsData(req, res);
-  })
+  });
 
   it('should be able to get a survey question number from a text description', function() {
     
@@ -330,7 +330,56 @@ describe('Event API', function() {
     var r = eventapi.getSurveyQuestionNumberFromString(t);
     assert.equal(r, e, 'didn\'t get right number');
     
-  })
+  });
+  
+  it('should grab some checked in people from an event', function(done) {
+
+    var req = {
+      query: {
+        type: 'checkedin'
+      },
+      params: {
+        id: '2ad0769a-2abc-11e3-8462-4b5f96a08764'  // Louis' event
+      }
+    }
+    
+    var res = {
+      send: function(code, data) {
+        assert.equal(code, 200, 'didn\'t get right status code');
+        assert.ok(data.length > 0, 'didn\'t get multiple checkins back');
+        assert.ok(data[0].pictureUrl, 'didn\'t get a pic back');
+        
+        done();
+      }
+    }
+    
+    eventapi.usersList(req, res);
+    
+  });
+  
+  it('should bomb gracefully looking for checked in people from an event with wrong type', function(done) {
+
+    var req = {
+      query: {
+        type: 'nowaydoesthisexist'
+      },
+      params: {
+        id: '2ad0769a-2abc-11e3-8462-4b5f96a08764'  // Louis' event
+      }
+    }
+
+    var res = {
+      send: function(code, data) {
+        assert.equal(code, 400, 'didn\'t get right status code');
+        assert.ok(data.msg.match(/unknown type/i), 'didn\'t get right error message');
+
+        done();
+      }
+    }
+
+    eventapi.usersList(req, res);
+
+  });
 });
     
     
