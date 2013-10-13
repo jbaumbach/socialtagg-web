@@ -50,7 +50,7 @@ block content
                 td
                  a(href='#', ng-click='editEvent(event)', no-click) {{ event.name }}
                 td {{ event.created | date:'EEEE, M-d-yyyy, h:mm:ss a' }}
-                td
+                td.event-actions
                   a.button.gray(href='#', ng-click='editEvent(event)', no-click) Edit
                   a.button.gray(href='#', ng-click='deleteEvent(event)', no-click) Delete
                   a.button.color(href='{{ event.path }}') View

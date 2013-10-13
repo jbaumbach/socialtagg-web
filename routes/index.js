@@ -25,3 +25,13 @@ exports.specialEventsTeamExtCurrAct = function(req, res) {
   });
   
 }
+
+
+// 2013/10/13 JB - Jade's IMEX conference
+exports.specialEventsImex = function(req, res) {
+
+  application.buildApplicationPagevars(req, { title: 'IMEX Conference' }, function(pageVars) {
+    res.render('specialevents/imexconference', pageVars);
+  });
+
+}

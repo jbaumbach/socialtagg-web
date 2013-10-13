@@ -42,7 +42,7 @@ var skipActualEmailSending = false;
 
 describe('api - user functions', function() {
 
-  this.timeout(90000);
+  this.timeout(9000);
 
   //
   // Black-box functional tests - calls endpoints from a client

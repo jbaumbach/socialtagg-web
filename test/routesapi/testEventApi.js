@@ -13,6 +13,8 @@ var assert = require('assert')
 
 describe('Event API', function() {
 
+  this.timeout(9000);
+
   it('should validate a blank raw event', function() {
     
     var eventRaw = {};

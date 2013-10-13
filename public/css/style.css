@@ -4093,6 +4093,7 @@ table.standard-table tr:hover td {background-color: #fafafa;}
 
 .my-events a.button {
   margin-right:8px;
+  margin-bottom: 8px;
 }
 
 .my-events ol {
@@ -4121,6 +4122,10 @@ div.field.event-datetime {
   max-width: 65px;
   text-align: center;
   height: 125px;
+}
+
+.my-events td.event-actions {
+  padding-bottom: 0;
 }
 
 .event-datetime .field input {
