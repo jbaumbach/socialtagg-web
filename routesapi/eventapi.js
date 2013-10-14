@@ -686,12 +686,10 @@ exports.usersList = function(req, res) {
         };
       });
 
-/*
       // todo: delete this when testing is done!
       if (req.query.test) {
         users = users.concat(users, users, users, users, users, users, users);
       }
-*/
 
       res.send(200, users);
     }
