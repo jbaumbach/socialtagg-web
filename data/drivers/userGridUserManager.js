@@ -1068,9 +1068,22 @@ exports.setUserProfilePicture = function(options, resultCallback) {
 
 exports.getEventUsers = function(eventId, type, callback) {
 
-  if (type != 'checkedin') {
+  var additionalWhere, err;
+  
+  switch(type) {
+    case 'checkedin':
+      additionalWhere = 'and checkin_date > \'0\'';
+      break;
+    case 'registered':
+      additionalWhere = 'and registration_date > \'0\'';
+      break;
+    default:
+      err = 'Unsupported type: ' + type;
+  }
+  
+  if (err) {
 
-    callback('Unsupported type: ' + type);
+    callback(err);
 
   } else {
 
@@ -1078,7 +1091,8 @@ exports.getEventUsers = function(eventId, type, callback) {
       type: 'event_users',
       qs: {
         // Note - you must use SINGLE QUOTES around a string value to search for
-        ql: util.format('select * where event_uuid = %s order by created DESC', eventId),
+        // order by created DESC
+        ql: util.format('select * where event_uuid = %s %s', eventId, additionalWhere),
         limit: '100'
       }
     }

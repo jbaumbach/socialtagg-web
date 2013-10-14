@@ -100,7 +100,7 @@ exports.authorizationComplete = function(error, req, res, next) {
     //
     res.format({
       json:function () {
-        res.json(error.httpResponseCode, { msg: error.Message });
+        res.json(error.httpResponseCode, error.Message);
       }
     });
 

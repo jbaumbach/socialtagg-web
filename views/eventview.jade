@@ -54,15 +54,30 @@ block content
             
             div#check-ins(ng-show="checkedInUsers.length > 0")
               //- Display the event's contaggs if we have any
-              .user-image(ng-repeat="users in checkedInUsers")
-                img(src="{{ users.pictureUrl }}")
-                p {{ users.firstName }}
+              .user-image(ng-repeat="checkedInUser in checkedInUsers")
+                img(src="{{ checkedInUser.pictureUrl }}")
+                p {{ checkedInUser.firstName }}
               .clear
             
             div(ng-show="!checkedInUsers || checkedInUsers.length == 0")
               .twelve.columns
                 p No one has checked in yet!  Please check back later.
 
+        .twelve.columns
+          .headline
+            h4 Who's Registered
+          div(ng-show="loadingRegisteredUsers")
+            p Finding users...
+          div(ng-show="!loadingRegisteredUsers", ng-cloak)
+            div#check-ins(ng-show="registeredUsers.length > 0")
+              //- Display the event's contaggs if we have any
+              .user-image(ng-repeat="registeredUser in registeredUsers")
+                img(src="{{ registeredUser.pictureUrl }}")
+                p {{ registeredUser.firstName }}
+              .clear
+            div(ng-show="!registeredUsers || registeredUsers.length == 0")
+              .twelve.columns
+                p No one has registered yet!  Please check back later.
 
         //- Not going to work as it stands - see comment in the mixin
           if event.hashtag

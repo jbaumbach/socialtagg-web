@@ -628,6 +628,7 @@ exports.usersList = function(req, res) {
 
       switch (type) {
         case 'checkedin':
+        case 'registered':
           
           var eventId = req.params.id;
 
@@ -675,7 +676,9 @@ exports.usersList = function(req, res) {
       res.send(err.status, { msg: err.msg });
       
     } else {
+      //
       // need to filter our user objects these for privacy
+      //
       var users = _.map(result, function(user) { 
         return { 
           pictureUrl: user.user.pictureUrl,
@@ -683,10 +686,12 @@ exports.usersList = function(req, res) {
         };
       });
 
+/*
       // todo: delete this when testing is done!
       if (req.query.test) {
         users = users.concat(users, users, users, users, users, users, users);
       }
+*/
 
       res.send(200, users);
     }

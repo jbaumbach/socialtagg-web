@@ -17,6 +17,7 @@ app.requires.push('eventUserService');
 var eventViewController = app.controller('eventViewController', function($scope, EventUser) {
 
   $scope.loadingEventUsers = true;
+  $scope.loadingRegisteredUsers = true;
 
   // todo: use the $routeParams angular component rather than regex
   var eventId = document.URL.match(/events\/(.*)/i)[1];
@@ -36,4 +37,22 @@ var eventViewController = app.controller('eventViewController', function($scope,
     $scope.loadingEventUsers = false;
     
   })
+
+  $scope.registeredUsers = EventUser.query({
+    eventId: eventId,
+    type: 'registered',
+    test: window.location.search.slice(1)   // todo: get rid of this 'url parameter grabber' before going live
+  }, function() {
+    // success
+    console.log('success');
+    $scope.loadingRegisteredUsers = false;
+
+  }, function(err) {
+    // fail!
+    console.log('fail!');
+    $scope.loadingRegisteredUsers = false;
+
+  })
+
+
 });
