@@ -30,7 +30,8 @@ block content
         p
           i.ico-globe
           b
-            a(href='http://' + displayUser.website, target="_blank") #{ displayUser.website }
+            - var ws = displayUser.website.match(/^http/i) ? displayUser.website : 'http://' + displayUser.website
+            a(href=ws, target="_blank") #{ displayUser.website }
       - if (displayUser.address && displayUser.address.length > 0)
         p
           i.ico-google-maps
