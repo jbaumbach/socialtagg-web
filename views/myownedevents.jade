@@ -115,10 +115,10 @@ block content
               label(for='inputDescription') Description
               textarea(id='inputDescription', ng-model='editableEvent.description', required)
 
-          p
-            a.button.color(href='#', ng-click='saveEvent(editableEvent)', no-click) Save
-            a.button.gray(href='#', ng-click='cancelEdit()', no-click) Close
-            i.icon-spinner.icon-spin.icon-2x(ng-show='isWorking')
+            .container.six.columns
+              a.button.color(href='#', ng-click='saveEvent(editableEvent)', no-click) Save
+              a.button.gray(href='#', ng-click='cancelEdit()', no-click) Close
+              i.icon-spinner.icon-spin.icon-2x(ng-show='isWorking')
   
         .six.columns
           .headline
