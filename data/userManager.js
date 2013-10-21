@@ -51,7 +51,7 @@ exports.getUser = function(id, resultCallback) {
 
       db.getUser(id, function(dbUser) {
         
-        cache.addToCache(dbUser, function() {
+        cache.addObjectToCache(dbUser, function() {
           resultCallback(dbUser);
           
         });
@@ -87,7 +87,7 @@ exports.getUserByEmail = function(emailAddr, resultCallback) {
 exports.upsertUser = function(user, resultCallback) {
   
   db.upsertUser(user, function(err, user) {
-    cache.addToCache(user, function() {
+    cache.addObjectToCache(user, function() {
 
       resultCallback(err, user);
     })
@@ -121,7 +121,7 @@ exports.validateCredentials = function(email, password, resultCallback) {
   
   db.validateCredentials(email, password, function(user) {
     if (user) {
-       cache.addToCache(user, function() {
+       cache.addObjectToCache(user, function() {
          resultCallback(user);
        })
     } else {
@@ -148,7 +148,7 @@ exports.validateFacebookLogin = function(accessToken, resultCallback) {
       
     } else {
 
-      cache.addToCache(user, function() {
+      cache.addObjectToCache(user, function() {
         resultCallback(null, user);
       });
       

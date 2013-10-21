@@ -8,6 +8,8 @@ var
   db = require('./drivers/userGridEventManager')
   , globalFunctions = require('../common/globalfunctions')
   , thisModule = this
+  , cache = require('../common/cache')
+  , async = require('async')
   ;
 
 
@@ -73,7 +75,36 @@ exports.getEvent = function(eventId, callback) {
      survey: the found survey if we have one, otherwise undefined
  */
 exports.getSurveyByEventId = function(eventId, callback) {
-  db.getSurveyByEventId(eventId, callback);
+  
+  var cacheKey = 'eventManager.getSurvyeByEventId.' + eventId;
+  
+  async.waterfall([
+    function(cb) {
+      cache.getFromCache(cacheKey, function(result) {
+        cb(null, result);
+      });
+    },
+    function(survey, cb) {
+      if (!survey) {
+
+        db.getSurveyByEventId(eventId, function(err, result) {
+          
+          if (!err && result) {
+            result.cacheKey = cacheKey;
+            cache.addObjectToCache(result, function() {
+              cb(null, result);
+            });
+          } else {
+            cb(err, result);
+          }
+        });
+      } else {
+       cb(null, survey);
+      }
+    }
+  ], function(err, survey) {
+    callback(err, survey);    
+  })
 }
 
 /**
@@ -102,3 +133,54 @@ exports.updateSurvey = function(survey, callback) {
   db.updateSurvey(survey, callback);
 }
 
+/*
+ Returns the total number of checkins and registrations for an event
+
+ Parameters:
+   eventId: the event id
+   callback: callback with parameters:
+     err: filled in if something bad happened
+       result: object containing results:
+       eg. { checkins: int, registered: int }
+ */
+exports.getEventUsersCounts = function(eventId, callback) {
+
+  var cacheKey = 'eventManager.getEventUsersCounts.' + eventId;
+
+  async.waterfall([
+    function(cb) {
+      cache.getFromCache(cacheKey, function(result) {
+        cb(null, result);
+      });
+    },
+    function(survey, cb) {
+      if (!survey) {
+
+        db.getEventUsersCounts(eventId, function(err, result) {
+
+          if (!err) {
+
+            result.cacheKey = cacheKey;
+            cache.addObjectToCache(result, function() {
+              cb(null, result);
+            });
+          } else {
+            cb(err);
+          }
+        });
+      } else {
+        cb(null, survey);
+      }
+    }
+  ], function(err, survey) {
+    callback(err, survey);
+  })
+
+  
+  
+  
+  
+  
+  
+  // db.getEventUsersCounts(eventId, callback);
+}

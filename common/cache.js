@@ -13,7 +13,7 @@ var thisModule = this
 //  https://devcenter.heroku.com/articles/memcachier#node-js
 
 
-exports.addToCache = function(object, callback) {
+exports.addObjectToCache = function(object, callback) {
   
   if (object) {
     
@@ -27,22 +27,23 @@ exports.addToCache = function(object, callback) {
       // Add to cache
       localCache.put(key, object, ttl);    
       
-      console.log('(info) addToCache: added ' + key + ' to cache with ttl: ' + ttl);
+      console.log('(info) addObjectToCache: added ' + key + ' to cache with ttl: ' + ttl);
       
     } else {
       
-      console.log('(warning) addToCache: could not find cache key for item');
+      console.log('(warning) addObjectToCache: could not find cache key for item');
   
     }
   } else {
     
-    console.log('(info) addToCache: no object to cache - not adding');
+    console.log('(info) addObjectToCache: no object to cache - not adding');
     
   }
   
   callback();
   
 };
+
 
 exports.getFromCache = function(key, callback) {
   

@@ -274,7 +274,7 @@ describe('Event API', function() {
       }
     }
 
-    var req = { query: { type: 'checkinTimeSummaryxxx' } };
+    var req = { query: { type: 'checkinTimeSummaryxxx' }, params: { eventId: 'hello' } };
 
     var res = {
       send: function(code, data) {
@@ -308,7 +308,7 @@ describe('Event API', function() {
 
     // todo: make this an array and call all the funcs in a loop
     
-    var req = { query: { type: 'checkinTimeSummary' } };
+    var req = { query: { type: 'checkinTimeSummary' }, params: { eventId: 'hello' } };
 
     var res = {
       send: function(code, data) {

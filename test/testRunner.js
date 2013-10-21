@@ -25,8 +25,8 @@
 //var testFiles = ["./test/common/testAuthorization.js"];
 //var testFiles = ["./test/common/testGlobalFunctions.js"];
 //var testFiles = ["./test/data/testUserManager.js"];
-var testFiles = ["./test/common/testApplication.js"];
-
+//var testFiles = ["./test/common/testApplication.js"];
+var testFiles = ["./test/data/drivers/testUserGridEventManager.js"];
 // var testFiles = ["./test/models/testUser.js"];
 //var testFiles = ["./test/models/testEvent.js"];
 

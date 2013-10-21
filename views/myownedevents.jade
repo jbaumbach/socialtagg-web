@@ -96,31 +96,18 @@ block content
                   label(for='inputStartTime') Time
                   input.text(type='text', id='inputStartTime', ng-model='editableEvent.startTime', required, placeholder='h:mm AM/PM')
 
-              //-
-                .two.columns
-                  .field
-                    label(for='inputTimeZone') Time Zone
-                    input.text(type='text', ng-model='editableEvent.timezoneOffset')
-                    a.button.color(href='#', ng-click='calculateTzOffset(editableEvent)', no-click) Calc
-                    
-                    select(id='inputTimeZone', ng-model='editableEvent.timezoneOffset')
-                      option(value='-8') PST
-                      option(value='-7') MST
-                      option(value='-6') CST
-                      option(value='-5') EST
-
             .container.six.columns.event-datetime
-              .two.columns
+              .three.columns
                 .field
                   label(for='inputEndDate') End Date
                   input.text(type='text', id='inputEndDate', ng-model='editableEvent.endDate', required, placeholder='m/d/yyyy')
               
-              .two.columns
+              .three.columns
                 .field
                   label(for='inputEndTime') Time
                   input.text(type='text', id='inputEndTime', ng-model='editableEvent.endTime', required, placeholder='h:mm AM/PM')
 
-            .field
+            .field.five.columns.event-datetime
               label(for='inputWebsite') Website Url
               input.text(type='url', size='100', id='inputWebsite', ng-model='editableEvent.website')
 

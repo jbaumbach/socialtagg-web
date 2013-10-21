@@ -475,3 +475,93 @@ exports.updateSurvey = function(survey, callback) {
   });
   
 }
+
+/*
+exports.test = function(callback) {
+
+  var count = 0;
+
+  async.whilst(
+    function () { return count < 5; },
+    function (callback) {
+      count++;
+      console.log('in main func')
+      setTimeout(callback, 1000);
+    },
+    function (err) {
+      // 5 seconds have passed
+      console.log('leaving...');
+      callback();
+    }
+  );
+  
+  
+}
+*/
+
+/*
+  Returns the total number of checkins and registrations for an event
+  
+  Parameters:
+    eventId: the event id
+    callback: callback with parameters:
+      err: filled in if something bad happened
+      result: object containing results:
+        eg. { checkins: int, registered: int }
+ */
+exports.getEventUsersCounts = function(eventId, callback) {
+
+  var options = {
+    type: 'event_users',
+    qs: {
+      // Note: you have to use '*' - specifying individual columns causes '.hasNextEntity()' on the 
+      // collection to fail
+      ql: util.format('select * where event_uuid = %s', eventId),
+      limit: 500
+    }
+  }
+
+  client().createCollection(options, function(err, eventUsers) {
+    if (err) {
+      callback(err, null);
+    } else {
+      
+      var result = {
+        registered: 0,
+        checkins: 0
+      }
+
+      var mainHasAnotherPage;
+
+      function countItemsOnPage(cb) {
+        
+        while (eventUsers.hasNextEntity()) {
+
+          var eventUserRow = eventUsers.getNextEntity();
+
+          if (eventUserRow.get('registration_date')) {
+            result.registered++;
+          }
+
+          if (eventUserRow.get('checkin_date')) {
+            result.checkins++;
+          }
+        }
+
+        mainHasAnotherPage = eventUsers.hasNextPage();
+        
+        if (mainHasAnotherPage) {
+          eventUsers.getNextPage(function(err) {
+            cb(err);
+          });
+        } else {
+          cb();
+        }
+      }
+
+      async.doWhilst(countItemsOnPage, function() { return mainHasAnotherPage; }, function(err) {
+        callback(err, result);
+      });
+    }
+  })
+}

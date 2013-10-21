@@ -22,7 +22,9 @@ describe('userGridEventManager', function() {
   function unMockGFuncsMd5() {
     globalFunctions.md5Encode = origGFuncMd5;
   }
-  
+
+  this.timeout(5000);
+
   it('should get a survey from raw data ok', function() {
   
     var s = {
@@ -60,5 +62,22 @@ describe('userGridEventManager', function() {
     
   });
   
+  // Note: if anyone else checks in or registers for this event, this will break.  Prolly
+  // should set up a test-only event.
+  it('should get total checkins and registrations ok', function(done) {
+    
+    var eventId = '2ad0769a-2abc-11e3-8462-4b5f96a08764'; // Lewis' event, should have checkins
+    
+    userGridEventManager.getEventUsersCounts(eventId, function(err, result) {
+      
+      //console.log('got: ' + util.inspect(result));
+      
+      assert.equal(result.registered, 4, 'didn\'t get the registrations right');
+      assert.equal(result.checkins, 3, 'didn\'t get the checkins right')
+      
+      done();
+    })
+    
+  })
   
 });

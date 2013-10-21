@@ -409,6 +409,8 @@ exports.getSurveyQuestionNumberFromString = function(surveyQuestionValue) {
 exports.eventAnalyticsData = function(req, res) {
 
   var type = req.query.type;
+  var sampleDataMode = req.query.test;
+  
   var data;
   
   //
@@ -416,7 +418,7 @@ exports.eventAnalyticsData = function(req, res) {
   //
   var dataRetreiver;
   
-  var eventId;
+  var eventId = req.params.eventId;
   var surveyId;
   var surveyQuestionId;
   
@@ -446,11 +448,18 @@ exports.eventAnalyticsData = function(req, res) {
   
   switch(type) {
     case 'totalCheckins':
-      data = {
-        datapoints: 28
-      }
-      
-      done(undefined, data);
+
+      eventManager.getEventUsersCounts(eventId, function(err, results) {
+        if (err) {
+          done(err);
+        } else {
+          data = {
+            datapoints: results.checkins
+          }
+          done(null, data);
+        }
+      });
+
       break;
 
     case 'contaggsExchanged':
