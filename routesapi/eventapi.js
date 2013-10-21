@@ -463,21 +463,19 @@ exports.eventAnalyticsData = function(req, res) {
       break;
 
     case 'contaggsExchanged':
-      data = {
-        datapoints: 518
-      }
 
-      done(undefined, data);
+      eventManager.getEventTotalContaggs(eventId, function(err, results) {
+        if (err) {
+          done(err);
+        } else {
+          data = {
+            datapoints: results.contaggs
+          }
+          done(null, data);
+        }
+      })
+
       break;
-
-    case 'averageContaggsPerAttendee':
-      data = {
-        datapoints: 5
-      }
-
-      done(undefined, data);
-      break;
-
 
     case 'checkinTimeSummary':
       

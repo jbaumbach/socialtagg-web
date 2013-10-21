@@ -12,9 +12,24 @@ var thisModule = this
 //  http://memcached.org/
 //  https://devcenter.heroku.com/articles/memcachier#node-js
 
-
+/*
+  Cache an object with properties .key and .ttl.
+  
+  Parameters:
+    object: the object
+    callback: a function with sig:
+      err: filled in if error
+      object: the original object
+ */
 exports.addObjectToCache = function(object, callback) {
   
+  var options = {
+    object: object
+  }
+  
+  thisModule.addToCache(options, callback);
+  
+/*
   if (object) {
     
     var key = object.cacheKey;
@@ -41,9 +56,44 @@ exports.addObjectToCache = function(object, callback) {
   }
   
   callback();
+*/
   
 };
 
+/*
+  Add somethine to the cache.  
+  
+  Parameters:
+    options: object with the properties:
+      object: the object to store in the cache.  Null objects will not be stored.
+      key:    the cache key to use.  If null, then check for the property object.cacheKey
+      ttl:    how long to store in the cache, in minutes.  If null, check object.ttl.  Default is
+              60 minutes.
+    callback: function with sig:
+      err: filled in if something went wrong
+      object: the original object to store
+ */
+exports.addToCache = function(options, callback) {
+  
+  var object = options.object || {};
+  
+  var key = options.key || object.cacheKey;
+  var ttl = (options.ttl || object.ttl || 60) * 1000 * 60;
+  
+  if (!key) {
+    callback('(error) no cache key specified');
+  } else {
+    if (options.object) {
+      // Store it
+      localCache.put(key, options.object, ttl);
+      console.log('(info) addToCache: added ' + key + ' to cache with ttl: ' + ttl);
+
+    } else {
+      console.log('(info) addOToCache: no object to cache - not adding');
+    }
+    callback(null, options.object);
+  }
+}
 
 exports.getFromCache = function(key, callback) {
   

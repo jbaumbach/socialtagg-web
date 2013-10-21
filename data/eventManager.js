@@ -90,8 +90,14 @@ exports.getSurveyByEventId = function(eventId, callback) {
         db.getSurveyByEventId(eventId, function(err, result) {
           
           if (!err && result) {
-            result.cacheKey = cacheKey;
-            cache.addObjectToCache(result, function() {
+            
+            var options = {
+              object: result,
+              key: cacheKey,
+              ttl: 5
+            }
+            
+            cache.addToCache(options, function() {
               cb(null, result);
             });
           } else {
@@ -160,8 +166,12 @@ exports.getEventUsersCounts = function(eventId, callback) {
 
           if (!err) {
 
-            result.cacheKey = cacheKey;
-            cache.addObjectToCache(result, function() {
+            var options = {
+              object: result,
+              key: cacheKey,
+              ttl: 5
+            }
+            cache.addToCache(options, function() {
               cb(null, result);
             });
           } else {
@@ -175,12 +185,18 @@ exports.getEventUsersCounts = function(eventId, callback) {
   ], function(err, survey) {
     callback(err, survey);
   })
-
-  
-  
-  
-  
-  
-  
-  // db.getEventUsersCounts(eventId, callback);
 }
+
+/*
+ Gets the total contaggs at/from an event
+
+ Parameters:
+   eventId: the event id
+   callback: function with sig:
+     err: filled in if something bad happened
+     result: object with values: { contaggs: int }
+ */
+exports.getEventTotalContaggs = function(eventId, callback) {
+  db.getEventTotalContaggs(eventId, callback);
+}
+

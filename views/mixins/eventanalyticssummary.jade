@@ -3,7 +3,7 @@ mixin eventanalyticssummary(image, id, description)
   .five.columns
     img.at-glance(src='/images/eventanalytics/' + image)
     
-    p.at-glance.value(ng-show='!dataResults["#{ id }"] == null') ...
+    p.at-glance.value(ng-show='dataResults["#{ id }"] == null') ...
     
     p.at-glance.value(ng-show='dataResults["#{ id }"] != null', style="display:none;") 
       | {{ dataResults["#{ id }"] }}

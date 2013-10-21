@@ -11,6 +11,7 @@ var util = require('util')
   , application = require('../../common/application')
   , Event = require('../../models/Event')
   , async = require('async')
+  , userGridUtilities = require('./userGridUtilities')
   , thisModule = this
   ;
 
@@ -476,28 +477,6 @@ exports.updateSurvey = function(survey, callback) {
   
 }
 
-/*
-exports.test = function(callback) {
-
-  var count = 0;
-
-  async.whilst(
-    function () { return count < 5; },
-    function (callback) {
-      count++;
-      console.log('in main func')
-      setTimeout(callback, 1000);
-    },
-    function (err) {
-      // 5 seconds have passed
-      console.log('leaving...');
-      callback();
-    }
-  );
-  
-  
-}
-*/
 
 /*
   Returns the total number of checkins and registrations for an event
@@ -512,56 +491,108 @@ exports.test = function(callback) {
 exports.getEventUsersCounts = function(eventId, callback) {
 
   var options = {
-    type: 'event_users',
-    qs: {
-      // Note: you have to use '*' - specifying individual columns causes '.hasNextEntity()' on the 
-      // collection to fail
-      ql: util.format('select * where event_uuid = %s', eventId),
-      limit: 500
+    queryOptions: {
+      type: 'event_users',
+      qs: {
+        // Note: you have to use '*' - specifying individual columns causes '.hasNextEntity()' on the 
+        // collection to fail
+        ql: util.format('select * where event_uuid = %s', eventId)
+      }
+    },
+
+    aggregator: function (eventUserRow) {
+      if (eventUserRow.get('registration_date')) {
+        result.registered++;
+      }
+
+      if (eventUserRow.get('checkin_date')) {
+        result.checkins++;
+      }
     }
   }
 
-  client().createCollection(options, function(err, eventUsers) {
-    if (err) {
-      callback(err, null);
-    } else {
-      
-      var result = {
-        registered: 0,
-        checkins: 0
+  var result = {
+    registered: 0,
+    checkins: 0
+  }
+
+  userGridUtilities.counterFunction(options, function(err) {
+    callback(err, result);
+  });
+}
+
+/*
+  Gets the total contaggs at/from an event
+  
+  Parameters:
+    eventId: the event id
+    callback: function with sig:
+      err: filled in if something bad happened
+      result: object with values: { contaggs: int }
+ */
+exports.getEventTotalContaggs = function(eventId, callback) {
+
+  var options = {
+    queryOptions: {
+      type: 'contaggs',
+      qs: {
+        // Note: you have to use '*' - specifying individual columns causes '.hasNextEntity()' on the 
+        // collection to fail
+        ql: util.format('select * where event_uuid = %s', eventId)
       }
+    },
 
-      var mainHasAnotherPage;
-
-      function countItemsOnPage(cb) {
-        
-        while (eventUsers.hasNextEntity()) {
-
-          var eventUserRow = eventUsers.getNextEntity();
-
-          if (eventUserRow.get('registration_date')) {
-            result.registered++;
-          }
-
-          if (eventUserRow.get('checkin_date')) {
-            result.checkins++;
-          }
-        }
-
-        mainHasAnotherPage = eventUsers.hasNextPage();
-        
-        if (mainHasAnotherPage) {
-          eventUsers.getNextPage(function(err) {
-            cb(err);
-          });
-        } else {
-          cb();
-        }
+    aggregator: function (eventUserRow) {
+      if (eventUserRow.get('event_uuid')) {
+        result.contaggs++;
       }
-
-      async.doWhilst(countItemsOnPage, function() { return mainHasAnotherPage; }, function(err) {
-        callback(err, result);
-      });
     }
-  })
+  }
+
+  var result = {
+    contaggs: 0
+  }
+
+  userGridUtilities.counterFunction(options, function(err) {
+    callback(err, result);
+  });
+}
+
+exports.getEventCompaniesRepresented = function(eventId, callback) {
+  
+  var options = {
+    queryOptions: {
+      type: 'contaggs',
+      qs: {
+        // Note: you have to use '*' - specifying individual columns causes '.hasNextEntity()' on the 
+        // collection to fail
+        ql: util.format('select * where event_uuid = %s', eventId)
+      }
+    },
+
+    aggregator: function (eventUserRow, cb) {
+      
+/*
+      if (eventUserRow.get('event_uuid')) {
+        result.contaggs++;
+      }
+*/
+      
+      
+      result.contaggs++;
+      
+      console.log('calling cb!');
+      cb();
+    }
+  }
+
+  var result = {
+    contaggs: 0
+  }
+
+  userGridUtilities.counterFunction(options, function(err) {
+    console.log('done w/gecr, boom');
+    callback(err, result);
+  });
+  
 }

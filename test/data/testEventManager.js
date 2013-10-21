@@ -30,21 +30,20 @@ describe('eventManager', function() {
       checkedResult: false
     }
 
-    var origadder = cache.addObjectToCache;
+    var origadder = cache.addToCache;
 
     function exitWhenDone() {
       if (status.checkedKey && status.checkedResult) {
-        cache.addObjectToCache = origadder;
+        cache.addToCache = origadder;
         done();
       }
     }
     
     
-    cache.addObjectToCache = function mockAdder(survey, cb) {
-      assert.equal(survey.cacheKey, cacheKey);
+    cache.addToCache = function mockAdder(options, cb) {
       
+      assert.equal(options.key, cacheKey);
       status.checkedKey = true;
-
       cb();
     }
     
@@ -77,20 +76,18 @@ describe('eventManager', function() {
       checkedResult: false
     }
 
-    var origadder = cache.addObjectToCache;
+    var origadder = cache.addToCache;
 
     function exitWhenDone() {
       if (status.checkedKey && status.checkedResult) {
-        cache.addObjectToCache = origadder;
+        cache.addToCache = origadder;
         done();
       }
     }
 
-    cache.addObjectToCache = function mockAdder(survey, cb) {
-      assert.equal(survey.cacheKey, cacheKey);
-
+    cache.addToCache = function mockAdder(options, cb) {
+      assert.equal(options.key, cacheKey);
       status.checkedKey = true;
-
       cb();
     }
 

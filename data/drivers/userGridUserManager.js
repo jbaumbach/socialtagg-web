@@ -16,6 +16,7 @@ var util = require('util')
   , application = require('../../common/application')
   , eventManager = require('../eventManager')
   , userGridEventManager = require('./userGridEventManager')
+  , userGridUtilities = require('./userGridUtilities')
   , https = require('https')
   , async = require('async')
   , thisModule = this
@@ -1087,35 +1088,27 @@ exports.getEventUsers = function(eventId, type, callback) {
 
   } else {
 
+    var result = [];
+    
     var options = {
-      type: 'event_users',
-      qs: {
-        // Note - you must use SINGLE QUOTES around a string value to search for
-        // order by created DESC
-        ql: util.format('select * where event_uuid = %s %s', eventId, additionalWhere),
-        limit: '100'
+      queryOptions: {
+        type: 'event_users',
+        qs: {
+          // Note - you must use SINGLE QUOTES around a string value to search for
+          // order by created DESC
+          ql: util.format('select * where event_uuid = %s %s', eventId, additionalWhere)
+        }
+      }, 
+      aggregator: function(contagg) {
+        var userId = contagg.get('user_uuid');
+        result.push({ userId: userId });
       }
     }
 
-    client().createCollection(options, function (err, resultUsers) {
-      if (err) {
-
-        callback(err);
-
-      } else {
-        var result = [];
-
-        //
-        // Let's build a list of user ids
-        //
-        while (resultUsers.hasNextEntity()) {
-          var contagg = resultUsers.getNextEntity();
-          var userId = contagg.get('user_uuid');
-          result.push({ userId: userId });
-        }
-
-        callback(null, result);
-      }
+    console.log('calling with: ' + util.inspect(options));
+    
+    userGridUtilities.counterFunction(options, function(err) {
+      callback(err, result);  
     });
   }
 }

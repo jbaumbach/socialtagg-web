@@ -77,7 +77,24 @@ describe('userGridEventManager', function() {
       
       done();
     })
-    
   })
+  
+  it('should get total contaggs for an event', function(done) {
+    var eventId = "d295e83a-0f8a-11e3-a682-2346c22487a2";   // John's test event
+    
+    userGridEventManager.getEventTotalContaggs(eventId, function(err, result) {
+      assert.equal(result.contaggs, 1, 'didn\'t get all the contaggs');
+      done();
+    });
+  });
+  
+  it('should get companies represented from db', function(done) {
+    var eventId = "d295e83a-0f8a-11e3-a682-2346c22487a2";   // John's test event
+    
+    userGridEventManager.getEventCompaniesRepresented(eventId, function(err, result) {
+      assert.ok(result, 'got null result!');
+      done();
+    });
+  });
   
 });

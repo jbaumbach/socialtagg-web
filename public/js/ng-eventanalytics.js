@@ -20,28 +20,6 @@ var analyticsController = app.controller('analyticsController', function ($scope
   $scope.isLoading = [];
   $scope.isLoadingMsg = [];
   $scope.displayType = [];
-  //$scope.surveyResults = [];
-
-  /* First try
-  var dataColors = [
-    '#434343',    
-    '#0713B7',    
-    '#9501AF',    
-    '#CCCCCC', //brown   
-    '#434343',
-    '#0713B7',
-    '#5B2B63',
-    '#C7CCCC', //brown
-    '#434343',
-    '#2F3367',
-    '#5B2B63',
-    '#363636',  //brown
-    '#424242',
-    '#000648',
-    '#3A0044',
-    '#363636'   // brown   
-  ];
-  */
   
   // Thanks: http://stackoverflow.com/questions/236936/how-pick-colors-for-a-pie-chart
   var dataColors = [
@@ -89,6 +67,8 @@ var analyticsController = app.controller('analyticsController', function ($scope
       // note: the display timing is a little funky here, maybe fix in future versions.
       $scope.isLoading[dataSetType] = false;
       $scope.dataResults[dataSetType] = data.datapoints;
+
+      $scope.dataResults['averageContaggsPerAttendee'] = averageContaggs();
       
     }, function() {
       // Fail!
@@ -172,6 +152,18 @@ var analyticsController = app.controller('analyticsController', function ($scope
 
     });
   }
+  
+  var averageContaggs = function() {
+    if ($scope.dataResults['totalCheckins'] != null && $scope.dataResults['contaggsExchanged'] != null) {
+      if ($scope.dataResults['totalCheckins'] > 0) {
+        return $scope.dataResults['contaggsExchanged'] / $scope.dataResults['totalCheckins'];
+      } else {
+        return 'n/a';
+      }
+    } else {
+      return null;
+    }
+  }
 
   $scope.init = function (pageVars) {
 
@@ -196,7 +188,7 @@ var analyticsController = app.controller('analyticsController', function ($scope
 
     loadNonChartType('totalCheckins');
     loadNonChartType('contaggsExchanged');
-    loadNonChartType('averageContaggsPerAttendee');
+    //loadNonChartType('averageContaggsPerAttendee');
     
     loadChartType('checkinTimeSummary', 'bar');
     loadChartType('companySummary', 'bar');
