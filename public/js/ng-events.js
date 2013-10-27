@@ -43,25 +43,29 @@ var eventController = app.controller('eventController', function($scope, Event, 
   var startDatePicker;
   var endDatePicker;
 
+  function applyPickerDateToAngularModel(element, event, property) {
+    console.log('doing apply');
+    event[property] = document.getElementById(element).value;
+    $scope.calculateTzOffset(event);
+
+    if(!$scope.$$phase) {
+      $scope.$apply();
+    }
+  }
+  
   function pickerOptions(element, event, property) {
     return {
       field: document.getElementById(element),
       firstDay: 0,
-      minDate: new Date('2000-01-01'),
+      minDate: new Date('2013-10-01'),
       maxDate: new Date('2020-12-31'),
       defaultDate: event[property] ? new Date(event[property]) : new Date(),
-      yearRange: [2000,2020],
+      yearRange: [2013, 2020],
       setDefaultDate: true,
       format: standardDateFormat,
       onSelect: function() {
-        $scope.$apply(function() {
-          //
-          // Make Angular aware of the new data
-          //
-          event[property] = document.getElementById(element).value;
-          $scope.calculateTzOffset(event);
-        });
-      }
+        applyPickerDateToAngularModel(element, event, property);
+      }    
     }
   }
   
@@ -115,6 +119,9 @@ var eventController = app.controller('eventController', function($scope, Event, 
       $scope.isCurrentEventSaved = editableEvent.uuid ? true : false;
       initSurvey(editableEvent);
 
+      //
+      // Lil bit of extra work to get third-party components to play nice with Angular
+      //
       if (startDatePicker) {
         startDatePicker.destroy();
       }
@@ -125,6 +132,9 @@ var eventController = app.controller('eventController', function($scope, Event, 
       
       startDatePicker = new Pikaday(pickerOptions('inputStartDate', editableEvent, 'startDate'));
       endDatePicker = new Pikaday(pickerOptions('inputEndDate', editableEvent, 'endDate'));
+
+      applyPickerDateToAngularModel('inputStartDate', editableEvent, 'startDate');
+      applyPickerDateToAngularModel('inputEndDate', editableEvent, 'endDate');
     }
   }
   

@@ -403,6 +403,132 @@ exports.getSurveyQuestionNumberFromString = function(surveyQuestionValue) {
   return result;
 }
 
+/**
+ * For the passed array of users, tabulate their companies and return the results in
+ * ready-to-use format
+ * 
+ * @users {Array} - the list of users
+ * 
+ * Example result: 
+ * 
+   data = {
+     labels: ['Microsoft', 'Google', 'Facebook', 'SocialTagg'],
+     datasets: [
+     {
+       data: [75, 60, 45, 12]
+     }]
+   }
+*/
+var companySummaryFromUsers = exports.companySummaryFromUsers = function(users) {
+
+  var options = {
+    getKey: function(user) {
+      return user.company.toLowerCase().replace(/[^a-z]/g, '');
+    },
+    getDescription: function(user) {
+      return user.company;
+    } 
+  }
+  
+  return dataSummaryFromItems(users, options);
+}
+
+var jobTitleSummaryFromUsers = exports.jobTitleSummaryFromUsers = function(users) {
+
+  var options = {
+    getKey: function(user) {
+      var result = user.title.toLowerCase().replace(/[^a-z]/g, '');
+      return result;
+    },
+    getDescription: function(user) {
+      return user.title;
+    }
+  }
+
+  return dataSummaryFromItems(users, options);
+}
+
+/**
+ * For the passed array of items, tabulate their companies and return the results in
+ * ready-to-use format
+ *
+ * @items {Array} - the list of users
+ * @options {Object} - two callback functions that help you build the results:
+ *  getKey(item) - allows you to process the item's data and return a key
+ *  getDescription(item) - allows you to return a description for the item..
+ *
+ * Example result:
+ *
+ data = {
+     labels: ['Microsoft', 'Google', 'Facebook', 'SocialTagg'],
+     datasets: [
+     {
+       data: [75, 60, 45, 12]
+     }]
+   }
+ */
+
+var dataSummaryFromItems = exports.dataSummaryFromItems = function(items, options) {
+
+  var result = {
+    labels: [],
+    datasets: [
+      {
+        data: []
+      }]
+  }
+
+  if (items && items.length > 0) {
+    var tabulation = {};
+
+    items.forEach(function(item) {
+      //
+      // Companies are the same if their name matches after removing non-letter characters
+      // The company name (.desc) is whichever company name is encountered first.
+      //
+      var key = options.getKey(item); // user.company.toLowerCase().replace(/[^a-z]/g, '');
+
+      if (!tabulation[key]) {
+        var value = {
+          desc: options.getDescription(item),  //user.company,
+          count: 0
+        }
+        tabulation[key] = value;
+      }
+
+      tabulation[key].count++;
+    });
+
+    //
+    // Sort by the counts ASC
+    //
+    var r1 = _.pairs(tabulation);
+    var r2 = _.sortBy(r1, function(item) { return -1 * item[1].count; });
+    
+    //
+    // Only return the first 10 items
+    //
+    var r3 = r2.slice(0, 10);
+
+    //
+    // Take our raw data and put it into ready-to-use format.  This logic prolly
+    // should be extracted, but it's easy to do here.  Refactor later if necessary.
+    //
+
+    r3.forEach(function(r) {
+      result.labels.push(r[1].desc);
+      result.datasets[0].data.push(r[1].count);
+    });
+  }
+
+  return result;
+}
+
+
+exports.getQuestionTypeForId = function(survey, questionId) {
+  return 'hello';
+}
+
 /*
   Get event analytics data from the database and return it to the client
  */
@@ -426,7 +552,7 @@ exports.eventAnalyticsData = function(req, res) {
   
   // Note: randomWaitTime is just to simulate waiting for results in the front end.  Take this out
   // when data is real.
-  var randomWaitTime = Math.floor((Math.random() * 1000) + 250);
+  var randomWaitTime = 0; //Math.floor((Math.random() * 1000) + 250);
   
   var done = function(err, data) {
     
@@ -478,7 +604,7 @@ exports.eventAnalyticsData = function(req, res) {
       break;
 
     case 'checkinTimeSummary':
-      
+      // Note: not called by front end.  todo: when there's time.
       data = {
         labels: ['5pm', '6pm', '7pm', '8pm', '9pm'],
         datasets: [
@@ -492,28 +618,60 @@ exports.eventAnalyticsData = function(req, res) {
       break;
     
     case 'companySummary':
-      data = {
-        labels: ['Microsoft', 'Google', 'Facebook', 'SocialTagg'],
-        datasets: [
-          {
-            data: [75, 60, 45, 12]
-          }]
-      }
       
-      done(undefined, data);
+      async.waterfall([
+        function(cb) {
+          userManager.getEventUsers(eventId, 'checkedin', cb);
+        },
+        function(userIds, cb) {
+          //
+          // May want to consider paging this if the user list is big
+          //
+          var uids = _.map(userIds, function(uid) { return { uuid: uid.userId }});
+          
+          userManager.populateUserContaggs(uids, function(populatedUsers) {
+            cb(null, populatedUsers);
+          })
+        },
+        function(users, cb) {
+          var result = companySummaryFromUsers(users);
+          cb(null, result);
+        }
+      ], function(err, result) {
+        done(err, result);
+      })
+      
       break;
 
 
     case 'titlesSummary':
-      data = {
-        labels: ['CEO', 'CTO', 'Director of Sys. Dev.', 'QA'],
-        datasets: [
-          {
-            data: [34, 60, 48, 22]
-          }]
-      }
 
-      done(undefined, data);
+      //
+      // Crap, this is not DRY at all.  It repeats a lot of the above code.
+      // todo: Let's see if we can rewrite, and cache too.
+      //
+      async.waterfall([
+        function(cb) {
+          userManager.getEventUsers(eventId, 'checkedin', cb);
+        },
+        function(userIds, cb) {
+          //
+          // May want to consider paging this if the user list is big
+          //
+          var uids = _.map(userIds, function(uid) { return { uuid: uid.userId }});
+
+          userManager.populateUserContaggs(uids, function(populatedUsers) {
+            cb(null, populatedUsers);
+          })
+        },
+        function(users, cb) {
+          var result = jobTitleSummaryFromUsers(users);
+          cb(null, result);
+        }
+      ], function(err, result) {
+        done(err, result);
+      })
+
       break;
 
     default:
@@ -523,86 +681,106 @@ exports.eventAnalyticsData = function(req, res) {
       if (surveyQuestionNumber) {
         
         // Get data from the db
-        var err, data;
-        
-        switch (surveyQuestionNumber) {
-          case '1':
-            // multichoice
-            data = {
-              type: 'multichoice',
-              datapoints: [
-                {
-                  label: 'The ice sculpture',
-                  value: 30
-                },
-                {
-                  label: 'The open bar',
-                  value : 50
-                },
-                {
-                  label: 'The live band',
-                  value : 100
-                },
-                {
-                  label: 'None of the above',
-                  value : 17
-                }
-              ]
-            }
-            break;
+        async.waterfall([
+          function(cb) {
+            eventManager.getSurveyByEventId(eventId, cb);
+          },
+          function(survey, cb) {
+            //var surveyId = survey.uuid;
+            var surveyId = 'de27021a-011b-11e3-842f-e7e00a856e3d'; // Louis or Jeff's survey
+            eventManager.getEventSurveyAnswers(surveyId, function(err, answers) {
+              cb(err, survey, answers);
+            });
+          }
+        ], 
+        function(err, survey, answers) {
+
+          console.log('survey: ' + util.inspect(survey, { depth: null }));
+          console.log('answers: ' + util.inspect(answers, { depth: null }));
           
-          case '2':
-            // scale_1to5
-            data = {
-              type: 'scale_1to5',
-              datapoints: [
-                {
-                  label: '1',
-                  value: 100
-                },
-                {
-                  label: '2',
-                  value : 50
-                },
-                {
-                  label: '3',
-                  value : 30
-                },
-                {
-                  label: '4',
-                  value : 15
-                },
-                {
-                  label: '5',
-                  value : 17
-                }
-              ]
-            }
-            break;
-          
-          case '3':
-            // freeform
-            data = {
-              type: 'freeform',
+          var data;
+
+          switch (surveyQuestionNumber) {
+            case '1':
+              // multichoice
+              data = {
+                type: 'multichoice',
                 datapoints: [
-                'ice sculpture',
-                'ice sculpture',
-                'bowling',
-                'bowling',
-                'free booze',
-                'ice sculpture',
-                'ice sculpture',
-                'Metallica is the best band of all time, rivaled possibly by Blink 182.  It\'s a personal ' +
-                  'opinion, but it\'s the correct opinion.'
-              ]
-            }
-            break;
-          
-          default:
-            err = { statusCode: 404, statusMsg: 'Bad question id: ' + surveyQuestionNumber};
-        }
-        
-        done(err, data);
+                  {
+                    label: 'The ice sculpture',
+                    value: 30
+                  },
+                  {
+                    label: 'The open bar',
+                    value : 50
+                  },
+                  {
+                    label: 'The live band',
+                    value : 100
+                  },
+                  {
+                    label: 'None of the above',
+                    value : 17
+                  }
+                ]
+              }
+              break;
+
+            case '2':
+              // scale_1to5
+              data = {
+                type: 'scale_1to5',
+                datapoints: [
+                  {
+                    label: '1',
+                    value: 100
+                  },
+                  {
+                    label: '2',
+                    value : 50
+                  },
+                  {
+                    label: '3',
+                    value : 30
+                  },
+                  {
+                    label: '4',
+                    value : 15
+                  },
+                  {
+                    label: '5',
+                    value : 17
+                  }
+                ]
+              }
+              break;
+
+            case '3':
+              // freeform
+              data = {
+                type: 'freeform',
+                datapoints: [
+                  'ice sculpture',
+                  'ice sculpture',
+                  'bowling',
+                  'bowling',
+                  'free booze',
+                  'ice sculpture',
+                  'ice sculpture',
+                  'Metallica is the best band of all time, rivaled possibly by Blink 182.  It\'s a personal ' +
+                    'opinion, but it\'s the correct opinion.'
+                ]
+              }
+              break;
+
+            default:
+              err = { statusCode: 404, statusMsg: 'Bad question id: ' + surveyQuestionNumber};
+          }
+
+          done(err, data);
+
+
+        })
         
       } else {
 

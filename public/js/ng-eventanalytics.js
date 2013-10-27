@@ -188,9 +188,8 @@ var analyticsController = app.controller('analyticsController', function ($scope
 
     loadNonChartType('totalCheckins');
     loadNonChartType('contaggsExchanged');
-    //loadNonChartType('averageContaggsPerAttendee');
     
-    loadChartType('checkinTimeSummary', 'bar');
+    // todo: loadChartType('checkinTimeSummary', 'bar');
     loadChartType('companySummary', 'bar');
     loadChartType('titlesSummary', 'bar');
     

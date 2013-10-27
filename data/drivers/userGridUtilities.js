@@ -56,7 +56,8 @@ var counterFunction = exports.counterFunction = function(options, callback) {
             } else if (options.aggregator.length == 2) {
 
               //
-              // We DO need to wait for each iterator call to complete
+              // We DO need to wait for all iterator calls to complete, but we can do the
+              // calls in parallel.
               //
 
               var rows = [];
@@ -75,8 +76,6 @@ var counterFunction = exports.counterFunction = function(options, callback) {
         ], function(err) {
 
           mainHasAnotherPage = resultCollection.hasNextPage();
-
-          console.log('has another page? ' + mainHasAnotherPage);
 
           if (mainHasAnotherPage) {
             resultCollection.getNextPage(function(err) {

@@ -34,6 +34,16 @@ exports.eventUserFromUserGridEventUser = function(ugEventUser) {
   return result;
 }
 
+exports.surveyAnswersFromUserGridSurveyAnswers = function(ugSurveyAnswers) {
+  var result = {
+    user: ugSurveyAnswers.get('user_uuid'),
+    created: ugSurveyAnswers.get('created'),
+    answers: ugSurveyAnswers.get('answers')
+  }
+
+  return result;
+}
+
 /**
  * Takes an event from usergrid and returns a SocialTagg Event
  * 
@@ -595,4 +605,35 @@ exports.getEventCompaniesRepresented = function(eventId, callback) {
     callback(err, result);
   });
   
+}
+
+exports.getEventSurveyAnswers = function(surveyId, callback) {
+
+  var options = {
+    queryOptions: {
+      type: 'survey_answers',
+      qs: {
+        // Note: you have to use '*' - specifying individual columns causes '.hasNextEntity()' on the 
+        // collection to fail
+        ql: util.format('select * where survey_uuid = %s', surveyId)
+      }
+    },
+
+    aggregator: function (surveyAnswersRecord, cb) {
+
+      var userResult = thisModule.surveyAnswersFromUserGridSurveyAnswers(surveyAnswersRecord);
+      result.responses.push(userResult);
+      cb();
+    }
+  }
+
+  var result = {
+    responses: []
+  }
+
+  userGridUtilities.counterFunction(options, function(err) {
+    console.log('done w/gecr, boom');
+    callback(err, result);
+  });
+
 }

@@ -200,3 +200,40 @@ exports.getEventTotalContaggs = function(eventId, callback) {
   db.getEventTotalContaggs(eventId, callback);
 }
 
+exports.getEventSurveyAnswers = function(surveyId, callback) {
+
+  var cacheKey = 'eventManager.getEventSurveyAnswers.' + surveyId;
+
+  async.waterfall([
+    function(cb) {
+      cache.getFromCache(cacheKey, function(result) {
+        cb(null, result);
+      });
+    },
+    function(survey, cb) {
+      if (!survey) {
+
+        db.getEventSurveyAnswers(surveyId, function(err, result) {
+
+          if (!err) {
+
+            var options = {
+              object: result,
+              key: cacheKey,
+              ttl: 5
+            }
+            cache.addToCache(options, function() {
+              cb(null, result);
+            });
+          } else {
+            cb(err);
+          }
+        });
+      } else {
+        cb(null, survey);
+      }
+    }
+  ], function(err, survey) {
+    callback(err, survey);
+  })
+}
