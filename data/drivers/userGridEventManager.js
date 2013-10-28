@@ -568,6 +568,7 @@ exports.getEventTotalContaggs = function(eventId, callback) {
   });
 }
 
+// todo: how is this working??? is this working???
 exports.getEventCompaniesRepresented = function(eventId, callback) {
   
   var options = {
@@ -581,13 +582,6 @@ exports.getEventCompaniesRepresented = function(eventId, callback) {
     },
 
     aggregator: function (eventUserRow, cb) {
-      
-/*
-      if (eventUserRow.get('event_uuid')) {
-        result.contaggs++;
-      }
-*/
-      
       
       result.contaggs++;
       

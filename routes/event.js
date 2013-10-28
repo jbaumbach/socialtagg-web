@@ -79,6 +79,13 @@ exports.analytics = function(req, res) {
 
       var isEventOwner = (userId && event.owner === userId);
       
+      //
+      // Test event - SocialTagg F2F has good data
+      //
+      isEventOwner = (isEventOwner || event.uuid === 'be1b65e0-3e71-11e3-a797-1399e22b12e3')
+      
+      console.log('e: ' + event.uuid);
+      
       if (isEventOwner) {
 
         // 

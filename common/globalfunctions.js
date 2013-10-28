@@ -309,6 +309,13 @@ String.prototype.htmlize = function() {
   return result;
 };
 
+//
+// Handy function from VB that I can't believe isn't in JS, C#, ObjeC, or any other 
+// modern language.
+//
+String.prototype.left = function(numberOfChars) {
+  return this.substr(0, numberOfChars);
+}
 
 //
 // Search an array of objects for an object having a specific value in a 

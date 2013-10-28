@@ -14,7 +14,7 @@ angular.module("eventAnalyticsDataService", ["ngResource"]).
 
 app.requires.push('eventAnalyticsDataService');
 
-var analyticsController = app.controller('analyticsController', function ($scope, EventAnalyticsData) {
+var analyticsController = app.controller('analyticsController', function ($scope, EventAnalyticsData, $log) {
 
   $scope.dataResults = [];
   $scope.isLoading = [];
@@ -55,8 +55,6 @@ var analyticsController = app.controller('analyticsController', function ($scope
 
   var loadNonChartType = function(dataSetType) {
     
-    console.log('loading nct: ' + dataSetType + '...');
-
     $scope.isLoading[dataSetType] = true;
     $scope.isLoadingMsg[dataSetType] = 'Loading...';
 
@@ -73,14 +71,12 @@ var analyticsController = app.controller('analyticsController', function ($scope
     }, function() {
       // Fail!
 
-      console.log('error!');
+      $log.info('error!');
       $scope.isLoadingMsg[dataSetType] = 'Oops, error loading data.';
     });
   }
   
   var loadChartType = function (dataSetType, chartType) {
-
-    console.log('loading ct: ' + dataSetType + '...');
 
     $scope.isLoading[dataSetType] = true;
     $scope.isLoadingMsg[dataSetType] = 'Loading...';
@@ -92,6 +88,20 @@ var analyticsController = app.controller('analyticsController', function ($scope
     var data = EventAnalyticsData.get(options, function () {
       // Success
 
+      function getMaxValueOfChartData(data) {
+        var result = 0;
+        
+        if (data && data.datasets && data.datasets.length > 0) {
+          angular.forEach(data.datasets[0].data, function(item) {
+            if (item > result) {
+              result = item;
+            }
+          })
+        }
+        
+        return result;
+      }
+      
       $scope.isLoading[dataSetType] = false;
 
       if (chartType === 'bar') {
@@ -101,9 +111,17 @@ var analyticsController = app.controller('analyticsController', function ($scope
         //
         applyStyleToChartData(data, dataSetType);
   
+        //
+        // Extra computation to workaround floats on y-axis bug
+        // https://github.com/nnnick/Chart.js/issues/58
+        //
+        var maxValue = getMaxValueOfChartData(data);
+        
         var options = {
-          // Put some space between the bars
-          barValueSpacing: 20
+          scaleOverride: true,
+          scaleSteps: maxValue,
+          scaleStepWidth: 1,
+          scaleStartValue: 0
         }
   
         var chrtCTS = new Chart(ctxCTS).Bar(data, options);
@@ -112,8 +130,6 @@ var analyticsController = app.controller('analyticsController', function ($scope
         //
         // Survey questions
         //
-        console.log('setting displaytype for ' + dataSetType + ' to ' + data.type);
-        
         $scope.displayType[dataSetType] = data.type;
         
         // The chart type is dependent on the question type
@@ -125,7 +141,6 @@ var analyticsController = app.controller('analyticsController', function ($scope
           data.datapoints.forEach(function(datapoint, index) {
             var colorIndex = index % dataColors.length;
             var color = dataColors[colorIndex];
-            console.log('colorIndex: ' + colorIndex + ', color: ' + color);
             datapoint.color = color;
           });
           
@@ -134,20 +149,17 @@ var analyticsController = app.controller('analyticsController', function ($scope
           
         } else if (data.type === 'freeform') {
           
-          console.log('gonna do freeform');
         } else {
-          console.log('(error) survey question ' + chartType + ' has an unknown type: ' + data.type);
+          $log.info('(error) survey question ' + chartType + ' has an unknown type: ' + data.type);
           
         }
       } else {
-        
-        console.log('(error) unknown chart type: ' + chartType);
+        $log.info('(error) unknown chart type: ' + chartType);
       }
       
     }, function () {
       // Error
-
-      console.log('error! for ' + dataSetType);
+      $log.info('error! for ' + dataSetType);
       $scope.isLoadingMsg[dataSetType] = 'Oops, error loading chart.';
 
     });

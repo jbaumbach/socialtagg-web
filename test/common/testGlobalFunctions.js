@@ -227,4 +227,14 @@ describe('globalFunctions', function() {
     var r = globalFunctions.qrCodeUrl(u);
     assert.equal(r, e, 'didn\'t get right code');
   });
+  
+  it('should get the left of a string ok', function() {
+    var s = 'this is twenty chars';
+    //       01234567890123456789012345678901234567890123456789
+    var e = 'this is tw';
+    
+    var r = s.left(10);
+    assert.equal(r, e, 'didn\'t get the left 10');
+    
+  })
 }) 

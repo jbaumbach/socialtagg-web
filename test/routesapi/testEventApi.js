@@ -423,70 +423,155 @@ describe('Event API', function() {
     
     assert.ok(r, 'didn\'t get back an empty object!');
   })
+
+
+  it('should grab the question type for a survey question of a given question id', function() {
+    var survey = { uuid: '6920504a-1e4c-11e3-8208-696c32c76c87',
+      eventId: 'd295e83a-0f8a-11e3-a682-2346c22487a2',
+      isAnonymous: true,
+      whenToShowType: 'showAfterXMins',
+      whentoShowMins: '10',
+      inactiveInd: false,
+      questions:
+        [ { choices:
+          [ 'The ice sculpture',
+            'The open bar',
+            'The live band',
+            'None of the above' ],
+          text: 'What was the best feature?',
+          type: 'multichoice',
+          questionId: 1 },
+          { text: 'How would you rank this event?',
+            type: 'scale_1to5',
+            questionId: 2 },
+          { text: 'What would you change for next time?',
+            type: 'freeform',
+            questionId: 3 } ] }
+
+    //
+    // Should work with both a string questionId and an int questionId
+    //
+    var r = eventapi.getQuestionTypeForId(survey, 1);
+    assert.equal(r, 'multichoice', 'didn\'t get multichoice');
+
+    r = eventapi.getQuestionTypeForId(survey, '3');
+    assert.equal(r, 'freeform', 'didn\'t get freeform');
+
+    r = eventapi.getQuestionTypeForId(survey, 334);
+    assert.ok(!r, 'got something other than undefined back for bogus id');
+
+
+  })
+
+  var stf2fSurvey = { uuid: '0c27ddea-3e72-11e3-9f08-f793b2f20cbe',
+    eventId: 'be1b65e0-3e71-11e3-a797-1399e22b12e3',
+    isAnonymous: true,
+    whenToShowType: 'showOnCheckin',
+    whentoShowMins: undefined,
+    inactiveInd: false,
+    questions:
+      [ { text: 'On a scale of 1-5, how would you rate your experience with SocialTagg?',
+        type: 'scale_1to5',
+        questionId: 1,
+        description: 'Scale of 1 to 5' },
+        { text: 'Where did you experience pain points?',
+          type: 'freeform',
+          questionId: 2,
+          description: 'Freeform Input' } ] }
+  
+  var stf2fAnswers = { responses:
+    [ { user: '187fd5ea-fd9d-11e2-ad49-a53cfe993bb8',
+      created: 1382818410532,
+      answers:
+        [ { answer: '5', question_id: '1' },
+          { answer: 'checking in', question_id: '2' } ] },
+      { user: 'c238c31a-2d6a-11e3-898d-85fbe15c5ce8',
+        created: 1382818491982,
+        answers:
+          [ { answer: '5', question_id: '1' },
+            { answer: 'is the guestlist secure?', question_id: '2' } ] },
+      { user: '5b07c30a-082e-11e3-b923-dbfd8bf6ac23',
+        created: 1382818785873,
+        answers:
+          [ { answer: '5', question_id: '1' },
+            { answer: 'checking in', question_id: '2' } ] },
+      { user: 'b66a00ee-73d3-11e2-95c4-02e81ae640dc',
+        created: 1382819748540,
+        answers:
+          [ { created: 1382843867692,
+            uuid: '20abbc55-49a8-4707-b25b-b0f9ed5deb03',
+            modified: 1382844947808,
+            answer: '4',
+            question_id: '1' },
+            { created: 1382843867692,
+              uuid: '97a42d20-1b70-4601-96a0-06ca25a1cc19',
+              modified: 1382844947809,
+              answer: 'Installing the beta iOS app was a pain. Otherwise, all good. ',
+              question_id: '2' } ] },
+      { user: 'f4dbf1b1-bc70-11e2-a65f-02e81afcd5fc',
+        created: 1382825249655,
+        answers:
+          [ { answer: '5', question_id: '1' },
+            { answer: 'Tim\'s face', question_id: '2' } ] },
+      { user: 'f4dbf1b1-bc70-11e2-a65f-02e81afcd5fc',
+        created: 1382825282645,
+        answers:
+          [ { answer: '5', question_id: '1' },
+            { answer: 'hfd', question_id: '2' } ] },
+      { user: 'd31fb37f-7428-11e2-a3b3-02e81adcf3d0',
+        created: 1382827174978,
+        answers:
+          [ { created: 1382852294055,
+            uuid: 'fbb8e432-c4d3-4e2c-a8ab-0ffa86e9766e',
+            modified: 1382852416828,
+            answer: '4',
+            question_id: '1' },
+            { created: 1382852294055,
+              uuid: 'ad79e312-3289-4ea9-a17b-b4cfa2cd83a4',
+              modified: 1382852416829,
+              answer: 'Loud people outside. Hehehe',
+              question_id: '2' } ] },
+      { user: '3d86497b-66c4-11e2-8b37-02e81ac5a17b',
+        created: 1382890251583,
+        answers:
+          [ { created: 1382844833750,
+            uuid: 'cc6284a0-6b5f-4e77-be93-c7d79154df26',
+            modified: 1382915450010,
+            answer: 'The date of this event was correct but the time was wrong. Please fix.',
+            question_id: '2' },
+            { created: 1382844954200,
+              uuid: '4ad6e3cc-3569-4445-b270-c46875d18f7e',
+              modified: 1382915450010,
+              answer: '5',
+              question_id: '1' } ] } ] }
+  
+  it('should get answers for a survey', function() {
+
+    var r = eventapi.getSurveyAnswersforQuestionId(stf2fAnswers, 1);
+    assert.equal(r.length, 8, 'didn\'t get all the answers back (got ' + r.length + ')');
+  })
+  
+  it('should convert a summary result to a labe/values result', function() {
+    var d = { labels: [ '5', '4' ], datasets: [ { data: [ 6, 2 ] } ] };
+    
+    var r = eventapi.convertSummaryToLabelValues(d);
+    
+    assert.ok(r.length == 2, 'didn\'t get em all back');
+    assert.equal(r[1].label, '4', 'didn\'t get 4 as the second item');
+    
+  })
+  
+  it('should get response answers for a survey', function() {
+    
+    var r = eventapi.buildResponseForQuestionId(stf2fSurvey, stf2fAnswers, 1);
+    
+    console.log('** survey for 1: ' + util.inspect(r, { depth: null}));
+    
+    assert.equal(r.type, 'scale_1to5', 'didn\'t get the right type back');
+    assert.equal(r.datapoints[0].label, '5', 'didn\'t get 5 as the first one in data points');
+    assert.equal(r.datapoints[1].value, 2, 'didn\'t get back 2 as the second number of responses');
+    
+  })
 });
     
     
-it('should grab the question type for a survey question of a given question id', function() {
-  var survey = { uuid: '6920504a-1e4c-11e3-8208-696c32c76c87',
-    eventId: 'd295e83a-0f8a-11e3-a682-2346c22487a2',
-    isAnonymous: true,
-    whenToShowType: 'showAfterXMins',
-    whentoShowMins: '10',
-    inactiveInd: false,
-    questions:
-      [ { choices:
-        [ 'The ice sculpture',
-          'The open bar',
-          'The live band',
-          'None of the above' ],
-        text: 'What was the best feature?',
-        type: 'multichoice',
-        questionId: 1 },
-        { text: 'How would you rank this event?',
-          type: 'scale_1to5',
-          questionId: 2 },
-        { text: 'What would you change for next time?',
-          type: 'freeform',
-          questionId: 3 } ] }
-  
-  var r = eventapi.getQuestionTypeForId(survey, 1);
-  assert.equal(r, 'multichoice', 'didn\'t get multichoice');
-  
-  r = eventapi.getQuestionTypeForId(survey, 3);
-  assert.equal(r, 'freeform', 'didn\'t get freeform');
-  
-  r = eventapi.getQuestionTypeForId(survey, 334);
-  assert.ok(!r, 'got something other than undefined back for bogus id');
-  
-  
-})
-
-it('should get answers for a survey and some toher stuff i can\'t think about', function() {
-  var answers = { responses:
-    [ { user: '3d86497b-66c4-11e2-8b37-02e81ac5a17b',
-      created: 1381740849448,
-      answers:
-        [ { created: 1381761599889,
-          uuid: '9c12bfba-d728-4e5c-a51f-b51f4ca7d354',
-          modified: 1381834266482,
-          answer: '4',
-          question_id: '1' },
-          { created: 1381761608667,
-            uuid: '123c084d-273d-46dd-bdf1-d5d1bac98423',
-            modified: 1381834266482,
-            answer: 'TEST TEST AGAIN AND AGAIN',
-            question_id: '2' },
-          { created: 1381761613653,
-            uuid: '574736c0-3045-4d87-b784-e1c259c8e7a8',
-            modified: 1381834266482,
-            answer: 'An abomination of all that is good in this world.',
-            question_id: '3' },
-          { created: 1381763200966,
-            uuid: 'de9807f0-ffb0-4afc-b701-7ba97c70e6cc',
-            modified: 1381834266482,
-            answer: 'BLAH BLAH BLAH SIS BOOM BAH FA LA LA',
-            question_id: '4' } ] } 
-    ] }
-  
-  
-})

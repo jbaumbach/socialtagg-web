@@ -403,9 +403,15 @@ exports.getSurveyQuestionNumberFromString = function(surveyQuestionValue) {
   return result;
 }
 
+//
+// The chart library on the page bombs out with certain characters, such as XSS type attack vectors.
+// This filters out everything but stuff you'd expect to see in a title/company name
+//
+var displayFilter = /[^a-zA-Z0-9_\.\-,/?<>[]{}!@#$%^&*()+= ]/g;
+
 /**
- * For the passed array of users, tabulate their companies and return the results in
- * ready-to-use format
+ * For the passed array of users, tabulate descriptive items and return the results in
+ * ready-to-use format.
  * 
  * @users {Array} - the list of users
  * 
@@ -423,10 +429,10 @@ var companySummaryFromUsers = exports.companySummaryFromUsers = function(users) 
 
   var options = {
     getKey: function(user) {
-      return user.company.toLowerCase().replace(/[^a-z]/g, '');
+      return user.company.toLowerCase().replace(/[^a-z]/g, '').left(15);
     },
     getDescription: function(user) {
-      return user.company;
+      return user.company.replace(displayFilter, '').truncate(15, true, '...');
     } 
   }
   
@@ -437,11 +443,11 @@ var jobTitleSummaryFromUsers = exports.jobTitleSummaryFromUsers = function(users
 
   var options = {
     getKey: function(user) {
-      var result = user.title.toLowerCase().replace(/[^a-z]/g, '');
+      var result = user.title.toLowerCase().replace(/[^a-z]/g, '').left(15);
       return result;
     },
     getDescription: function(user) {
-      return user.title;
+      return user.title.replace(displayFilter, '').truncate(20, true, '...');
     }
   }
 
@@ -455,7 +461,7 @@ var jobTitleSummaryFromUsers = exports.jobTitleSummaryFromUsers = function(users
  * @items {Array} - the list of users
  * @options {Object} - two callback functions that help you build the results:
  *  getKey(item) - allows you to process the item's data and return a key
- *  getDescription(item) - allows you to return a description for the item..
+ *  getDescription(item) - (optional) allows you to return a description for the item..
  *
  * Example result:
  *
@@ -467,7 +473,6 @@ var jobTitleSummaryFromUsers = exports.jobTitleSummaryFromUsers = function(users
      }]
    }
  */
-
 var dataSummaryFromItems = exports.dataSummaryFromItems = function(items, options) {
 
   var result = {
@@ -486,11 +491,11 @@ var dataSummaryFromItems = exports.dataSummaryFromItems = function(items, option
       // Companies are the same if their name matches after removing non-letter characters
       // The company name (.desc) is whichever company name is encountered first.
       //
-      var key = options.getKey(item); // user.company.toLowerCase().replace(/[^a-z]/g, '');
+      var key = options.getKey(item);
 
       if (!tabulation[key]) {
         var value = {
-          desc: options.getDescription(item),  //user.company,
+          desc: options.getDescription(item),
           count: 0
         }
         tabulation[key] = value;
@@ -524,20 +529,114 @@ var dataSummaryFromItems = exports.dataSummaryFromItems = function(items, option
   return result;
 }
 
-
-exports.getQuestionTypeForId = function(survey, questionId) {
-  return 'hello';
+/*
+  Grab the question type for the passed survey and question id
+ */
+var getQuestionTypeForId = exports.getQuestionTypeForId = function(survey, questionId) {
+  var result;
+  
+  if (survey && survey.questions && survey.questions.length > 0) {
+    
+    var theQuestion = _.find(survey.questions, function(question) {
+      return (question.questionId == questionId);
+    })
+    
+    if (theQuestion) {
+      result = theQuestion.type;
+    }
+  } else {
+    console.log('(warning) gqtfi: can\'t get survey questions for some reason');
+  }
+  
+  return result;
 }
 
 /*
+  Get an array of answers corresponding to the question number
+
+  Lovely exponential order (O2) algorithm here.
+  
+  May want to look into process.nextTick().  It seems to be kind of like a ".DoEvents()"
+  
+ */
+var getSurveyAnswersforQuestionId = exports.getSurveyAnswersforQuestionId = function(answers, questionId) {
+  var result = [];
+
+  _.each(answers.responses, function(response) {
+    result.push(_.find(response.answers, function(answer) {
+      return answer.question_id == questionId;
+    }));
+  });
+  
+  return result;
+}
+
+var convertSummaryToLabelValues = exports.convertSummaryToLabelValues = function(summary) {
+  var result = [];
+  
+  if (summary && 
+    summary.labels &&
+    summary.labels.length > 0 &&
+    summary.datasets && 
+    summary.datasets.length > 0 &&
+    summary.datasets[0].data &&
+    summary.datasets[0].data.length > 0) {
+    
+    _.each(summary.datasets[0].data, function(dataItem, index) {
+      result.push({ label: summary.labels[index], value: dataItem });
+    })
+  } else {
+    console.log('(warning) cstlv: the summary to convert is missing something');
+  }
+  
+  return result;
+}
+
+var buildResponseForQuestionId = exports.buildResponseForQuestionId = function(survey, answers, questionId) {
+  
+  var type = getQuestionTypeForId(survey, questionId);
+  var answers = getSurveyAnswersforQuestionId(answers, questionId);
+  
+  var result = {
+    type: type,
+    datapoints: []
+  }
+  
+  switch (type) {
+    case 'multichoice':
+    case 'scale_1to5':
+    case 'freeform':
+
+      var options = {
+        getKey: function(item) {
+          return item.answer;
+        },
+        getDescription: function(item) {
+          return item.answer;
+        }
+      }
+      
+      var temp = dataSummaryFromItems(answers, options);
+      result.datapoints = convertSummaryToLabelValues(temp);
+
+      break;
+      
+    default:
+      throw 'unsupported question type: ' + type + 
+        ' for question id: ' + questionId + 
+        ' for survey id: '+  survey.uuid;
+      
+  }
+  return result;
+} 
+
+/*
   Get event analytics data from the database and return it to the client
+  todo: break this beast down into small testable units
  */
 exports.eventAnalyticsData = function(req, res) {
 
   var type = req.query.type;
-  var sampleDataMode = req.query.test;
-  
-  var data;
   
   //
   // Function that can return our required data
@@ -545,30 +644,19 @@ exports.eventAnalyticsData = function(req, res) {
   var dataRetreiver;
   
   var eventId = req.params.eventId;
-  var surveyId;
-  var surveyQuestionId;
-  
-  // todo: start implementing data calls
-  
-  // Note: randomWaitTime is just to simulate waiting for results in the front end.  Take this out
-  // when data is real.
-  var randomWaitTime = 0; //Math.floor((Math.random() * 1000) + 250);
   
   var done = function(err, data) {
-    
-    setTimeout(function() {
-      if (err) {
-  
-        var statusCode = err.statusCode || 500;
-        var statusMsg = err.statusMsg || 'Unknown error';
-        
-        res.send(statusCode, { msg: statusMsg });
-        
-      } else {
-  
-        res.send(200, data);
-      }
-    }, randomWaitTime);
+    if (err) {
+
+      var statusCode = err.statusCode || 500;
+      var statusMsg = err.statusMsg || 'Unknown error';
+      
+      res.send(statusCode, { msg: statusMsg });
+      
+    } else {
+
+      res.send(200, data);
+    }
   };
 
   
@@ -579,7 +667,7 @@ exports.eventAnalyticsData = function(req, res) {
         if (err) {
           done(err);
         } else {
-          data = {
+          var data = {
             datapoints: results.checkins
           }
           done(null, data);
@@ -594,7 +682,7 @@ exports.eventAnalyticsData = function(req, res) {
         if (err) {
           done(err);
         } else {
-          data = {
+          var data = {
             datapoints: results.contaggs
           }
           done(null, data);
@@ -605,7 +693,7 @@ exports.eventAnalyticsData = function(req, res) {
 
     case 'checkinTimeSummary':
       // Note: not called by front end.  todo: when there's time.
-      data = {
+      var data = {
         labels: ['5pm', '6pm', '7pm', '8pm', '9pm'],
         datasets: [
           {
@@ -637,9 +725,7 @@ exports.eventAnalyticsData = function(req, res) {
           var result = companySummaryFromUsers(users);
           cb(null, result);
         }
-      ], function(err, result) {
-        done(err, result);
-      })
+      ], done)
       
       break;
 
@@ -668,9 +754,7 @@ exports.eventAnalyticsData = function(req, res) {
           var result = jobTitleSummaryFromUsers(users);
           cb(null, result);
         }
-      ], function(err, result) {
-        done(err, result);
-      })
+      ], done)
 
       break;
 
@@ -686,8 +770,7 @@ exports.eventAnalyticsData = function(req, res) {
             eventManager.getSurveyByEventId(eventId, cb);
           },
           function(survey, cb) {
-            //var surveyId = survey.uuid;
-            var surveyId = 'de27021a-011b-11e3-842f-e7e00a856e3d'; // Louis or Jeff's survey
+            var surveyId = survey.uuid;
             eventManager.getEventSurveyAnswers(surveyId, function(err, answers) {
               cb(err, survey, answers);
             });
@@ -695,93 +778,9 @@ exports.eventAnalyticsData = function(req, res) {
         ], 
         function(err, survey, answers) {
 
-          console.log('survey: ' + util.inspect(survey, { depth: null }));
-          console.log('answers: ' + util.inspect(answers, { depth: null }));
-          
-          var data;
-
-          switch (surveyQuestionNumber) {
-            case '1':
-              // multichoice
-              data = {
-                type: 'multichoice',
-                datapoints: [
-                  {
-                    label: 'The ice sculpture',
-                    value: 30
-                  },
-                  {
-                    label: 'The open bar',
-                    value : 50
-                  },
-                  {
-                    label: 'The live band',
-                    value : 100
-                  },
-                  {
-                    label: 'None of the above',
-                    value : 17
-                  }
-                ]
-              }
-              break;
-
-            case '2':
-              // scale_1to5
-              data = {
-                type: 'scale_1to5',
-                datapoints: [
-                  {
-                    label: '1',
-                    value: 100
-                  },
-                  {
-                    label: '2',
-                    value : 50
-                  },
-                  {
-                    label: '3',
-                    value : 30
-                  },
-                  {
-                    label: '4',
-                    value : 15
-                  },
-                  {
-                    label: '5',
-                    value : 17
-                  }
-                ]
-              }
-              break;
-
-            case '3':
-              // freeform
-              data = {
-                type: 'freeform',
-                datapoints: [
-                  'ice sculpture',
-                  'ice sculpture',
-                  'bowling',
-                  'bowling',
-                  'free booze',
-                  'ice sculpture',
-                  'ice sculpture',
-                  'Metallica is the best band of all time, rivaled possibly by Blink 182.  It\'s a personal ' +
-                    'opinion, but it\'s the correct opinion.'
-                ]
-              }
-              break;
-
-            default:
-              err = { statusCode: 404, statusMsg: 'Bad question id: ' + surveyQuestionNumber};
-          }
-
+          var data = buildResponseForQuestionId(survey, answers, surveyQuestionNumber);
           done(err, data);
-
-
         })
-        
       } else {
 
         done({ statusCode: 404, statusMsg: 'Unknown type: ' + type} );
@@ -817,11 +816,6 @@ exports.usersList = function(req, res) {
           
           var eventId = req.params.id;
 
-          // todo: remove this when testing is done
-          if (req.query.test) {
-            eventId = '2ad0769a-2abc-11e3-8462-4b5f96a08764';
-          }
-          
           userManager.getEventUsers(eventId, type, function(err, result) {
             if (err) {
               cb({ status: 500, msg: err });
@@ -870,11 +864,6 @@ exports.usersList = function(req, res) {
           firstName: user.user.firstName
         };
       });
-
-      // todo: delete this when testing is done!
-      if (req.query.test) {
-        users = users.concat(users, users, users, users, users, users, users);
-      }
 
       res.send(200, users);
     }

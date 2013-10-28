@@ -7,7 +7,7 @@ mixin eventanalyticschart(width, height, headline, id, legendSupplement)
           | (#{ legendSupplement })
     
     //- Display area for the result data
-    .eight.columns
+    .ten.columns
       .chartcontainer(style='width:' + width + 'px;height:' + height + 'px')
         
         .placeholder(ng-show='isLoading["' + id + '"]') {{ isLoadingMsg["#{ id }"] }}

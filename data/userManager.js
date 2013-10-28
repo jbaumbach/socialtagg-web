@@ -178,6 +178,9 @@ exports.getUserContaggs = function(id, resultCallback) {
 };
 
 exports.populateUserContaggs = function(userContaggIdList, resultCallback) {
+  //
+  // todo: add caching here, or the server will get killed by event analytics
+  //
   db.populateUserContaggs(userContaggIdList, resultCallback);
 };
 

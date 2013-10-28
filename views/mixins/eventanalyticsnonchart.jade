@@ -18,4 +18,4 @@ mixin eventanalyticsnonchart(headline, type, legendSupplement)
               tr
                 th Responses
               tr(ng-repeat='response in dataResults["' + type + '"]')
-                td {{ response }}
+                td {{ response.label + '  (' + response.value + ')' }}
