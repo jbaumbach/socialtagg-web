@@ -68,16 +68,38 @@ block content
             h4 Who's Registered
           div(ng-show="loadingRegisteredUsers")
             p Finding users...
+          
           div(ng-show="!loadingRegisteredUsers", ng-cloak)
+            
             div#check-ins(ng-show="registeredUsers.length > 0")
-              //- Display the event's contaggs if we have any
-              .user-image(ng-repeat="registeredUser in registeredUsers")
-                img(src="{{ registeredUser.pictureUrl }}")
-                p {{ registeredUser.firstName }}
-              .clear
-            div(ng-show="!registeredUsers || registeredUsers.length == 0")
+              
+              if locals.isEventOwner
+                //- Admin view: display admin actions
+                .ten.columns.actionable(ng-repeat="registeredUser in registeredUsers")
+                  .two.columns
+                    img.admin-user-image(src="{{ registeredUser.pictureUrl }}")
+                  .four.columns
+                    ul
+                      li {{ registeredUser.lastName + ', ' + registeredUser.firstName }}
+                      li 
+                        a(href='{{ registeredUser.email }}')
+                          {{ registeredUser.email }}
+                  .two.column
+                    a.button.color(href='#', ng-click='checkinUser(registeredUser)', no-click) Check In
+                    i.icon-spinner.icon-spin.icon-2x(style='display:none;', ng-show="registeredUser.isCheckingIn")
+  
+
+              else
+                //- Public view: display the event's contaggs if we have any
+                .user-image(ng-repeat="registeredUser in registeredUsers")
+                  img(src="{{ registeredUser.pictureUrl }}")
+                  p {{ registeredUser.lastName }}
+                .clear
+            
+            div(ng-show="!registeredUsers || registeredUsers.length == 0", ng-cloak)
               .twelve.columns
-                p No one has registered yet!  Please check back later.
+                p(ng-show="checkedInUsers.length == 0") No one has registered yet!  Please check back later.
+                p(ng-show="checkedInUsers.length > 0") Everyone has checked in!
 
         //- Not going to work as it stands - see comment in the mixin
           if event.hashtag

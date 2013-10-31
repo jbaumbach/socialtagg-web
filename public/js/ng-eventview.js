@@ -4,17 +4,7 @@
  * Time: 11:42 PM
  */
 
-angular.module("eventUserService", ["ngResource"]).
-  factory("EventUser", function ($resource) {
-    return $resource(
-      "/apiv1/events/:eventId/users",
-      { eventId: "@eventId" }
-    );
-  });
-
-app.requires.push('eventUserService');
-
-var eventViewController = app.controller('eventViewController', function($scope, EventUser) {
+var eventViewController = app.controller('eventViewController', function($scope, EventUser, UserActions, $dialog) {
 
   $scope.loadingEventUsers = true;
   $scope.loadingRegisteredUsers = true;
@@ -24,35 +14,52 @@ var eventViewController = app.controller('eventViewController', function($scope,
   
   $scope.checkedInUsers = EventUser.query({ 
     eventId: eventId, 
-    type: 'checkedin', 
-    test: window.location.search.slice(1)   // todo: get rid of this 'url parameter grabber' before going live
+    type: 'checkedin' 
   }, function() {
     // success
-    console.log('success');
     $scope.loadingEventUsers = false;
 
   }, function(err) {
     // fail!
-    console.log('fail!');
     $scope.loadingEventUsers = false;
     
   })
 
   $scope.registeredUsers = EventUser.query({
     eventId: eventId,
-    type: 'registered',
-    test: window.location.search.slice(1)   // todo: get rid of this 'url parameter grabber' before going live
+    type: 'registered'
   }, function() {
     // success
-    console.log('success');
     $scope.loadingRegisteredUsers = false;
 
   }, function(err) {
     // fail!
-    console.log('fail!');
     $scope.loadingRegisteredUsers = false;
 
   })
 
+  $scope.checkinUser = function(registeredUser) {
+    var options = {
+      action: 'checkinUser',
+      userId: registeredUser.id,
+      eventId: eventId
+    }
+
+    registeredUser.isCheckingIn = true;
+    
+    UserActions.save(options, function() {
+      // success
+      $scope.registeredUsers = _.without($scope.registeredUsers, registeredUser);
+      $scope.checkedInUsers.push(registeredUser);
+      
+    }, function(err) {
+      // failure!
+      registeredUser.isCheckingIn = false;
+
+      var btns = [{result:'ok', label: 'OK', cssClass: 'btn-primary'}];
+      $dialog.messageBox('Oops, an error', err.data.msg, btns)
+        .open();
+    });
+  }
 
 });

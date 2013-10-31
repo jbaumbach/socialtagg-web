@@ -1100,8 +1100,22 @@ exports.getEventUsers = function(eventId, type, callback) {
         }
       }, 
       aggregator: function(contagg) {
+        //
+        // Let's NOT include registered users who are already checkedin in the 
+        // registered users response.
+        //
         var userId = contagg.get('user_uuid');
-        result.push({ userId: userId });
+        var checkedInTime = contagg.get('checkin_date');
+        
+        var addIt = type != 'registered' ||
+          (type === 'registered' && !checkedInTime); 
+          
+        if (addIt) {
+          result.push({ userId: userId });
+        } else {
+          console.log('excluding checked in user from regs: ' + userId);
+          
+        }
       }
     }
 
@@ -1111,6 +1125,57 @@ exports.getEventUsers = function(eventId, type, callback) {
       callback(err, result);  
     });
   }
+}
+
+/**
+ * Checks in a user to an event
+ * @param userId - the user id
+ * @param eventId - the event id
+ * @param resultCallback - callback with parameters:
+ *  err - filled in if something bad happened
+ */
+exports.checkinUserToEvent = function(userId, eventId, resultCallback) {
+
+  async.waterfall([
+    function(cb) {
+      var options = {
+        type: 'event_users',
+        qs: {
+          ql: util.format('select * where user_uuid = %s and event_uuid = %s', userId, eventId)
+        }
+      }
+
+      client().createCollection(options, cb);  // function(err, resultEvents) {
+    },
+    function(userRow, cb) {
+
+      if (userRow.hasNextEntity()) {
+
+        var userEntry = userRow.getNextEntity();
+        
+        cb(null, userEntry);
+      } else {
+  
+        cb('Unable to find registered user for that event');
+      }
+    },
+    function(userEntry, cb) {
+      
+      // Louis' row: select * where user_uuid = 5b07c30a-082e-11e3-b923-dbfd8bf6ac23 and event_uuid = d295e83a-0f8a-11e3-a682-2346c22487a2
+      // Jeff1 row: select * where user_uuid = 3d86497b-66c4-11e2-8b37-02e81ac5a17b and event_uuid = d295e83a-0f8a-11e3-a682-2346c22487a2
+      // Jeff2' row: select * where user_uuid = f32063c6-7409-11e2-96f4-02e81ac5a17b and event_uuid = d295e83a-0f8a-11e3-a682-2346c22487a2
+
+      var checkinData = { checkin_date: new Date().valueOf() };
+
+      console.log('setting: ' + util.inspect(checkinData));
+
+      userEntry.set(checkinData);
+      userEntry.save(cb);
+      
+    }
+  ], function(err) {
+    resultCallback(err);
+  })
 }
 
 

@@ -41,7 +41,10 @@ exports.detail = function(req, res) {
       
       pageVars.event = event;
       pageVars.title = pageVars.event.name + ' - Details';
-      pageVars.isEventOwner = (userId && event.owner === userId);
+
+      // todo: SocialTagg F2F 10/2013.  Can remove after dev complete on events page.
+      var isSpecialEvent = eventId === 'be1b65e0-3e71-11e3-a797-1399e22b12e3';
+      pageVars.isEventOwner = isSpecialEvent || (userId && event.owner === userId);
       
       done();
       

@@ -158,7 +158,8 @@ var eventController = app.controller('eventController', function($scope, Event, 
     var btns = [{result:'cancel', label: 'Cancel'}, {result:'ok', label: 'OK', cssClass: 'btn-primary'}];
 
     //
-    // Note: $dialog goes away in angular-ui 0.6.0 and higher.
+    // Note: $dialog goes away in angular-ui 0.6.0 and higher.  Don't upgrade until there's plenty of time
+    // to figure out it's new version, which is a lot more complicated.
     //
     $dialog.messageBox(title, msg, btns)
       .open()
@@ -316,6 +317,9 @@ var eventController = app.controller('eventController', function($scope, Event, 
     
     if (!question.questionId) {
       
+      // todo: create a variable that will always count up instead of grabbing the max + 1.  
+      // if the user changes the survey while it's live, we'll get a mishmash of data
+      
       var newQuestionId = 0;
       // Get the next question id.  Holes in the order are ok.
       $scope.survey.questions.forEach(function(question) {
@@ -323,6 +327,9 @@ var eventController = app.controller('eventController', function($scope, Event, 
       });
       newQuestionId++;
       question.questionId = newQuestionId;
+      
+      
+      
       $scope.survey.questions.push(question);
     }
     

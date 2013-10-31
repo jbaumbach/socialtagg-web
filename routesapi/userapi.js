@@ -12,6 +12,7 @@ var userManager = require('./../data/userManager')
   , sprintf = require("sprintf-js").sprintf
   , fs = require('fs')
   , _ = require('underscore')
+  , async = require('async')
   , thisModule = this
   ;
 
@@ -246,6 +247,49 @@ exports.handleForgotPasswordEmailRequest = function(options, res) {
       
     });
   }
+}
+
+/**
+ * Check in a user to an event they are already registered for.  If not registered,
+ * or bogus data, 500 error happens!
+ * @param options - object with these properties:
+ *  eventId - the event id
+ *  userId - the user id
+ *  
+ * @param res - the response object.  This function will go ahead and close out the request.
+ */
+exports.handleCheckinUserToEvent = function(options, res) {
+
+  var eventId = options.eventId;
+  var userId = options.userId;
+
+  async.waterfall([
+    function(cb) {
+
+      if (!userId) {
+        cb({ status: 400, msg: 'userId not supplied' });
+      } else if (!eventId) {
+        cb({ status: 400, msg: 'eventId not supplied' });
+      } else {
+        cb();
+      }
+    }, 
+    function(cb) {
+      userManager.checkinUserToEvent(userId, eventId, function(err) {
+        if (err) {
+          cb({status: 500, msg: err });
+        } else {
+          cb();
+        }
+      });
+    }
+  ], function(err, result) {
+    if (err) {
+      res.send(err.status, { msg: err.msg });
+    } else {
+      res.send(200);
+    }
+  });
 }
 
 //
@@ -484,6 +528,8 @@ exports.usersPost = function(req, res) {
       thisModule.handleResetPasswordRequest(options, res);
     } else if (actionMode === 'updatedprofileemail') {
       thisModule.handleUpdateProfileEmailRequest(options, res);
+    } else if (actionMode === 'checkinUser') {
+      thisModule.handleCheckinUserToEvent(options, res);
     } else {
       thisModule.respond(res, 403, util.format('\'action\' value of \'%s\' is not allowed', actionMode)); 
     } 
@@ -551,8 +597,6 @@ exports.contaggs = function(req, res) {
       thisModule.respond(res, 404, util.format('user id \'%s\' not found', requestedUserId));
     }
   });
-
-
 }
 
 /*

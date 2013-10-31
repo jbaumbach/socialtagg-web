@@ -592,6 +592,9 @@ var convertSummaryToLabelValues = exports.convertSummaryToLabelValues = function
   return result;
 }
 
+/*
+  Build the expected response to the front end for the particular question from the survey.
+ */
 var buildResponseForQuestionId = exports.buildResponseForQuestionId = function(survey, answers, questionId) {
   
   var type = getQuestionTypeForId(survey, questionId);
@@ -798,6 +801,9 @@ exports.usersList = function(req, res) {
   //
   // Let's do some tasks
   //
+  var eventId = req.params.id;
+  var isEventOwner = false;
+  
   async.waterfall([
     function(cb) {
       if (!req.query.type) {
@@ -807,14 +813,33 @@ exports.usersList = function(req, res) {
         
         cb(null, req.query.type)
       }
-    }, 
+    },
+    function(type, cb) {
+      //
+      // Let's look up the event and find out who the owner is
+      //
+      eventManager.getEvent(eventId, function(err, event) {
+
+        if (err) {
+          cb({ status: 500, msg: err});
+          
+        } else {
+          
+          // todo: SocialTagg F2F 10/2013.  Can remove after dev complete on events page.
+          var isSpecialEvent = eventId === 'be1b65e0-3e71-11e3-a797-1399e22b12e3';
+          isEventOwner = isSpecialEvent || event.owner === application.getCurrentSessionUserId(req);
+          
+          // http://development.socialtagg.com:3000/events/be1b65e0-3e71-11e3-a797-1399e22b12e3
+          
+          cb(null, type);
+        }
+      });
+    },
     function(type, cb) {
 
       switch (type) {
         case 'checkedin':
         case 'registered':
-          
-          var eventId = req.params.id;
 
           userManager.getEventUsers(eventId, type, function(err, result) {
             if (err) {
@@ -856,15 +881,24 @@ exports.usersList = function(req, res) {
       
     } else {
       //
-      // need to filter our user objects these for privacy
+      // need to filter our user objects for privacy if it's not an event owner.  Otherwise,
+      // pass the usual object back.
       //
-      var users = _.map(result, function(user) { 
-        return { 
-          pictureUrl: user.user.pictureUrl,
-          firstName: user.user.firstName
-        };
+      var users = _.map(result, function(user) {
+        var result
+        
+        if (isEventOwner) {
+          result = user.user;
+        } else {
+          result = {
+            pictureUrl: user.user.pictureUrl,
+            firstName: user.user.firstName
+          };
+        }
+        
+        return result;
       });
-
+      
       res.send(200, users);
     }
   });

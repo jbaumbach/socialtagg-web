@@ -5,17 +5,6 @@
  */
 
 
-angular.module("userService", ["ngResource"]).
-  factory("User", function($resource) {
-    return $resource(
-      "/apiv1/users/:id",
-      { id: "@id" },
-      { update: { method: "PUT" } }
-    );
-  });
-
-// Add services dependencies to main app
-app.requires.push('userService');
 app.requires.push('ngUpload');
 
 var userController = app.controller('userController', function($scope, $dialog, User) {

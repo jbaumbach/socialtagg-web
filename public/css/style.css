@@ -4124,12 +4124,20 @@ div.field.event-datetime {
   height: 125px;
 }
 
+.my-events #check-ins img.admin-user-image {
+  max-width: 65px;
+}
+
 .my-events td.event-actions {
   padding-bottom: 0;
 }
 
 .event-datetime .field input {
   width: 80px;
+}
+
+.my-events .actionable {
+  padding-bottom:5px;
 }
 
 /****************** Login box *****************/

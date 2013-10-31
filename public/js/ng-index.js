@@ -9,6 +9,14 @@
 
 var app = angular.module('indexApp', ['ui.bootstrap']);
 
+//
+// Angular resources from ng-resources.js
+//
+app.requires.push('eventUserService');
+app.requires.push('userService');
+app.requires.push('userActionsService');
+
+
 var loginController = app.controller('loginController', function($scope, $http, $location) {
   // Login controller
 

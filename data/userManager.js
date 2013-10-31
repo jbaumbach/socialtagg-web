@@ -205,6 +205,17 @@ exports.getUserEventsOwned = function(id, resultCallback) {
 }
 
 /**
+ * Checks in a user to an event
+ * @param userId - the user id
+ * @param eventId - the event id
+ * @param resultCallback - callback with parameters:
+ *  err - filled in if something bad happened
+ */
+exports.checkinUserToEvent = function(userId, eventId, resultCallback) {
+  db.checkinUserToEvent(userId, eventId, resultCallback);
+}
+
+/**
  * For each of the passed eventUser objects, add an 'Event' property
  * @param {array} array of eventUser objects
  * @param {function} resultCallback, with parameters:
