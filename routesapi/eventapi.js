@@ -864,7 +864,7 @@ exports.usersList = function(req, res) {
                 if (err) {
                   cb(err);
                 } else {
-                  cb(null, result);
+                  cb(null, result, type);
                 } 
               });
             }
@@ -874,7 +874,7 @@ exports.usersList = function(req, res) {
           cb({ status: 400, msg: 'Unknown type: ' + type });
       }
     }
-  ], function(err, result) {
+  ], function(err, result, type) {
     
     if (err) {
       res.send(err.status, { msg: err.msg });
@@ -898,6 +898,19 @@ exports.usersList = function(req, res) {
         
         return result;
       });
+      
+      //
+      // Let's sort the results
+      //
+      var comparer;
+      
+      if (isEventOwner && type === 'registered') {
+        comparer = function(user) { return user.lastName; }  
+      } else {
+        comparer = function(user) { return user.firstName; }
+      }
+      
+      users = _.sortBy(users, comparer);
       
       res.send(200, users);
     }
