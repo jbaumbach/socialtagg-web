@@ -237,4 +237,20 @@ describe('globalFunctions', function() {
     assert.equal(r, e, 'didn\'t get the left 10');
     
   })
+  
+  it('should round some stuff to 2 places', function() {
+    
+    var cases = [
+      { n: 10,      e: 10,    p:2 },
+      { n: 1.7777,  e: 1.78,  p:2 },
+      { n: 1.005,   e: 1.01,  p:2 },
+      { n: 1.005,   e: 1,     p:0 },
+      { n: 1.77777, e: 1.8,   p:1 }
+    ]
+    
+    cases.forEach(function(testCase) {
+      var r = testCase.n.round(testCase.p);
+      assert.equal(r, testCase.e, 'didn\'t get right number');
+    });
+  })
 }) 

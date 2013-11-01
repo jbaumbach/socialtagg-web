@@ -195,10 +195,16 @@ exports.getEventUsersCounts = function(eventId, callback) {
    callback: function with sig:
      err: filled in if something bad happened
      result: object with values: { contaggs: int }
+     
+     DELETE THIS! It's obsolete since the devices will not be 
+     adding the event field to the contagg row.
  */
+
+/*
 exports.getEventTotalContaggs = function(eventId, callback) {
   db.getEventTotalContaggs(eventId, callback);
 }
+*/
 
 exports.getEventSurveyAnswers = function(surveyId, callback) {
 
@@ -236,4 +242,16 @@ exports.getEventSurveyAnswers = function(surveyId, callback) {
   ], function(err, survey) {
     callback(err, survey);
   })
+}
+
+/**
+ * Grabs the usergrid contagg objects that were created between the passed dates
+ * @param startDate - the start date
+ * @param endDate - the end date
+ * @param callback - function with sig
+ *  err - you know what this is
+ *  contaggs - array of *usergrid* contagg objects - not normal objects!
+ */
+exports.getContaggsCreatedBetweenStartAndEndDates = function(startDate, endDate, callback) {
+  db.getContaggsCreatedBetweenStartAndEndDates(startDate, endDate, callback);
 }

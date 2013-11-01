@@ -66,14 +66,14 @@ describe('userGridEventManager', function() {
   // should set up a test-only event.
   it('should get total checkins and registrations ok', function(done) {
     
-    var eventId = '2ad0769a-2abc-11e3-8462-4b5f96a08764'; // Lewis' event, should have checkins
+    var eventId = 'b9a9138a-4296-11e3-af47-51a116293e74';  // JBs unit test event - don't change 
     
     userGridEventManager.getEventUsersCounts(eventId, function(err, result) {
       
       //console.log('got: ' + util.inspect(result));
       
       assert.equal(result.registered, 4, 'didn\'t get the registrations right');
-      assert.equal(result.checkins, 3, 'didn\'t get the checkins right')
+      assert.equal(result.checkins, 1, 'didn\'t get the checkins right')
       
       done();
     })

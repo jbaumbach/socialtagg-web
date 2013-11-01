@@ -277,6 +277,7 @@ exports.qrCodeUrl = function(urlToUse, options) {
   return result;
 }
 
+
 //***********************************************
 // Class extensions
 //***********************************************
@@ -331,3 +332,7 @@ Array.prototype.find = function(field, value) {
   });
   return result;
 };
+
+Number.prototype.round = function(places) {
+  return +(Math.round(this + "e+" + places)  + "e-" + places);
+}

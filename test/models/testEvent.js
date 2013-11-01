@@ -31,7 +31,9 @@ describe('Event model', function() {
       locationLat: -34.4534,
       locationLon: 123.2323,
       website: 'http://www.holycrap.com',
-      inactiveInd: true
+      inactiveInd: true,
+      startDateTimeUtc: 1360536391023,      // Sun Feb 10 2013
+      endDateTimeUtc: 1360536391023      // Sun Feb 10 2013
     };
     
     var testEvent = new Event(initData);

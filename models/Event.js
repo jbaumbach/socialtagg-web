@@ -31,7 +31,8 @@ var Event = function(values) {
   this.locationLon = values.locationLon || '';
   this.website = values.website || '';
   this.inactiveInd = values.inactiveInd || '';
-
+  this.startDateTimeUtc = values.startDateTimeUtc || 0;
+  this.endDateTimeUtc = values.endDateTimeUtc || 0;
   
   // Additional initialization
   

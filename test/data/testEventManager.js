@@ -8,6 +8,7 @@ var eventManager = require('../../data/eventManager')
   , assert = require('assert')
   , util = require('util')
   , cache = require('../../common/cache')
+  , sinon = require("sinon")
 ;
 
 
@@ -34,18 +35,16 @@ describe('eventManager', function() {
 
     function exitWhenDone() {
       if (status.checkedKey && status.checkedResult) {
-        cache.addToCache = origadder;
+        stubCache.restore();
         done();
       }
     }
     
-    
-    cache.addToCache = function mockAdder(options, cb) {
-      
+    var stubCache = sinon.stub(cache, 'addToCache', function(options, cb) {
       assert.equal(options.key, cacheKey);
       status.checkedKey = true;
       cb();
-    }
+    });
     
     eventManager.getSurveyByEventId(eventId, function(err, survey) {
       assert.ok(!err, 'got an error');
@@ -69,7 +68,7 @@ describe('eventManager', function() {
 
   it('should grab user counts for an event', function(done) {
 
-    var eventId = '2ad0769a-2abc-11e3-8462-4b5f96a08764'; // Lewis' event, should have checkins
+    var eventId = 'b9a9138a-4296-11e3-af47-51a116293e74';  // JBs unit test event - don't change 
     var cacheKey = 'eventManager.getEventUsersCounts.' + eventId;
     var status = {
       checkedKey: false,
@@ -80,22 +79,22 @@ describe('eventManager', function() {
 
     function exitWhenDone() {
       if (status.checkedKey && status.checkedResult) {
-        cache.addToCache = origadder;
+        cacheStub.restore();
         done();
       }
     }
 
-    cache.addToCache = function mockAdder(options, cb) {
+    var cacheStub = sinon.stub(cache, 'addToCache', function(options, cb) {
       assert.equal(options.key, cacheKey);
       status.checkedKey = true;
       cb();
-    }
+    });
 
     eventManager.getEventUsersCounts(eventId, function(err, result) {
       assert.ok(!err, 'got an error');
 
       assert.equal(result.registered, 4, 'didn\'t get the registrations right');
-      assert.equal(result.checkins, 3, 'didn\'t get the checkins right')
+      assert.equal(result.checkins, 1, 'didn\'t get the checkins right')
 
 
       status.checkedResult = true;
@@ -108,13 +107,29 @@ describe('eventManager', function() {
     var eventId = '5c935f4a-2ff2-11e3-8997-05c3745a7888'; // no checkins
 
     eventManager.getEventUsersCounts(eventId, function(err, result) {
+      
+      console.log('got: ' + util.inspect(result));
+      
       assert.ok(!err, 'got an error');
 
       assert.equal(result.registered, 0, 'didn\'t get the registrations right');
-      assert.equal(result.checkins, 0, 'didn\'t get the checkins right')
+      assert.equal(result.checkins, 0, 'didn\'t get the checkins right');
 
       done();
     })
-  })
+  });
 
-})
+  it('should get contaggs between dates', function(done) {
+    
+    // SocialTagg F2F event start and end dates
+    
+    var sd = 1382817600000;
+    var ed = 1382828400000;
+    
+    eventManager.getContaggsCreatedBetweenStartAndEndDates(sd, ed, function(err, contaggs) {
+      assert.equal(contaggs.length, 13, 'shoulda got 13');
+      done();
+    })
+    
+  })
+});

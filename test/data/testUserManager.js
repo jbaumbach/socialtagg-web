@@ -320,18 +320,20 @@ describe('userManager', function() {
   });
 
   it('should get user events attended', function(done) {
-    var sampleUuid = '5b07c30a-082e-11e3-b923-dbfd8bf6ac23';  // Louis'; change this, it may not be reliable
+    var sampleUserId = 'c6911a5a-ce2b-11e2-9420-ef5ce7c13f4c';  // Melissa Jeffries - should have checked in an event
     
-    userManager.getUserEventsAttended(sampleUuid, function(err, events) {
+    userManager.getUserEventsAttended(sampleUserId, function(err, events) {
 
       assert.ok(events.length > 0, 'didn\'t get any events back');
-      console.log('got events: ' + events.length);
+      //console.log('got events: ' + util.inspect(events));
       
-      var rowUuidWithBothCheckinAndRegisteredDates = 'f2ccd41a-2b1e-11e3-965c-ebabed62c9b3';
-      var goodEvent = _.find(events, function(event) { return event.uuid === rowUuidWithBothCheckinAndRegisteredDates});
+      var eventIdWithBothCheckinAndRegisteredDates = 'b9a9138a-4296-11e3-af47-51a116293e74';    // JBs test event
+      var goodEvent = _.find(events, function(event) { return event.eventUuid === eventIdWithBothCheckinAndRegisteredDates});
       
-      assert.equal(goodEvent.checkinDate, '1380689770779', 'didn\'t get right checkin date');
-      assert.equal(goodEvent.registrationDate, '1380689770779', 'didn\'t get right registration date');
+      //console.log('good event: ' + util.inspect(goodEvent));
+      
+      assert.equal(goodEvent.checkinDate, '1383270242150', 'didn\'t get right checkin date');
+      assert.equal(goodEvent.registrationDate, '1383270214675', 'didn\'t get right registration date');
       
       done();
     });

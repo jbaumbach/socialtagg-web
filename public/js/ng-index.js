@@ -108,6 +108,9 @@ var loginController = app.controller('loginController', function($scope, $http, 
     });
   }
 
+  //
+  // Create a new user
+  //
   $scope.create = function() {
 
     fillAutocompleterFieldIfNecessary('#username', $scope.email);

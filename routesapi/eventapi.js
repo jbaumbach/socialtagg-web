@@ -631,7 +631,76 @@ var buildResponseForQuestionId = exports.buildResponseForQuestionId = function(s
       
   }
   return result;
-} 
+}
+
+/**
+ * This gnarly function does a lot of crap.  The end result is a number of contaggs that were
+ * exchanged at an event.
+ * 
+ * @eventId  - the event it
+ * @callback - function with sig:
+ *  err - filled in if something bad happened
+ *  result - the number of contaggs we found
+ */
+var getAndProcessEventContaggsCounts = exports.getAndProcessEventContaggsCounts = function(eventId, callback) {
+  
+  async.waterfall([
+    function(cb) {
+      eventManager.getEvent(eventId, cb);
+    },
+    function(event, cb) {
+      // get all contaggs created between start and end time of this event
+      eventManager.getContaggsCreatedBetweenStartAndEndDates(event.startDateTimeUtc, event.endDateTimeUtc, function(err, contaggs) {
+        cb(err, event, contaggs);
+      });
+    },
+    function(event, contaggs, cb) {
+      // Get all the checked in users from the event 
+      userManager.getEventUsers(eventId, 'checkedin', function(err, eventUsers) {
+        cb(err, event, contaggs, eventUsers);
+      })
+    },
+    function(event, contaggs, eventUsers, cb) {
+      //
+      // Nice little Order-2 algorithm coming up!  This is awesome for server performance!
+      //
+      var contaggsAtEvent = [];
+      
+      var seeIfContaggWasMadeByEventUser = function(contagg, ecb) {
+        //
+        // contagg is a user-grid object for now - prolly wanna convert to regular object
+        // at some point.  But, we can update UG records as long as we have the UG object
+        //
+        var contaggUserId = contagg.get('uuid_user');
+        
+        var isEventContagg = _.find(eventUsers, function(eventUser) { 
+          var match = eventUser.userId == contaggUserId;
+          return match;
+        });
+        
+        if (isEventContagg) {
+          contaggsAtEvent.push(contagg);
+        }
+        
+        ecb();
+      }
+      
+      async.each(contaggs, seeIfContaggWasMadeByEventUser, function(err) {
+        cb(err, contaggsAtEvent);
+      });
+    }
+  ], 
+  function(err, contaggs) {
+    
+    var result = {}
+    
+    if (!err && contaggs) {
+      result.contaggs = contaggs.length;
+    };
+    
+    callback(err, result);
+  });
+}
 
 /*
   Get event analytics data from the database and return it to the client
@@ -681,7 +750,7 @@ exports.eventAnalyticsData = function(req, res) {
 
     case 'contaggsExchanged':
 
-      eventManager.getEventTotalContaggs(eventId, function(err, results) {
+      getAndProcessEventContaggsCounts(eventId, function(err, results) {
         if (err) {
           done(err);
         } else {

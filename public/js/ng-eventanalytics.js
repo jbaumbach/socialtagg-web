@@ -168,7 +168,9 @@ var analyticsController = app.controller('analyticsController', function ($scope
   var averageContaggs = function() {
     if ($scope.dataResults['totalCheckins'] != null && $scope.dataResults['contaggsExchanged'] != null) {
       if ($scope.dataResults['totalCheckins'] > 0) {
-        return $scope.dataResults['contaggsExchanged'] / $scope.dataResults['totalCheckins'];
+        
+        return ($scope.dataResults['contaggsExchanged'] / $scope.dataResults['totalCheckins']).round(1);
+        
       } else {
         return 'n/a';
       }

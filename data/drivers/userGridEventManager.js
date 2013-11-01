@@ -66,11 +66,12 @@ exports.eventFromUserGridEvent = function(userGridEvent) {
     website: userGridEvent.get('website'),
     inactiveInd: userGridEvent.get('inactive_ind')
   }
-  
+
   //
   // Break down dates to human digestible forms if we can
   //
   var sd = userGridEvent.get('start_date');
+  constructionData.startDateTimeUtc = sd;
   
   if (sd && constructionData.timezoneOffset) {
     
@@ -83,6 +84,7 @@ exports.eventFromUserGridEvent = function(userGridEvent) {
   }
   
   var ed = userGridEvent.get('end_date');
+  constructionData.endDateTimeUtc = ed;
   
   if (ed && constructionData.timezoneOffset) {
     
@@ -629,5 +631,46 @@ exports.getEventSurveyAnswers = function(surveyId, callback) {
     console.log('done w/gecr, boom');
     callback(err, result);
   });
+
+}
+
+/**
+ * Grabs the usergrid contagg objects that were created between the passed dates
+ * @param startDate - the start date
+ * @param endDate - the end date
+ * @param callback - function with sig
+ *  err - you know what this is
+ *  contaggs - array of *usergrid* contagg objects - not normal objects!
+ */
+exports.getContaggsCreatedBetweenStartAndEndDates = function(startDate, endDate, callback) {
+  
+  var options = {
+    queryOptions: {
+      type: 'contaggs',
+      qs: {
+        // Note: you have to use '*' - specifying individual columns causes '.hasNextEntity()' on the 
+        // collection to fail
+        ql: util.format('select * where created > %s and created < %s', startDate, endDate)
+      }
+    },
+
+    aggregator: function (record, cb) {
+
+      //
+      // Note: we're just going to push the UG objects, just in case we want to do some updatin' later
+      //
+      result.push(record);
+      cb();
+    }
+  }
+
+  var result = []
+
+  console.log('gccbsaed: ' + util.inspect(options));
+  
+  userGridUtilities.counterFunction(options, function(err) {
+    callback(err, result);
+  });
+
 
 }

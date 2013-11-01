@@ -10,6 +10,7 @@ var assert = require('assert')
   , Event = require('../../models/Event')
   , _ = require('underscore')
   , User = require(process.cwd() + '/models/User')
+  , sinon = require('sinon')
   ;
 
 describe('Event API', function() {
@@ -572,6 +573,34 @@ describe('Event API', function() {
     assert.equal(r.datapoints[1].value, 2, 'didn\'t get back 2 as the second number of responses');
     
   })
+  
+  it('should get and process events users counts ok for no contaggs', function(done) {
+    var eventId = 'b9a9138a-4296-11e3-af47-51a116293e74';  // JBs unit test event - don't change 
+
+    eventapi.getAndProcessEventContaggsCounts(eventId, function(err, result) {
+      
+      assert.ok(result);
+      assert.ok(!err);
+      assert.equal(result.contaggs, 0);
+      
+      done();
+    })
+  })
+
+  it('should get and process events users counts ok for some contaggs', function(done) {
+    
+    var eventId = 'be1b65e0-3e71-11e3-a797-1399e22b12e3';   // ST F2F 
+
+    eventapi.getAndProcessEventContaggsCounts(eventId, function(err, result) {
+
+      assert.ok(result);
+      assert.ok(!err);
+      assert.equal(result.contaggs, 13);
+
+      done();
+    })
+  })
+
 });
     
     
