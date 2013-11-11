@@ -226,8 +226,6 @@ exports.updateEvent = function(event, callback) {
   var updatedEvent = userGridEventFromData(event);
   var options = userGridEventFromData(event);
 
-  console.log('data put from Angular: ' + util.inspect(updatedEvent));
-
   client().createEntity(options, function(err, existingEvent) {
     
     var result;

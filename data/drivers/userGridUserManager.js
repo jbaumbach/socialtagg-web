@@ -722,13 +722,24 @@ exports.populateUserContaggs = function(userContaggIdList, resultCallback) {
     }
   }
   
-  //
-  // Fire off API requests to usergrid in parallel.  Should be faster than calling
-  // the API one user at a time.
-  //
-  userContaggIdList.forEach(function(contagg) {
-    thisModule.getUser(contagg.uuid, processResult);
-  });
+  if (userContaggIdList && userContaggIdList.length > 0) {
+
+    //
+    // Fire off API requests to usergrid in parallel.  Should be faster than calling
+    // the API one user at a time.
+    //
+    userContaggIdList.forEach(function(contagg) {
+      thisModule.getUser(contagg.uuid, processResult);
+    });
+
+  } else {
+    //
+    // Nothing to do, return empty array.
+    //
+    resultCallback(resultUsers);
+  }
+  
+  
 }
 
 exports.addUserContagg = function(user, userIdToAdd, resultCallback) {
