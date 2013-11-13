@@ -11,7 +11,15 @@ var eventViewController = app.controller('eventViewController', function($scope,
 
   // todo: use the $routeParams angular component rather than regex
   var eventId = document.URL.match(/events\/(.*)/i)[1];
-  
+
+  //
+  // Load user data into our model
+  //
+  $scope.init = function(pageVars) {
+    $scope.user = pageVars.user;
+    console.log('got user: ' + $scope.user);
+  }
+
   $scope.checkedInUsers = EventUser.query({ 
     eventId: eventId, 
     type: 'checkedin' 
@@ -60,6 +68,10 @@ var eventViewController = app.controller('eventViewController', function($scope,
       $dialog.messageBox('Oops, an error', err.data.msg, btns)
         .open();
     });
+  }
+  
+  $scope.register = function() {
+    
   }
 
 });

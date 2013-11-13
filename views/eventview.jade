@@ -13,7 +13,7 @@ block content
         h2 Event Details
         #bolded-line  
   
-  .container.my-events(ng-controller="eventViewController")
+  .container.my-events(ng-controller="eventViewController", ng-init='init(' + publicPageVars + ')')
     if !locals.event
 
       .sixteen.columns
@@ -42,6 +42,10 @@ block content
             li
               .desc Description
               .value #{ event.description }  
+
+        if false
+          .twelve.columns.register(ng-show="true", style="display:none;")
+            a.button.color(href='#', ng-click='register()', no-click) Register
 
         .twelve.columns
           .headline

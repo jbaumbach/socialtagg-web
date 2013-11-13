@@ -4140,6 +4140,10 @@ div.field.event-datetime {
   padding-bottom:15px;
 }
 
+.my-events .register {
+  margin-top: 20px;
+}
+
 /****************** Login box *****************/
 .other-login-options {
   margin-top: 15px;

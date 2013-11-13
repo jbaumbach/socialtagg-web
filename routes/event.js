@@ -19,16 +19,11 @@ exports.detail = function(req, res) {
     title: 'Event Detail'
   };
 
-  var printerFriendly = req.query.prn;
-  var viewToRender = printerFriendly ? 'eventprinterfriendly' : 'eventview';
-  
-  if (!printerFriendly) {
-    pageVars.usesAngular = true;
-  }
+  pageVars.usesAngular = true;
 
   function done() {
     application.buildApplicationPagevars(req, pageVars, function(pageVars) {
-      res.render(viewToRender, pageVars);
+      res.render('eventview', pageVars);
     });
   };
 
@@ -152,6 +147,12 @@ exports.analytics = function(req, res) {
 };
 
 
+/**
+ * The printer friendly page 
+ * 
+ * @param req
+ * @param res
+ */
 exports.checkInPage = function(req, res) {
 
   var pageVars = {

@@ -14,7 +14,7 @@ block content
         h2 My Profile
         #bolded-line  
 
-  .controllerContainer.my-profile(ng-controller='userController', ng-init='init(' + publicPageVars + ')')
+  .controllerContainer.my-profile(ng-controller='userController', ng-init='init({ user: { id: ' + 1234 + ' } })')
     .container
       .six.columns
 
