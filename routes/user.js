@@ -300,13 +300,9 @@ exports.detail = function(req, res) {
           showQrCode: requestedUserIsSessionUser
         }
 
-        application.buildApplicationPagevars(req, pageVars);
-        res.render('userView', pageVars);
-/*
         application.buildApplicationPagevars(req, pageVars, function(pageVars) {
           res.render('userView', pageVars);
         });
-*/
         
       } else {
         res.send(404, 'Sorry, that user is not found.');

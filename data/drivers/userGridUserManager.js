@@ -1138,15 +1138,7 @@ exports.getEventUsers = function(eventId, type, callback) {
   }
 }
 
-/**
- * Checks in a user to an event
- * @param userId - the user id
- * @param eventId - the event id
- * @param resultCallback - callback with parameters:
- *  err - filled in if something bad happened
- */
-exports.checkinUserToEvent = function(userId, eventId, resultCallback) {
-
+function setDataForEventUser(userId, eventId, data, resultCallback) {
   async.waterfall([
     function(cb) {
       var options = {
@@ -1163,26 +1155,84 @@ exports.checkinUserToEvent = function(userId, eventId, resultCallback) {
       if (userRow.hasNextEntity()) {
 
         var userEntry = userRow.getNextEntity();
-        
+
         cb(null, userEntry);
       } else {
-  
+
         cb('Unable to find registered user for that event');
       }
     },
     function(userEntry, cb) {
-      
+
       // Louis' row: select * where user_uuid = 5b07c30a-082e-11e3-b923-dbfd8bf6ac23 and event_uuid = d295e83a-0f8a-11e3-a682-2346c22487a2
       // Jeff1 row: select * where user_uuid = 3d86497b-66c4-11e2-8b37-02e81ac5a17b and event_uuid = d295e83a-0f8a-11e3-a682-2346c22487a2
       // Jeff2' row: select * where user_uuid = f32063c6-7409-11e2-96f4-02e81ac5a17b and event_uuid = d295e83a-0f8a-11e3-a682-2346c22487a2
 
-      var checkinData = { checkin_date: new Date().valueOf() };
 
-      console.log('setting: ' + util.inspect(checkinData));
+      console.log('setting: ' + util.inspect(data));
 
-      userEntry.set(checkinData);
+      userEntry.set(data);
       userEntry.save(cb);
+
+    }
+  ], function(err) {
+    resultCallback(err);
+  })
+
+} 
+
+/**
+ * Checks in a user to an event
+ * @param userId - the user id
+ * @param eventId - the event id
+ * @param resultCallback - callback with parameters:
+ *  err - filled in if something bad happened
+ */
+exports.checkinUserToEvent = function(userId, eventId, resultCallback) {
+  var data = { checkin_date: new Date().valueOf() };
+  setDataForEventUser(userId, eventId, data, resultCallback);
+}
+
+/**
+ * Registers a user for an event
+ * @param userId - the user id
+ * @param eventId - the event id
+ * @param resultCallback - callback with parameters:
+ *  err - filled in if something bad happened. Can either return a string message
+ *    or a { status: int, msg: string } object.  You should handle both options.
+ */
+exports.registerUserToEvent = function(userId, eventId, resultCallback) {
+  
+  async.waterfall([
+    function checkForExistingRegisteredUser(cb) {
+      var options = {
+        type: 'event_users',
+        qs: {
+          ql: util.format('select * where event_uuid = %s and user_uuid = %s', eventId, userId)
+        }
+      }
       
+      client().createCollection(options, function(err, userEvent) {
+        var result = userEvent.hasNextEntity();
+        cb(err, result);
+      })
+    },
+    function insertIfNotAlreadyThere(userEvent, cb) {
+      if (!userEvent) {
+        var options = {
+          type: 'event_users',
+          name: 'name' + globalFunctions.md5Encode(userId + eventId + new Date()),
+          event_uuid: eventId,
+          user_uuid: userId,
+          registration_date: new Date().valueOf()
+        };
+  
+        client().createEntity(options, function(err, newRegistration) {
+          cb(err);
+        });
+      } else {
+        cb({ status: 400, msg: 'user is already registered!' });
+      }
     }
   ], function(err) {
     resultCallback(err);

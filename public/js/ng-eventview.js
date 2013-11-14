@@ -4,20 +4,54 @@
  * Time: 11:42 PM
  */
 
-var eventViewController = app.controller('eventViewController', function($scope, EventUser, UserActions, $dialog) {
+var eventViewController = app.controller('eventViewController', function($scope,
+  $dialog, $location, EventUser, UserActions) {
 
   $scope.loadingEventUsers = true;
   $scope.loadingRegisteredUsers = true;
 
   // todo: use the $routeParams angular component rather than regex
-  var eventId = document.URL.match(/events\/(.*)/i)[1];
+  var eventId = document.URL.match(/events\/([a-zA-Z0-9-]*)/i)[1];
 
+  function updateUserCanRegister() {
+
+    var result = false;
+    
+    if ($scope.pageVars.user && $scope.pageVars.user.id)
+    {
+      //
+      // We have a user, need to check if they've already registered
+      //
+      if (!$scope.loadingEventUsers && !$scope.loadingRegisteredUsers) {
+
+        var isRegistered = _.find($scope.registeredUsers, function(user) {
+          return user.id == $scope.pageVars.user.id;
+        });
+
+        var isCheckedIn = _.find($scope.checkedInUsers, function(user) {
+          return user.id == $scope.pageVars.user.id;
+        });
+
+        result = !isRegistered && !isCheckedIn;
+      }
+    } else {
+      result = true;
+    }
+
+    $scope.userCanRegister = result;
+  }
+  
   //
   // Load user data into our model
   //
   $scope.init = function(pageVars) {
-    $scope.user = pageVars.user;
-    console.log('got user: ' + $scope.user);
+    $scope.pageVars = pageVars;
+
+    updateUserCanRegister();
+    
+    if (getQueryStringParameterByName('register')) {
+      $scope.register();
+    }
   }
 
   $scope.checkedInUsers = EventUser.query({ 
@@ -26,10 +60,12 @@ var eventViewController = app.controller('eventViewController', function($scope,
   }, function() {
     // success
     $scope.loadingEventUsers = false;
+    updateUserCanRegister();
 
   }, function(err) {
     // fail!
     $scope.loadingEventUsers = false;
+    updateUserCanRegister();
     
   })
 
@@ -39,10 +75,12 @@ var eventViewController = app.controller('eventViewController', function($scope,
   }, function() {
     // success
     $scope.loadingRegisteredUsers = false;
+    updateUserCanRegister();
 
   }, function(err) {
     // fail!
     $scope.loadingRegisteredUsers = false;
+    updateUserCanRegister();
 
   })
 
@@ -70,8 +108,44 @@ var eventViewController = app.controller('eventViewController', function($scope,
     });
   }
   
+  //
+  // Happens on button click or page-load if ?register=1
+  // 
   $scope.register = function() {
     
+    if ($scope.pageVars.user && $scope.pageVars.user.id) {
+      
+      // Logged in - register the user
+
+      var options = {
+        action: 'registerUser',
+        userId: $scope.pageVars.user.id,
+        eventId: eventId
+      }
+
+      $scope.isRegistering = true;
+      
+      UserActions.save(options, function() {
+        // success
+        $scope.isRegistering = false;
+        $scope.registeredUsers.push($scope.pageVars.user);
+        updateUserCanRegister();
+
+      }, function(err) {
+        // failure
+        $scope.isRegistering = false;
+      })
+      
+    } else {
+      
+      // Not logged in - redirect to login page
+      
+      var loginDest = encodeURIComponent('/events/' + eventId + '?register=1');
+      var url = $scope.pageVars.secureProtocol + '://' + $scope.pageVars.serverPath + 
+        '/login?loginDest=' + loginDest;
+      
+      window.location = url;
+    }
   }
 
 });

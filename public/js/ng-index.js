@@ -17,7 +17,7 @@ app.requires.push('userService');
 app.requires.push('userActionsService');
 
 
-var loginController = app.controller('loginController', function($scope, $http, $location) {
+var loginController = app.controller('loginController', function($scope, $http, $location, $log) {
   // Login controller
 
   $scope.loginModes = {
@@ -62,8 +62,6 @@ var loginController = app.controller('loginController', function($scope, $http, 
     $scope.secureProtocol = pageVars.secureProtocol;
     $scope.loginDest = pageVars.loginDest;
     $scope.newAcctUrl = pageVars.newAcctUrl;
-
-    // $scope.setLoginMessage();
   }
 
   function trySubmitUserInfo(postData, postUrl, successFunction, failFunction) {
@@ -80,12 +78,6 @@ var loginController = app.controller('loginController', function($scope, $http, 
     }).success(function (data, status, headers, config) {
         $scope.loading = false;
 
-        /*
-        if (successUrl) {
-          window.location = successUrl;
-        }
-        */
-        
         console.log('have successfunction? ' + successFunction)
         if (successFunction) {
           console.log('calling success function');
@@ -147,6 +139,8 @@ var loginController = app.controller('loginController', function($scope, $http, 
     var successUrl = $scope.secureProtocol + '://' + $scope.serverPath + ($scope.loginDest || '');
     var postUrl = $scope.secureProtocol + '://' + $scope.serverPath + '/login';
 
+    console.log('successUrl: ' + successUrl);
+    
     trySubmitUserInfo(postData, postUrl, function() {
       // Success
       window.location = successUrl;

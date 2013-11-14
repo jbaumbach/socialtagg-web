@@ -216,6 +216,17 @@ exports.checkinUserToEvent = function(userId, eventId, resultCallback) {
 }
 
 /**
+ * Registers a user for an event
+ * @param userId - the user id
+ * @param eventId - the event id
+ * @param resultCallback - callback with parameters:
+ *  err - filled in if something bad happened
+ */
+exports.registerUserToEvent = function(userId, eventId, resultCallback) {
+  db.registerUserToEvent(userId, eventId, resultCallback);
+}
+
+/**
  * For each of the passed eventUser objects, add an 'Event' property
  * @param {array} array of eventUser objects
  * @param {function} resultCallback, with parameters:

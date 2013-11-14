@@ -250,15 +250,16 @@ exports.handleForgotPasswordEmailRequest = function(options, res) {
 }
 
 /**
- * Check in a user to an event they are already registered for.  If not registered,
- * or bogus data, 500 error happens!
+ * Handles a checkin or registration action for a user and an event.
+ * 
  * @param options - object with these properties:
  *  eventId - the event id
  *  userId - the user id
+ *  action - either 'checkinUser' or 'registerUser'
  *  
  * @param res - the response object.  This function will go ahead and close out the request.
  */
-exports.handleCheckinUserToEvent = function(options, res) {
+exports.handleUserEventAction = function(options, res) {
 
   var eventId = options.eventId;
   var userId = options.userId;
@@ -275,13 +276,25 @@ exports.handleCheckinUserToEvent = function(options, res) {
       }
     }, 
     function(cb) {
-      userManager.checkinUserToEvent(userId, eventId, function(err) {
-        if (err) {
-          cb({status: 500, msg: err });
-        } else {
-          cb();
-        }
-      });
+      //
+      // Here are all the possible operations we can do here and their userManager methods
+      //
+      var operation = {
+        checkinUser: userManager.checkinUserToEvent,
+        registerUser: userManager.registerUserToEvent
+      };
+      
+      if (operation[options.action]) {
+        operation[options.action](userId, eventId, function(err) {
+          if (err) {
+            cb({status: err.status || 500, msg: err.msg || err });
+          } else {
+            cb();
+          }
+        });
+      } else {
+        cb({status: 400, msg: 'unsupported operation: ' + options.action });
+      }
     }
   ], function(err, result) {
     if (err) {
@@ -528,8 +541,9 @@ exports.usersPost = function(req, res) {
       thisModule.handleResetPasswordRequest(options, res);
     } else if (actionMode === 'updatedprofileemail') {
       thisModule.handleUpdateProfileEmailRequest(options, res);
-    } else if (actionMode === 'checkinUser') {
-      thisModule.handleCheckinUserToEvent(options, res);
+    } else if (actionMode === 'checkinUser' || actionMode === 'registerUser') {
+      options.action = actionMode;
+      thisModule.handleUserEventAction(options, res);
     } else {
       thisModule.respond(res, 403, util.format('\'action\' value of \'%s\' is not allowed', actionMode)); 
     } 

@@ -5,6 +5,17 @@ var myApp = require(process.cwd() + '/app.js')
   , async = require('async')
   ;
 
+/*
+  Run with the command:
+
+  $ node scripts/reset-johns-sample-event.js
+
+  THere may be some errors in the console from the UG component - ignore those as long as
+  you see a bunch of "success" messages interwoven.
+  
+  * Be sure to stop your dev website first or this will bomb out.
+ 
+ */
 
 var app = myApp.app();
 

@@ -13,6 +13,7 @@ block content
         h2 Event Details
         #bolded-line  
   
+  //-.container.my-events(ng-controller="eventViewController", ng-init='init({ user: { id: "' + public.user.id + '"} })')
   .container.my-events(ng-controller="eventViewController", ng-init='init(' + publicPageVars + ')')
     if !locals.event
 
@@ -43,9 +44,10 @@ block content
               .desc Description
               .value #{ event.description }  
 
-        if false
-          .twelve.columns.register(ng-show="true", style="display:none;")
+        if true
+          .twelve.columns.register(ng-show="userCanRegister", style="display:none;")
             a.button.color(href='#', ng-click='register()', no-click) Register
+            i.icon-spinner.icon-spin.icon-2x(style="display:none;", ng-show="isRegistering")
 
         .twelve.columns
           .headline
@@ -97,7 +99,7 @@ block content
                 //- Public view: display the event's contaggs if we have any
                 .user-image(ng-repeat="registeredUser in registeredUsers")
                   img(src="{{ registeredUser.pictureUrl }}")
-                  p {{ registeredUser.lastName }}
+                  p {{ registeredUser.firstName }}
                 .clear
             
             div(ng-show="!registeredUsers || registeredUsers.length == 0", ng-cloak)
