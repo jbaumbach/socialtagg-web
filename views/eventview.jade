@@ -44,11 +44,16 @@ block content
               .desc Description
               .value #{ event.description }  
 
+        //- If events are enabled
         if true
           .twelve.columns.register(ng-show="userCanRegister", style="display:none;")
             a.button.color(href='#', ng-click='register()', no-click) Register
             i.icon-spinner.icon-spin.icon-2x(style="display:none;", ng-show="isRegistering")
 
+          .twelve.columns.register(ng-show="userIsRegistered", style="display:none;")
+            .notification.success
+              p You are {{ userStatus }} for this event.
+        
         .twelve.columns
           .headline
             h4 Who's Checked In
@@ -67,7 +72,7 @@ block content
             
             div(ng-show="!checkedInUsers || checkedInUsers.length == 0")
               .twelve.columns
-                p No one has checked in yet!  Please check back later.
+                p No one has checked in yet!
 
         .twelve.columns
           .headline

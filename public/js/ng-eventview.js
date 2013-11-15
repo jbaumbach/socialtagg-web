@@ -13,14 +13,12 @@ var eventViewController = app.controller('eventViewController', function($scope,
   // todo: use the $routeParams angular component rather than regex
   var eventId = document.URL.match(/events\/([a-zA-Z0-9-]*)/i)[1];
 
-  function updateUserCanRegister() {
+  function updateUserStatus() {
 
-    var result = false;
-    
     if ($scope.pageVars.user && $scope.pageVars.user.id)
     {
       //
-      // We have a user, need to check if they've already registered
+      // We have a user, need to check if they've already registered or checked in
       //
       if (!$scope.loadingEventUsers && !$scope.loadingRegisteredUsers) {
 
@@ -32,13 +30,16 @@ var eventViewController = app.controller('eventViewController', function($scope,
           return user.id == $scope.pageVars.user.id;
         });
 
-        result = !isRegistered && !isCheckedIn;
+        $scope.userCanRegister = !isRegistered && !isCheckedIn;
+        $scope.userIsRegistered = !$scope.userCanRegister;
+        
+        if ($scope.userIsRegistered) {
+          $scope.userStatus = isRegistered ? 'registered' : 'checked-in';
+        }
       }
     } else {
-      result = true;
+      $scope.userCanRegister = true;
     }
-
-    $scope.userCanRegister = result;
   }
   
   //
@@ -47,7 +48,7 @@ var eventViewController = app.controller('eventViewController', function($scope,
   $scope.init = function(pageVars) {
     $scope.pageVars = pageVars;
 
-    updateUserCanRegister();
+    updateUserStatus();
     
     if (getQueryStringParameterByName('register')) {
       $scope.register();
@@ -60,12 +61,12 @@ var eventViewController = app.controller('eventViewController', function($scope,
   }, function() {
     // success
     $scope.loadingEventUsers = false;
-    updateUserCanRegister();
+    updateUserStatus();
 
   }, function(err) {
     // fail!
     $scope.loadingEventUsers = false;
-    updateUserCanRegister();
+    updateUserStatus();
     
   })
 
@@ -75,12 +76,12 @@ var eventViewController = app.controller('eventViewController', function($scope,
   }, function() {
     // success
     $scope.loadingRegisteredUsers = false;
-    updateUserCanRegister();
+    updateUserStatus();
 
   }, function(err) {
     // fail!
     $scope.loadingRegisteredUsers = false;
-    updateUserCanRegister();
+    updateUserStatus();
 
   })
 
@@ -97,6 +98,7 @@ var eventViewController = app.controller('eventViewController', function($scope,
       // success
       $scope.registeredUsers = _.without($scope.registeredUsers, registeredUser);
       $scope.checkedInUsers.push(registeredUser);
+      updateUserStatus();
       
     }, function(err) {
       // failure!
@@ -129,7 +131,7 @@ var eventViewController = app.controller('eventViewController', function($scope,
         // success
         $scope.isRegistering = false;
         $scope.registeredUsers.push($scope.pageVars.user);
-        updateUserCanRegister();
+        updateUserStatus();
 
       }, function(err) {
         // failure
