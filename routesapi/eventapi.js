@@ -969,8 +969,10 @@ exports.usersList = function(req, res) {
           // Special case - if the logged in user visits the event page, include their OWN user id
           // so Angular can tell that the user is registered/checked in
           //
-          if (user.id === currentUserId) {
-            result[id] = user.id;
+          var shouldIncludeId = user.userId === currentUserId;
+          
+          if (shouldIncludeId) {
+            result.id = user.userId;
           }
         }
         
@@ -978,7 +980,7 @@ exports.usersList = function(req, res) {
       });
       
       //
-      // Let's sort the results
+      // Let's sort the results, but differently depending on how the page is displayed
       //
       var comparer;
       
