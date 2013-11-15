@@ -872,6 +872,7 @@ exports.usersList = function(req, res) {
   //
   var eventId = req.params.id;
   var isEventOwner = false;
+  var currentUserId = application.getCurrentSessionUserId(req);
   
   async.waterfall([
     function(cb) {
@@ -896,7 +897,7 @@ exports.usersList = function(req, res) {
           
           // todo: SocialTagg F2F 10/2013.  Can remove after dev complete on events page.
           var isSpecialEvent = eventId === 'be1b65e0-3e71-11e3-a797-1399e22b12e3';
-          isEventOwner = isSpecialEvent || event.owner === application.getCurrentSessionUserId(req);
+          isEventOwner = isSpecialEvent || event.owner === currentUserId;
           
           // http://development.socialtagg.com:3000/events/be1b65e0-3e71-11e3-a797-1399e22b12e3
           
@@ -963,6 +964,14 @@ exports.usersList = function(req, res) {
             pictureUrl: user.user.pictureUrl,
             firstName: user.user.firstName
           };
+          
+          //
+          // Special case - if the logged in user visits the event page, include their OWN user id
+          // so Angular can tell that the user is registered/checked in
+          //
+          if (user.id === currentUserId) {
+            result[id] = user.id;
+          }
         }
         
         return result;
