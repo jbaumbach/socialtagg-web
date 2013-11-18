@@ -4197,6 +4197,34 @@ div.field.event-datetime {
   background: none repeat scroll 0 0 #F9F9F9;
 }
 
+/* Homepage */
+
+div.integrated-event-platform {
+  margin-bottom: 60px;
+  margin-top: 80px;
+}
+
+.integrated-event-platform img,
+.integrated-event-platform p,
+.integrated-event-platform h2 {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  color: #666;
+}
+
+.integrated-event-platform img {
+  max-width: 90px;  
+}
+
+.integrated-event-platform h2 {
+  margin-bottom: 25px;
+}
+
+.integrated-event-platform img {
+  margin-bottom: 10px;
+}
+
 
 /**********************************
 Extracted from bootstrap CSS
