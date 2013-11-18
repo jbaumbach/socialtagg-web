@@ -15,8 +15,7 @@ var eventViewController = app.controller('eventViewController', function($scope,
 
   function updateUserStatus() {
 
-    if ($scope.pageVars.user && $scope.pageVars.user.id)
-    {
+    if ($scope.pageVars.user && $scope.pageVars.user.id) {
       //
       // We have a user, need to check if they've already registered or checked in
       //
