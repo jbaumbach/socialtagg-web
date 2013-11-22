@@ -482,7 +482,7 @@ html[xmlns] .slides {display: block;}
 /* Client Logo List
 ====================================*/
 .client-list li {
-	border: 1px solid #e5e5e5;
+	/* border: 1px solid #e5e5e5;  nah, no border */
 	float: left;
 	margin: -1px 0 0 -1px;
 }
@@ -4199,7 +4199,9 @@ div.field.event-datetime {
 
 /* Homepage */
 
-div.integrated-event-platform {
+div.integrated-event-platform,
+div.whats-next,
+div.call-to-action {
   margin-bottom: 60px;
   margin-top: 80px;
 }
@@ -4226,7 +4228,22 @@ div.integrated-event-platform {
   margin-bottom: 10px;
 }
 
+.call-to-action {
+  text-align: center;
+}
 
+.button.large {
+  font-size: 2em;
+  padding: 18px 24px;
+}
+
+.our-partners li {
+  margin-right: 45px;
+}
+
+.our-partners .extra-top-margin img {
+  margin-top: 25px;
+}
 /**********************************
 Extracted from bootstrap CSS
 **********************************/

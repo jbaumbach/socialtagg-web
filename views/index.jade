@@ -37,8 +37,39 @@ block content
   
   //-********** Horizontal Icons Control
   //-include includes/horizontalIcons
-      
-  .container
+
+  .container.call-to-action
+    .eight.columns
+      a.button.large.gray(href=links.features) See More Details
+    .eight.columns
+      a.button.large.color(href=links.myownedevents)  Create an Event
+
+
+  .container.whats-next
+    .sixteen.columns
+      .headline.no-margin
+        h3 What's Next for SocialTagg?
+    .one-third.column
+      img(src='/images/features/phase1.jpg')
+      .item-description
+        h5 Phase 1
+        p Business Card Replacement App
+    .one-third.column
+      img(src='/images/features/phase2.jpg')
+      .item-description
+        h5 Phase 2
+        p Event Check-in Platform on Web and Mobile
+    .one-third.column
+      img(src='/images/features/nextphase.jpg')
+      .item-description
+        h5 Phase 3
+        p Passive Connections System
+
+
+
+
+
+  .container.our-partners
     .sixteen.columns
       .headline.no-margin
         h3 Our Partners
@@ -47,4 +78,7 @@ block content
           a(href='http://techweek.com/losangeles/')
             img(src='http://techweek.com/images/badges/tw_la_dpbadge.png', border='0', style='width: 65px;', alt='Techweek')
 
-  
+        li.extra-top-margin
+          a(href='http://uclaideas.com/')
+            img(src='/images/partners/inventathon.png', border='0', alt='Techweek')
+      
