@@ -669,6 +669,35 @@ exports.getContaggsCreatedBetweenStartAndEndDates = function(startDate, endDate,
   userGridUtilities.counterFunction(options, function(err) {
     callback(err, result);
   });
+}
 
+exports.getEventCounts = function(options, callback) {
+  
+  // By default, get all event summaries and return an array of stuff
+
+  var counterOptions = {
+    queryOptions: {
+      type: 'events-sts',
+      qs: {}    // todo: fix counterFunction() to handle missing qs
+    },
+
+    aggregator: function (record, cb) {
+
+      result.push({
+        id: record.get('uuid'),
+        created: record.get('created'),
+        owner: record.get('owner')
+      });
+      cb();
+    }
+  }
+
+  var result = []
+
+  console.log('gec: ' + util.inspect(counterOptions));
+
+  userGridUtilities.counterFunction(counterOptions, function(err) {
+    callback(err, result);
+  });
 
 }

@@ -255,3 +255,14 @@ exports.getEventSurveyAnswers = function(surveyId, callback) {
 exports.getContaggsCreatedBetweenStartAndEndDates = function(startDate, endDate, callback) {
   db.getContaggsCreatedBetweenStartAndEndDates(startDate, endDate, callback);
 }
+
+/**
+ * Get events counts based on the options.
+ * @param options - TBD
+ * @param callback - function with signature:
+ *  err - filled in if there was bad juju
+ *  events - an array of results based on your options
+ */
+exports.getEventCounts = function(options, callback) {
+  db.getEventCounts(options, callback);
+}
