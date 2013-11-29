@@ -14,6 +14,7 @@ var userManager = require('./../data/userManager')
   , SurveyQuestion = require('../models/SurveyQuestion')
   , async = require('async')
   , thisModule = this
+  , moment = require('moment')
   ;
 
 //
@@ -996,4 +997,71 @@ exports.usersList = function(req, res) {
     }
   });
   
+}
+
+var getEventSummary = exports.getEventSummary = function(options, events) {
+
+  if (!events) {
+    console.log('(warning) no events passed!');
+  }
+
+  //
+  // Convert an event into something we can count (e.g. the week number)
+  //
+  var mapper = function(event) {
+    var m = moment(+event.created);
+    event.dayOfYear = m.dayOfYear();
+    event.week = m.week();
+    event.month = m.month();
+    event.dateStr = moment().week(event.week).format('dddd, MMMM Do YYYY');
+    return event;
+  }
+
+  //
+  // Aggregate the mapped events (count the weeks)
+  //
+  var reducer = function(memo, event) {
+    var week = memo[event.week] || {};
+    week.week = event.week;
+    week.desc = 'Week of ' + event.dateStr;
+    week.eventCount = ++week.eventCount || 1;
+    memo[event.week] = week;
+
+    return memo;
+  }
+
+  var summary = _.
+    chain(events).
+    map(mapper).
+    reduce(reducer, {}).
+    value();
+
+  return summary;
+}
+
+exports.eventActivity = function(req, res) {
+
+  //
+  // Async is kinda overkill here, but this func will prolly be exteded out a bit
+  //
+  async.waterfall([
+    function getEventCounts(cb) {
+      eventManager.getEventCounts(null, function(err, events) {
+
+        //
+        // Group the results
+        //
+        var summary = getEventSummary(null, events);
+
+        cb(err, summary);
+      })
+    }
+  ], function done(err, summary) {
+    if (err) {
+      res.send(err.statusCode, { msg: err.msg });
+    } else {
+      res.send(200, summary);
+    }
+  })
+
 }

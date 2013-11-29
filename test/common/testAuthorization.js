@@ -94,7 +94,7 @@ describe('api authorization', function() {
     //
     // Execute our one and only test.
     //
-    auth.authorize(req, res, function() { calledNext = true; });
+    auth.authorizeOld(req, res, function() { calledNext = true; });
     
     //
     // Make sure we called "next()" ok.
@@ -142,7 +142,7 @@ describe('api authorization', function() {
     //
     // Execute our one and only test.
     //
-    auth.authorize(req, res, function() { calledNext = true; });
+    auth.authorizeOld(req, res, function() { calledNext = true; });
 
     //
     // Make sure we called "next()" ok.
@@ -195,7 +195,7 @@ describe('api authorization', function() {
     //
     // Execute our one and only test.
     //
-    auth.authorize(req, res, function() { calledNext = true; });
+    auth.authorizeOld(req, res, function() { calledNext = true; });
 
     //
     // Make sure we had expected behavior
@@ -244,7 +244,7 @@ describe('api authorization', function() {
     //
     // Execute our one and only test.
     //
-    auth.authorize(req, res, function() { calledNext = true; });
+    auth.authorizeOld(req, res, function() { calledNext = true; });
 
     //
     // Make sure we had expected behavior
@@ -298,7 +298,7 @@ describe('api authorization', function() {
     //
     // Execute our one and only test.
     //
-    auth.authorize(req, res, function() { calledNext = true; });
+    auth.authorizeOld(req, res, function() { calledNext = true; });
 
     //
     // Make sure we had expected behavior

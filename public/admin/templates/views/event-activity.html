@@ -1,0 +1,20 @@
+
+<h2>Events Activity - By Week</h2>
+<p>Note: test data by SocialTagg staff is not yet filtered from these results.</p>
+  
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Week #</th>
+      <th>Date</th>
+      <th>Number of Events Created</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="(weekNo, item) in summary">
+      <td>{{ weekNo }}</td>
+      <td>{{ item.desc }}</td>
+      <td>{{ item.eventCount }}</td>
+    </tr>
+  </tbody>
+</table>

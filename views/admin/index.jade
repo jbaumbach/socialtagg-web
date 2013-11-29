@@ -1,6 +1,6 @@
 !!! 5
 html(lang='en')
-head
+  head
     meta(charset='utf-8')
     title SocialTagg Admin Tools
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
@@ -42,7 +42,8 @@ head
     link(rel='apple-touch-icon-precomposed', sizes='72x72', href='../assets/ico/apple-touch-icon-72-precomposed.png')
     link(rel='apple-touch-icon-precomposed', href='../assets/ico/apple-touch-icon-57-precomposed.png')
     link(rel='shortcut icon', href='../assets/ico/favicon.png')
-  body
+  
+  body(ng-app='app')
     .navbar.navbar-inverse.navbar-fixed-top
       .navbar-inner
         .container-fluid
@@ -76,7 +77,7 @@ head
               li.nav-header General KPIs
               li 
                 //-.active // <-- apply this style to the currently active link
-                a(href='#') Event Activity 
+                a(href='#/event-activity') Event Activity 
               li
                 a(href='#') New Signups
               li
@@ -114,29 +115,8 @@ head
                 a(href='#') Link
 
         .span9
-          .hero-unit
-            h1 SocialTagg Admin Tools
-            p Select from the links on the right to view various admin tools.
-            //- p
-              a.btn.btn-primary.btn-large(href='#') Learn more »
-          
-        .span9
-          h2 Events Activity - By Week
-          p Note: test data by SocialTagg staff is not yet filtered from these results.
-          //- Events Activity module
-          table.table.table-striped
-            thead
-              tr
-                th Week #
-                th Date
-                th Number of Events Created
-            tbody
-              each item in locals.eventSummary
-                tr
-                  td #{ item.week }
-                  td #{ item.desc }
-                  td #{ item.eventCount }
-          
+          ng-view
+        
           
          //- 
           .row-fluid
@@ -174,5 +154,11 @@ head
       Le javascript
        Placed at the end of the document so the pages load faster 
 
-    script(src='//ajax.googleapis.com/ajax/libs/angularjs/1.0.1/angular.min.js')
-    script(src='//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.6.0/ui-bootstrap-tpls.min.js')
+    script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js")
+    script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular-resource.js")
+    script(src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.6.0/ui-bootstrap-tpls.min.js")
+    script(src="/admin/js/ng-index.js")
+    script(src="/admin/js/ng-resources.js")
+    script(src="/admin/js/controllers/ng-home.js")
+    script(src="/admin/js/controllers/ng-event-activity.js")
+    

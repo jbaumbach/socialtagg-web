@@ -49,6 +49,7 @@ var globalFunctions = require('./globalfunctions')
   , util = require('util')
   , application = require('./application')
   , thisModule = this
+  , _ = require('underscore')
   ;
 
 //
@@ -132,6 +133,81 @@ exports.authenticate = function(req, res, next) {
     });
   }
 } 
+
+var getCurrentUsersGroup = exports.getCurrentUsersGroup = function(req, callback) {
+  
+  var result;
+  
+  var currentUserId = application.getCurrentSessionUserId(req);
+    
+  // temporary kluge: hard-coded ids of admins
+  var admins = [
+    'ea10dde9-8a1b-11e2-b0a7-02e81ac5a17b',   // John's Test User - Dont Modify
+    '0a0f9599-9921-11e2-b8af-02e81ae640dc',   // Tim Feng
+    '187fd5ea-fd9d-11e2-ad49-a53cfe993bb8',   // Karim Varela
+    'b66a00ee-73d3-11e2-95c4-02e81ae640dc',   // John Baumbach I
+    '1bf34bfa-07c8-11e3-af5c-51a7c0a13fad',   // Louis Tang
+    'f4dbf1b1-bc70-11e2-a65f-02e81afcd5fc',   // Karim Varela
+    '9c1f4cda-e2d3-11e2-a4b4-3ba51af19848',   // Dubem Enyekwe
+    '5b07c30a-082e-11e3-b923-dbfd8bf6ac23',   // Louis Tang
+    '532cc7a6-7679-11e2-96f4-02e81ac5a17b',   // Jade Shyu
+    'c238c31a-2d6a-11e3-898d-85fbe15c5ce8',   // Joseph Mirandi
+    '3d86497b-66c4-11e2-8b37-02e81ac5a17b'    // Jeff Mock'
+  ];
+  
+  console.log('userid: ' + currentUserId);
+  if (_.contains(admins, currentUserId)) {
+    result = 'admin';
+  }
+
+  console.log('returning: ' + result);
+
+  return result;
+}
+
+exports.authorize = function(accessType) {
+
+  return function(req, res, next) {
+    var errResult;
+    
+    //
+    //
+    // Which groups are required to access the passed access type
+    var groupsRequiredForAccessType = {
+      systemreports: ['admin']
+    }
+
+    var groupsRequired = groupsRequiredForAccessType[accessType];
+    var currentUserGroup = getCurrentUsersGroup(req);
+    
+    console.log('gr: ' + util.inspect(groupsRequired) + ', cug: ' + util.inspect(currentUserGroup));
+    
+    if (groupsRequired) {
+      if (_.contains(groupsRequired, currentUserGroup)) {
+        //
+        // All good!
+        //
+      } else {
+        errResult = {
+          statusCode: 401,
+          msg: 'Sorry, your access level cannot access this resource type.'
+        }
+        console.log('(info) access level ' + currentUserGroup + ' is denied access to ' + accessType);
+      }
+    } else {
+      errResult = {
+        statusCode: 500,
+        msg: 'Poor programming: unknown access type specified: ' + accessType
+      }
+    }
+    
+    if (errResult) {
+      res.send(errResult.statusCode, { msg: errResult.msg });
+    } else {
+      next();
+    }
+  }
+}
 
 /*
   Same as .authenticate but also checks if there is a temporary authentication.
@@ -251,7 +327,7 @@ exports.authenticateHmac = function(req, callback) {
 // Authenticate and authorize an api call.  Call next() if ok, otherwise 
 // write an error to response.
 //
-exports.authorize = function(req, res, next) {
+exports.authorizeOld = function(req, res, next) {
   
   thisModule.authenticateHmac(req, function(error, apiUser) {
 
