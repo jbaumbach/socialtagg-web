@@ -11,11 +11,12 @@ var util = require('util')
   ;
 
 /*
- Helper function to count values in a collection.  Parameters:
+ Helper function to loop through all rows in a collection and call an interator function.
+  Parameters:
 
  options: object with properties:
    queryOptions: usergrid query options.  Row limit default is 500. 
-   aggregator: function that accepts these parameters:
+   aggregator: iterator function that accepts these parameters:
      collectionRow: a row from the collection that we're counting.  You are responsible
                    for accessing the data values and incrementing your counters
      callback: (optional) if provided, the function to callback when aggregator is done.  The callback

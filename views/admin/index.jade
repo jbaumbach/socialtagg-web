@@ -42,6 +42,12 @@ html(lang='en')
     link(rel='apple-touch-icon-precomposed', sizes='72x72', href='../assets/ico/apple-touch-icon-72-precomposed.png')
     link(rel='apple-touch-icon-precomposed', href='../assets/ico/apple-touch-icon-57-precomposed.png')
     link(rel='shortcut icon', href='../assets/ico/favicon.png')
+
+    //- 
+      Allows /admin to be the base url, so socialtagg.com/admin and socialtagg.com/admin/ both work
+      http://docs.angularjs.org/guide/dev_guide.services.$location
+
+    base(href="/admin/")
   
   body(ng-app='app')
     .navbar.navbar-inverse.navbar-fixed-top
@@ -61,7 +67,7 @@ html(lang='en')
             
             ul.nav
               li.active
-                a(href='/admin/') Home
+                a(href='/') Home
             //-  
               li
                 a(href='#about') About
@@ -77,7 +83,7 @@ html(lang='en')
               li.nav-header General KPIs
               li 
                 //-.active // <-- apply this style to the currently active link
-                a(href='#/event-activity') Event Activity 
+                a(href='/admin/#/event-activity') Event Activity 
               li
                 a(href='#') New Signups
               li
@@ -149,7 +155,7 @@ html(lang='en')
 
       hr
       footer
-        p © SocialTagg, LLC. 2013
+        p Copyright © SocialTagg, LLC. 2013
     //
       Le javascript
        Placed at the end of the document so the pages load faster 
@@ -157,8 +163,10 @@ html(lang='en')
     script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js")
     script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular-resource.js")
     script(src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.6.0/ui-bootstrap-tpls.min.js")
+    script(src='//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js')
+    script(src='/js/Chart.min.js')
     script(src="/admin/js/ng-index.js")
     script(src="/admin/js/ng-resources.js")
     script(src="/admin/js/controllers/ng-home.js")
     script(src="/admin/js/controllers/ng-event-activity.js")
-    
+  

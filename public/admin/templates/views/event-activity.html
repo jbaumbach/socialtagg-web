@@ -1,8 +1,12 @@
 
 <h2>Events Activity - By Week</h2>
-<p>Note: test data by SocialTagg staff is not yet filtered from these results.</p>
-  
+<p>Note: Test events created by SocialTagg staff is filtered from these results.</p>
+
+<canvas id="eventsChart" width="800" height="400"></canvas>
+
+<h3>Details</h3>
 <table class="table table-striped">
+
   <thead>
     <tr>
       <th>Week #</th>
@@ -11,7 +15,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr ng-repeat="(weekNo, item) in summary">
+    <tr ng-repeat="(weekNo, item) in summary.data">
       <td>{{ weekNo }}</td>
       <td>{{ item.desc }}</td>
       <td>{{ item.eventCount }}</td>

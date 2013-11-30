@@ -15,6 +15,7 @@ var userManager = require('./../data/userManager')
   , async = require('async')
   , thisModule = this
   , moment = require('moment')
+  , authorization = require(process.cwd() + '/common/authorization')
   ;
 
 //
@@ -1005,6 +1006,25 @@ var getEventSummary = exports.getEventSummary = function(options, events) {
     console.log('(warning) no events passed!');
   }
 
+  if (options && options.excludeUserIds) {
+    //
+    // Excluding user ids
+    //
+    events = _.reject(events, function(event) {
+      //
+      // Some event owners are 'undefined'.  why?
+      // 
+      var shouldReject = !event.owner || _.contains(options.excludeUserIds, event.owner);
+      if (shouldReject) {
+        // Reject!
+      } else {
+        // todo: remove this line when tested
+        // console.log('\'' + event.owner + '\',  // Not rejecting!  Who is this?');
+      }
+      return shouldReject;
+    })
+  }
+
   //
   // Convert an event into something we can count (e.g. the week number)
   //
@@ -1013,27 +1033,56 @@ var getEventSummary = exports.getEventSummary = function(options, events) {
     event.dayOfYear = m.dayOfYear();
     event.week = m.week();
     event.month = m.month();
-    event.dateStr = moment().week(event.week).format('dddd, MMMM Do YYYY');
     return event;
   }
 
   //
-  // Aggregate the mapped events (count the weeks)
+  // Aggregate the mapped events (only counting by weeks is currently supported)
   //
   var reducer = function(memo, event) {
-    var week = memo[event.week] || {};
-    week.week = event.week;
-    week.desc = 'Week of ' + event.dateStr;
-    week.eventCount = ++week.eventCount || 1;
-    memo[event.week] = week;
+    var week = memo[event.week];
+    //
+    // Only include the data item if it's within our range, as defined by the memo
+    // object.
+    //
+    if (week) {
+      week.eventCount = ++week.eventCount;
+    }
 
     return memo;
   }
 
+  //
+  // Build empty result set
+  //
+  var memo = {};
+  
+  if (options && options.dateRange && options.dateRange.weeks) {
+
+    var dateCounter = moment().subtract('weeks', (options.dateRange.weeks - 1));
+    var now = moment();
+    var sanity = 10000;      // Max number of stuff to count, not sure if this is required yet
+    
+    while (dateCounter <= now) {
+      var weekNumber = dateCounter.week();
+      memo[weekNumber] = {
+        week: weekNumber,
+        desc:'Week of ' + dateCounter.format('dddd, MMMM Do YYYY'),
+        eventCount: 0
+      }
+
+      dateCounter = dateCounter.add('weeks', 1);
+      if (--sanity < 0) throw 'stupid infinite loop';
+    }
+  } else {
+    throw 'Sorry, only options.dateRange.weeks is currently supported!';
+  }
+  
+  
   var summary = _.
     chain(events).
     map(mapper).
-    reduce(reducer, {}).
+    reduce(reducer, memo).
     value();
 
   return summary;
@@ -1042,16 +1091,30 @@ var getEventSummary = exports.getEventSummary = function(options, events) {
 exports.eventActivity = function(req, res) {
 
   //
-  // Async is kinda overkill here, but this func will prolly be exteded out a bit
+  // Async is kinda overkill here, but this func will prolly be extended out a bit
   //
   async.waterfall([
     function getEventCounts(cb) {
-      eventManager.getEventCounts(null, function(err, events) {
+      //
+      // Exclude us!
+      //
+      var options = {
+        dateRange: { weeks: 24 },
+        excludeUserIds: _.union(
+          authorization.getAdmins(),
+          authorization.tempGetOtherExclusions()
+        )
+      }
+
+      //
+      // Note: options are ignored in the eventManager function (for now)
+      //
+      eventManager.getEventCounts(options, function(err, events) {
 
         //
         // Group the results
         //
-        var summary = getEventSummary(null, events);
+        var summary = getEventSummary(options, events);
 
         cb(err, summary);
       })
@@ -1060,7 +1123,12 @@ exports.eventActivity = function(req, res) {
     if (err) {
       res.send(err.statusCode, { msg: err.msg });
     } else {
-      res.send(200, summary);
+      //
+      // Put the results in a 'data' object.  This way, the results of .data can
+      // be processed by the client without Angular's promise '$then' etc. won't be part
+      // of the data result set.
+      //
+      res.send(200, { data: summary });
     }
   })
 

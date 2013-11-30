@@ -673,16 +673,19 @@ exports.getContaggsCreatedBetweenStartAndEndDates = function(startDate, endDate,
 
 exports.getEventCounts = function(options, callback) {
   
-  // By default, get all event summaries and return an array of stuff
+  // By default, get all events and return an array of 'lite' events
 
   var counterOptions = {
     queryOptions: {
       type: 'events-sts',
-      qs: {}    // todo: fix counterFunction() to handle missing qs
+      qs: {}    // todo: fix counterFunction() to handle missing qs, otherwise an exception is thrown
     },
 
     aggregator: function (record, cb) {
 
+      //
+      // Build a 'lite' version of the event
+      //
       result.push({
         id: record.get('uuid'),
         created: record.get('created'),

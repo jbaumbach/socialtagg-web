@@ -134,13 +134,10 @@ exports.authenticate = function(req, res, next) {
   }
 } 
 
-var getCurrentUsersGroup = exports.getCurrentUsersGroup = function(req, callback) {
-  
-  var result;
-  
-  var currentUserId = application.getCurrentSessionUserId(req);
-    
-  // temporary kluge: hard-coded ids of admins
+//
+// Temporary function - this should be in a database and programmatically maintained
+//
+var getAdmins = exports.getAdmins = function() {
   var admins = [
     'ea10dde9-8a1b-11e2-b0a7-02e81ac5a17b',   // John's Test User - Dont Modify
     '0a0f9599-9921-11e2-b8af-02e81ae640dc',   // Tim Feng
@@ -150,11 +147,42 @@ var getCurrentUsersGroup = exports.getCurrentUsersGroup = function(req, callback
     'f4dbf1b1-bc70-11e2-a65f-02e81afcd5fc',   // Karim Varela
     '9c1f4cda-e2d3-11e2-a4b4-3ba51af19848',   // Dubem Enyekwe
     '5b07c30a-082e-11e3-b923-dbfd8bf6ac23',   // Louis Tang
+    '5893116a-275a-11e3-be34-f9ef93e2dea2',   // louis@socialtagg.com
+    'b31e92da-4c8a-11e3-8e0d-213c6a3c1b66',   // ltgame@hotmail.com
     '532cc7a6-7679-11e2-96f4-02e81ac5a17b',   // Jade Shyu
+    'd31fb37f-7428-11e2-a3b3-02e81adcf3d0',   // jade@socialtagg.com
     'c238c31a-2d6a-11e3-898d-85fbe15c5ce8',   // Joseph Mirandi
     '3d86497b-66c4-11e2-8b37-02e81ac5a17b'    // Jeff Mock'
   ];
+
+  return admins;
+}
+
+var tempGetOtherExclusions = exports.tempGetOtherExclusions = function() {
+  var undefines = [
+    '420f013a-03f4-11e3-851f-a93a57d20d81',   // not in DB anymore?
+    '71ebee1a-1bfd-11e3-98e1-3d6c4df5db3f',   // not in DB anymore?
+    '7d6029fa-1027-11e3-bbbe-3f9c3726ead0'    // Alyson P. (beta tester)
+  ];
   
+  //
+  // Non-socialtagg users who've created events as of 11/29/2013 11:48 AM:
+  //  Adam Plimpton:      0ccaf7ea-2659-11e3-9cc9-37aa58c1f5ef
+  //  d4cheung@gmail.com: 3dc6bd5a-563f-11e3-bf6e-7dcb156cd05b
+  //
+  
+  return undefines;
+} 
+
+var getCurrentUsersGroup = exports.getCurrentUsersGroup = function(req, callback) {
+  
+  var result;
+  
+  var currentUserId = application.getCurrentSessionUserId(req);
+    
+  // temporary kluge: hard-coded ids of admins
+  var admins = getAdmins();
+    
   console.log('userid: ' + currentUserId);
   if (_.contains(admins, currentUserId)) {
     result = 'admin';

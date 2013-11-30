@@ -24,7 +24,8 @@ app.config(function ($routeProvider, $locationProvider) {
       controller:"EventActivity"
     })
     .otherwise({
-      template: "This doesn't exist!"
+      templateUrl:"templates/views/home.html",
+      controller:"HomeCtrl"
     });
 });
 
@@ -35,3 +36,20 @@ app.directive('stLoginStatus', function() {
     templateUrl: "admin/templates/directives/login-status.html"
   }
 })
+
+
+// Helper functions
+
+function st_getMaxValueOfChartData(data) {
+  var result = 0;
+
+  if (data && data.datasets && data.datasets.length > 0) {
+    angular.forEach(data.datasets[0].data, function(item) {
+      if (item > result) {
+        result = item;
+      }
+    })
+  }
+
+  return result;
+}

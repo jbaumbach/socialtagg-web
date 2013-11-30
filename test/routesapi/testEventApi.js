@@ -603,13 +603,57 @@ describe('Event API', function() {
 
   it('should get an event summary from a list of "lite" event objects', function() {
 
-    var r = eventapi.getEventSummary(null, events);
+    // Shouldn't be less than 2
+    var weeksToGoBack = 24;
+    
+    var options = {
+      dateRange: { weeks: weeksToGoBack }
+    }
+    
+    var r = eventapi.getEventSummary(options, events);
 
-    var uno = r['32'];
-    assert.equal(uno.week, 32, 'didn\'t get right week');
-    assert.equal(uno.eventCount, 7, 'didn\'t get right count for week');
-    //assert.equal(uno.desc, 'Week of Monday, August 5th 2013', 'didn\'t get right desc');
+    var numResults = _.size(r);
+    
+    assert.equal(numResults, weeksToGoBack, 'didn\'t go back right number of weeks');
+    
+    // Arbitrary - update as needed
+    var uno = r['48'];
+    assert.equal(uno.week, 48, 'didn\'t get right week');
+    assert.equal(uno.eventCount, 5, 'didn\'t get right count for week');
     assert.ok(uno.desc.match(/Week of/i), 'didn\'t get right desc');
+    
+    var dos = r['47'];
+    assert.equal(dos.week, 47, 'didn\'t get right week');
+    assert.equal(dos.eventCount, 8, 'didn\'t get right count for week');
+    
+  })
+
+  it('should get an event summary from a list of "lite" event objects and exlusions', function() {
+
+    // Shouldn't be less than 2
+    var weeksToGoBack = 24;
+    
+    var options = {
+      dateRange: { weeks: weeksToGoBack },
+      excludeUserIds: admins
+    }
+    
+    var r = eventapi.getEventSummary(options, events);
+
+    var numResults = _.size(r);
+    
+    assert.equal(numResults, weeksToGoBack, 'didn\'t go back right number of weeks');
+    
+    // Arbitrary - update as needed
+    var uno = r['48'];
+    assert.equal(uno.week, 48, 'didn\'t get right week');
+    assert.equal(uno.eventCount, 2, 'didn\'t get right count for week');
+    assert.ok(uno.desc.match(/Week of/i), 'didn\'t get right desc');
+    
+    var dos = r['47'];
+    assert.equal(dos.week, 47, 'didn\'t get right week');
+    assert.equal(dos.eventCount, 3, 'didn\'t get right count for week');
+    
   })
 
 });
@@ -885,4 +929,18 @@ var events = [ { id: '42e60bfa-fd80-11e2-b3fe-3df7a1a1c275',
     owner: '0a0f9599-9921-11e2-b8af-02e81ae640dc' },
   { id: '4d064f0a-555f-11e3-af0d-1976715e46dd',
     created: 1385335355376,
-    owner: '0ccaf7ea-2659-11e3-9cc9-37aa58c1f5ef' } ]    
+    owner: '0ccaf7ea-2659-11e3-9cc9-37aa58c1f5ef' } ]
+
+var admins = [
+  'ea10dde9-8a1b-11e2-b0a7-02e81ac5a17b',   // John's Test User - Dont Modify
+  '0a0f9599-9921-11e2-b8af-02e81ae640dc',   // Tim Feng
+  '187fd5ea-fd9d-11e2-ad49-a53cfe993bb8',   // Karim Varela
+  'b66a00ee-73d3-11e2-95c4-02e81ae640dc',   // John Baumbach I
+  '1bf34bfa-07c8-11e3-af5c-51a7c0a13fad',   // Louis Tang
+  'f4dbf1b1-bc70-11e2-a65f-02e81afcd5fc',   // Karim Varela
+  '9c1f4cda-e2d3-11e2-a4b4-3ba51af19848',   // Dubem Enyekwe
+  '5b07c30a-082e-11e3-b923-dbfd8bf6ac23',   // Louis Tang
+  '532cc7a6-7679-11e2-96f4-02e81ac5a17b',   // Jade Shyu
+  'c238c31a-2d6a-11e3-898d-85fbe15c5ce8',   // Joseph Mirandi
+  '3d86497b-66c4-11e2-8b37-02e81ac5a17b'    // Jeff Mock'
+];
