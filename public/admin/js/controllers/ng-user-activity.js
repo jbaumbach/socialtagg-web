@@ -1,7 +1,7 @@
 
-app.controller("EventActivity", function ($scope, $route, EventActivity) {
-  
-  $scope.summary = EventActivity.get(
+app.controller("UserActivity", function ($scope, $route, UserActivity) {
+
+  $scope.summary = UserActivity.get(
     function success(dataSummary) {
       // loading = false
 
@@ -35,6 +35,7 @@ app.controller("EventActivity", function ($scope, $route, EventActivity) {
       // Extra computation to workaround floats on y-axis bug
       // https://github.com/nnnick/Chart.js/issues/58
       //
+/*
       var maxValue = st_getMaxValueOfChartData(data);
 
       var options = {
@@ -43,13 +44,15 @@ app.controller("EventActivity", function ($scope, $route, EventActivity) {
         scaleStepWidth: 1,
         scaleStartValue: 0
       }
+*/
+      var options = {};
 
       //Get the context of the canvas element we want to select
-      var ctx = document.getElementById("eventsChart").getContext("2d");
+      var ctx = document.getElementById("usersChart").getContext("2d");
       var myNewChart = new Chart(ctx).Line(data, options);
-      
+
     }, function fail() {
       console.log('crud, error: ' + arguments[0].data.msg);
     }
-  )  
+  )
 });

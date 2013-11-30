@@ -528,3 +528,86 @@ exports.registrationValidationUrl = function(email, verificationCode) {
   return result;
 }
 
+/**
+ * This accepts a list of "lite" dataItems and builds a summary dataset
+ * based on day, week, or month.
+ *
+ * Each "lite" object is required to have  '.created' property.  It should not have
+ * a "dayOfYear", "week", or "month" property.
+ * @type {Function}
+ */
+exports.getDataSummary = function(options, dataItems) {
+
+  if (!dataItems) {
+    console.log('(warning) no dataItems passed!');
+  }
+
+  if (options && options.filterFunction) {
+    //
+    // Call a filter function if we have one
+    //
+    dataItems = options.filterFunction(dataItems);
+  }
+
+  //
+  // Convert an event into something we can count (e.g. the week number)
+  //
+  var mapper = function(dataItem) {
+    var m = moment(+dataItem.created);
+    dataItem.dayOfYear = m.dayOfYear();
+    dataItem.week = m.week();
+    dataItem.month = m.month();
+    return dataItem;
+  }
+
+  //
+  // Aggregate the mapped dataItems (only counting by weeks is currently supported)
+  //
+  var reducer = function(memo, dataItem) {
+    var week = memo[dataItem.week];
+    //
+    // Only include the data item if it's within our range, as defined by the memo
+    // object.
+    //
+    if (week) {
+      week.count = ++week.count;
+    }
+
+    return memo;
+  }
+
+  //
+  // Build empty result set
+  //
+  var memo = {};
+
+  if (options && options.dateRange && options.dateRange.weeks) {
+
+    var dateCounter = moment().subtract('weeks', (options.dateRange.weeks - 1));
+    var now = moment();
+    var sanity = 10000;      // Max number of stuff to count, not sure if this is required yet
+
+    while (dateCounter <= now) {
+      var weekNumber = dateCounter.week();
+      memo[weekNumber] = {
+        week: weekNumber,
+        desc:'Week of ' + dateCounter.format('dddd, MMMM Do YYYY'),
+        count: 0
+      }
+
+      dateCounter = dateCounter.add('weeks', 1);
+      if (--sanity < 0) throw 'stupid infinite loop';
+    }
+  } else {
+    throw 'Sorry, only options.dateRange.weeks is currently supported!';
+  }
+
+  var summary = _.
+    chain(dataItems).
+    map(mapper).
+    reduce(reducer, memo).
+    value();
+
+  return summary;
+}
+

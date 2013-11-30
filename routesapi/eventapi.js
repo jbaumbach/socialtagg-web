@@ -1002,90 +1002,27 @@ exports.usersList = function(req, res) {
 
 var getEventSummary = exports.getEventSummary = function(options, events) {
 
-  if (!events) {
-    console.log('(warning) no events passed!');
-  }
-
   if (options && options.excludeUserIds) {
-    //
-    // Excluding user ids
-    //
-    events = _.reject(events, function(event) {
-      //
-      // Some event owners are 'undefined'.  why?
-      // 
-      var shouldReject = !event.owner || _.contains(options.excludeUserIds, event.owner);
-      if (shouldReject) {
-        // Reject!
-      } else {
-        // todo: remove this line when tested
-        // console.log('\'' + event.owner + '\',  // Not rejecting!  Who is this?');
-      }
-      return shouldReject;
-    })
-  }
+    options.filterFunction = function(dataItems) {
+      dataItems = _.reject(dataItems, function(event) {
+        //
+        // Some event owners are 'undefined'.  why?
+        // 
+        var shouldReject = !event.owner || _.contains(options.excludeUserIds, event.owner);
+        if (shouldReject) {
+          // Reject!
+        } else {
+          // todo: remove this line when tested
+          // console.log('\'' + event.owner + '\',  // Not rejecting!  Who is this?');
+        }
+        return shouldReject;
+      })
 
-  //
-  // Convert an event into something we can count (e.g. the week number)
-  //
-  var mapper = function(event) {
-    var m = moment(+event.created);
-    event.dayOfYear = m.dayOfYear();
-    event.week = m.week();
-    event.month = m.month();
-    return event;
-  }
-
-  //
-  // Aggregate the mapped events (only counting by weeks is currently supported)
-  //
-  var reducer = function(memo, event) {
-    var week = memo[event.week];
-    //
-    // Only include the data item if it's within our range, as defined by the memo
-    // object.
-    //
-    if (week) {
-      week.eventCount = ++week.eventCount;
+      return dataItems;
     }
-
-    return memo;
-  }
-
-  //
-  // Build empty result set
-  //
-  var memo = {};
-  
-  if (options && options.dateRange && options.dateRange.weeks) {
-
-    var dateCounter = moment().subtract('weeks', (options.dateRange.weeks - 1));
-    var now = moment();
-    var sanity = 10000;      // Max number of stuff to count, not sure if this is required yet
-    
-    while (dateCounter <= now) {
-      var weekNumber = dateCounter.week();
-      memo[weekNumber] = {
-        week: weekNumber,
-        desc:'Week of ' + dateCounter.format('dddd, MMMM Do YYYY'),
-        eventCount: 0
-      }
-
-      dateCounter = dateCounter.add('weeks', 1);
-      if (--sanity < 0) throw 'stupid infinite loop';
-    }
-  } else {
-    throw 'Sorry, only options.dateRange.weeks is currently supported!';
   }
   
-  
-  var summary = _.
-    chain(events).
-    map(mapper).
-    reduce(reducer, memo).
-    value();
-
-  return summary;
+  return application.getDataSummary(options, events);
 }
 
 exports.eventActivity = function(req, res) {

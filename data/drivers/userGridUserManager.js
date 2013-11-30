@@ -1240,6 +1240,39 @@ exports.registerUserToEvent = function(userId, eventId, resultCallback) {
 }
 
 
+exports.getUserCounts = function(options, callback) {
+
+  // By default, get all events and return an array of 'lite' events
+
+  var counterOptions = {
+    queryOptions: {
+      type: 'users',
+      qs: {}    // todo: fix counterFunction() to handle missing qs, otherwise an exception is thrown
+    },
+
+    aggregator: function (record, cb) {
+
+      //
+      // Build a 'lite' version of the event
+      //
+      result.push({
+        id: record.get('uuid'),
+        created: record.get('created')
+      });
+      cb();
+    }
+  }
+
+  var result = []
+
+  console.log('guc: ' + util.inspect(counterOptions));
+
+  userGridUtilities.counterFunction(counterOptions, function(err) {
+    callback(err, result);
+  });
+
+}
+
 //********************************************************************************
 // API user functions
 //********************************************************************************

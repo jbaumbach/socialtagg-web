@@ -1,0 +1,24 @@
+
+<h2>New Signups - By Week</h2>
+<p>Total users in system: <strong>{{ summary.overview.total }}</strong></p>
+  
+<canvas id="usersChart" width="800" height="400"></canvas>
+
+<h3>Details</h3>
+<table class="table table-striped">
+
+  <thead>
+  <tr>
+    <th>Week #</th>
+    <th>Date</th>
+    <th>Number of User Accounts Created</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr ng-repeat="(weekNo, item) in summary.data">
+    <td>{{ weekNo }}</td>
+    <td>{{ item.desc }}</td>
+    <td>{{ item.count }}</td>
+  </tr>
+  </tbody>
+</table>

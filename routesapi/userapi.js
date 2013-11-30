@@ -698,3 +698,44 @@ exports.uploadProfilePicture = function(req, res) {
     
   }
 }
+
+exports.userActivity = function(req, res) {
+
+  //
+  // Async is kinda overkill here, but this func will prolly be extended out a bit
+  //
+  async.waterfall([
+    function getUserCounts(cb) {
+
+      var options = {
+        dateRange: { weeks: 24 }
+      }
+
+      //
+      // Note: options are ignored in the eventManager function (for now)
+      //
+      userManager.getUserCounts(options, function(err, users) {
+
+        //
+        // Group the results
+        //
+        var aggregateRows = application.getDataSummary(options, users); //getUserSummary(options, users);
+        var total = _.size(users);
+
+        cb(err, aggregateRows, total);
+      })
+    }
+  ], function done(err, aggregateRows, total) {
+    if (err) {
+      res.send(err.statusCode, { msg: err.msg });
+    } else {
+      //
+      // Put the results in a 'data' object.  This way, the results of .data can
+      // be processed by the client without Angular's promise '$then' etc. being part
+      // of the data result set.
+      //
+      res.send(200, { data: aggregateRows, overview: { total: total } });
+    }
+  })
+
+}

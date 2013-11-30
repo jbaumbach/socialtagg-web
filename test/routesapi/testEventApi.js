@@ -619,12 +619,12 @@ describe('Event API', function() {
     // Arbitrary - update as needed
     var uno = r['48'];
     assert.equal(uno.week, 48, 'didn\'t get right week');
-    assert.equal(uno.eventCount, 5, 'didn\'t get right count for week');
+    assert.equal(uno.count, 5, 'didn\'t get right count for week');
     assert.ok(uno.desc.match(/Week of/i), 'didn\'t get right desc');
     
     var dos = r['47'];
     assert.equal(dos.week, 47, 'didn\'t get right week');
-    assert.equal(dos.eventCount, 8, 'didn\'t get right count for week');
+    assert.equal(dos.count, 8, 'didn\'t get right count for week');
     
   })
 
@@ -647,12 +647,12 @@ describe('Event API', function() {
     // Arbitrary - update as needed
     var uno = r['48'];
     assert.equal(uno.week, 48, 'didn\'t get right week');
-    assert.equal(uno.eventCount, 2, 'didn\'t get right count for week');
+    assert.equal(uno.count, 2, 'didn\'t get right count for week 48');
     assert.ok(uno.desc.match(/Week of/i), 'didn\'t get right desc');
     
     var dos = r['47'];
     assert.equal(dos.week, 47, 'didn\'t get right week');
-    assert.equal(dos.eventCount, 3, 'didn\'t get right count for week');
+    assert.equal(dos.count, 3, 'didn\'t get right count for week 47');
     
   })
 

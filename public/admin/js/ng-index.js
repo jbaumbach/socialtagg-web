@@ -23,6 +23,11 @@ app.config(function ($routeProvider, $locationProvider) {
       templateUrl:"templates/views/event-activity.html",
       controller:"EventActivity"
     })
+    .when('/user-activity',
+    {
+      templateUrl:"templates/views/user-activity.html",
+      controller:"UserActivity"
+    })
     .otherwise({
       templateUrl:"templates/views/home.html",
       controller:"HomeCtrl"

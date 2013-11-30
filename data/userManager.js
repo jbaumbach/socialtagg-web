@@ -262,6 +262,10 @@ exports.getEventUsers = function(eventId, type, callback) {
   db.getEventUsers(eventId, type, callback);
 }
 
+exports.getUserCounts = function(options, callback) {
+  db.getUserCounts(options, callback);
+}
+
 //********************************************************************************
 // API user functions
 //********************************************************************************
