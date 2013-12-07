@@ -524,7 +524,7 @@ exports.usersPut = function(req, res) {
 }
 
 var handleUserCreateAndCheckin = exports.handleUserCreateAndCheckin = function(options, res) {
-  console.log('handleUserCreateAndCheckin: ' + util.inspect(options, {depth:null}));
+  //console.log('handleUserCreateAndCheckin: ' + util.inspect(options, {depth:null}));
 
 /* Example of options object (posted by Angular & possibly added to): 
   { action: 'createAndCheckin',
@@ -551,8 +551,6 @@ var handleUserCreateAndCheckin = exports.handleUserCreateAndCheckin = function(o
       }
     }, 
     function checkForExistingUser(cb) {
-      console.log('checkForExistingUser...')
-
       userManager.getUserByEmail(userRaw.email, function(user) {
         if (user) {
           cb({ status: 400, msg: 'Sorry, that email address is already in use' });
@@ -562,22 +560,19 @@ var handleUserCreateAndCheckin = exports.handleUserCreateAndCheckin = function(o
       });
     },
     function insertUser(cb) {
-      console.log('upserting user...')
-
       userManager.upsertUser(userRaw, function(err, user) {
-        console.log('got user: ' + util.inspect(user));
         newUser = user;
         if (err) {
           cb({ status: 500, msg: err });
         } else if(!user) {
-          cb({ status: 500, msg: 'User not created, please try again later '});
+          cb({ status: 500, msg: 'User not created, please contact support and/or try again later '});
         } else {
           cb();
         }
       });
     },
     function sendWelcomeEmail(cb) {
-      if (options.source == 'eventOwner') {
+      if (options.sourceType == 'eventOwner') {
         console.log('todo: sending welcome email');
         cb();
       } else {
@@ -586,11 +581,9 @@ var handleUserCreateAndCheckin = exports.handleUserCreateAndCheckin = function(o
       }
     },
     function registerUser(cb) {
-      console.log('registering user...')
       userManager.registerUserToEvent(newUser.id, options.eventId, cb);
     },
     function checkinUser(cb) {
-      console.log('checking in user...')
       userManager.checkinUserToEvent(newUser.id, options.eventId, cb);
     }
   ], function(err) {

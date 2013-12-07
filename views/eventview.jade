@@ -45,7 +45,7 @@ block content
               .value #{ event.description }  
 
         .twelve.columns.register(ng-show="userCanRegister", style="display:none;")
-          a.button.color(href='#', ng-click='register()', no-click) Register
+          a.button.color(href='#', ng-click='register()', no-click) Register Me
           i.icon-spinner.icon-spin.icon-2x(style="display:none;", ng-show="isRegistering")
 
         .twelve.columns.register(ng-show="userIsRegistered", style="display:none;")
@@ -112,8 +112,8 @@ block content
                   input.text(type='text', id='title', ng-model='newUser.title')
 
 
-              .two.columns
-                a.button.color(href='#', ng-click='addUser()', no-click) Save
+              .three.columns
+                a.button.color(href='#', ng-click='addUser()', no-click) Save & Check In
                 i.icon-spinner.icon-spin.icon-2x.spinnerleftmargin(ng-show='savingNewUser')
 
 
