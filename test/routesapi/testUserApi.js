@@ -106,7 +106,7 @@ describe('api - user functions', function() {
       .set('Content-Type', 'application/json')
       .send(JSON.stringify({ action: 'uggabugga' }))
       .expect(/.*action.*not allowed/)
-      .expect(403, done);
+      .expect(400, done);
   });
 
   it('should not send a verificationemail email w/o a verification code', function(done) {

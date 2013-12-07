@@ -78,19 +78,12 @@ var loginController = app.controller('loginController', function($scope, $http, 
     }).success(function (data, status, headers, config) {
         $scope.loading = false;
 
-        console.log('have successfunction? ' + successFunction)
         if (successFunction) {
-          console.log('calling success function');
           successFunction();
         }
 
     }).error(function (data, status, headers, config) {
 
-      console.log('oops, failure! ' + data);
-      console.log('status: ' + status);
-      console.log('headers: ' + headers);
-      console.log('config: ' + config);
-      
       $scope.loginError = true;
       $scope.loading = false;
       
@@ -116,10 +109,8 @@ var loginController = app.controller('loginController', function($scope, $http, 
       var postData = 'email=' + $scope.email;
       var postUrl = $scope.secureProtocol + '://' + $scope.serverPath + '/registration/createnewaccount';
       
-      console.log('submitting create...');
       trySubmitUserInfo(postData, postUrl, function() {
         // Success
-        console.log('setting login mode');
         $scope.mode = $scope.loginModes.regSent;
         
       }, function(data) {
@@ -139,8 +130,6 @@ var loginController = app.controller('loginController', function($scope, $http, 
     var successUrl = $scope.secureProtocol + '://' + $scope.serverPath + ($scope.loginDest || '');
     var postUrl = $scope.secureProtocol + '://' + $scope.serverPath + '/login';
 
-    console.log('successUrl: ' + successUrl);
-    
     trySubmitUserInfo(postData, postUrl, function() {
       // Success
       window.location = successUrl;

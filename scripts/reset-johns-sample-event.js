@@ -88,6 +88,33 @@ async.waterfall([
       client().createEntity(options, acb);
     }, cb);
     
+  },
+  function deleteLavamantisAsAUser(cb) {
+    async.waterfall([
+      function getLavamantis(dlcb) {
+        var options = {
+          type: 'users',
+          qs: {
+            // Note: you have to use '*' - specifying individual columns causes '.hasNextEntity()' on the 
+            // collection to fail
+            ql: util.format('select * where email = \'lavamantis@gmail.com\''),
+            //ql: util.format('select * where email = \'blah2@blah.com\''),
+            limit: 100
+          }
+        }
+        client().createCollection(options, dlcb);
+      },
+      function deleteLavamantis(rows, dlcb) {
+        if (rows.hasNextEntity()) {
+          var lavamantisRow = rows.getNextEntity();
+          console.log('deleting lavamantis!');
+          lavamantisRow.destroy(dlcb);
+        } else {
+          console.log('no lavamantis to delete!');
+          dlcb();
+        }
+      }
+    ], cb);
   }
 ], function getOuttaHere(err) {
   var exitCode = 0; // success

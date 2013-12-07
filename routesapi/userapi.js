@@ -409,16 +409,20 @@ exports.detail = function(req, res) {
   });
 };
 
-exports.validateRawUser = function(userRaw) {
+exports.validateRawUser = function(userRaw, options) {
   
   var v = application.ErrorCollectingValidator();
+  options = options || {};
   
   //
   // These fields are required
   //
   v.check(userRaw.firstName, 'first name should be between 1 and 50 chars').len(1, 50);
   v.check(userRaw.lastName, 'last name should be between 1 and 50 chars').len(1, 50);
-  // no need to check, we ignore this value if passed: v.check(userRaw.email, 'email should be present and valid').isEmail();
+  
+  if (options.checkEmail) {
+    v.check(userRaw.email, 'email should be present and valid').isEmail();
+  }
   
   // Only check password if this is an insert
   if (!userRaw.id) {
@@ -519,6 +523,85 @@ exports.usersPut = function(req, res) {
 
 }
 
+var handleUserCreateAndCheckin = exports.handleUserCreateAndCheckin = function(options, res) {
+  console.log('handleUserCreateAndCheckin: ' + util.inspect(options, {depth:null}));
+
+/* Example of options object (posted by Angular & possibly added to): 
+  { action: 'createAndCheckin',
+    eventId: 'd295e83a-0f8a-11e3-a682-2346c22487a2',
+    firstName: 'fred',
+    lastName: 'jones',
+    email: 'uggabugga@',
+    company: 'co',
+    title: 'title' }
+*/
+  
+  
+  var userRaw = options;
+  var newUser;
+  
+  async.waterfall([
+
+    function validateUser(cb) {
+      var invalidDataMsgs = thisModule.validateRawUser(userRaw, { checkEmail: true });
+      if (invalidDataMsgs.length > 0) {
+        cb({ status: 400, msg: invalidDataMsgs });
+      } else {
+        cb();
+      }
+    }, 
+    function checkForExistingUser(cb) {
+      console.log('checkForExistingUser...')
+
+      userManager.getUserByEmail(userRaw.email, function(user) {
+        if (user) {
+          cb({ status: 400, msg: 'Sorry, that email address is already in use' });
+        } else {
+          cb();
+        }
+      });
+    },
+    function insertUser(cb) {
+      console.log('upserting user...')
+
+      userManager.upsertUser(userRaw, function(err, user) {
+        console.log('got user: ' + util.inspect(user));
+        newUser = user;
+        if (err) {
+          cb({ status: 500, msg: err });
+        } else if(!user) {
+          cb({ status: 500, msg: 'User not created, please try again later '});
+        } else {
+          cb();
+        }
+      });
+    },
+    function sendWelcomeEmail(cb) {
+      if (options.source == 'eventOwner') {
+        console.log('todo: sending welcome email');
+        cb();
+      } else {
+        console.log('bah, not going to send welcome email');
+        cb();
+      }
+    },
+    function registerUser(cb) {
+      console.log('registering user...')
+      userManager.registerUserToEvent(newUser.id, options.eventId, cb);
+    },
+    function checkinUser(cb) {
+      console.log('checking in user...')
+      userManager.checkinUserToEvent(newUser.id, options.eventId, cb);
+    }
+  ], function(err) {
+    if (err) {
+      res.send(err.status, { msg: err.msg });
+    } else {
+      res.send(201, newUser);
+    }
+  })
+}
+
 exports.usersPost = function(req, res) {
   //
   // todo: understand how Express parses the JSON post (asynchronously?)  
@@ -544,8 +627,12 @@ exports.usersPost = function(req, res) {
     } else if (actionMode === 'checkinUser' || actionMode === 'registerUser') {
       options.action = actionMode;
       thisModule.handleUserEventAction(options, res);
+    } else if (actionMode === 'createAndCheckinByEventOwner') {
+      options.sourceType = 'eventOwner';
+      options.sourceId = options.eventId;
+      thisModule.handleUserCreateAndCheckin(options, res);
     } else {
-      thisModule.respond(res, 403, util.format('\'action\' value of \'%s\' is not allowed', actionMode)); 
+      thisModule.respond(res, 400, util.format('\'action\' value of \'%s\' is not allowed', actionMode)); 
     } 
   } else {
     

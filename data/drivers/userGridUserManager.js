@@ -61,7 +61,9 @@ exports.userFromUserGridUser = function(userGridUser) {
     company: userGridUser.get('company'),
     title: userGridUser.get('title'),
     twitter: userGridUser.get('twitter'),
-    avatarId: userGridUser.get('uuid_avatar_image')
+    avatarId: userGridUser.get('uuid_avatar_image'),
+    sourceType: userGridUser.get('source_type'),
+    sourceId: userGridUser.get('source_id')
   });
 }
 
@@ -161,12 +163,26 @@ function userGridUserFromUser(user) {
     bio: user.bio,
     company: user.company,
     title: user.title,
-    twitter: user.twitter
-    // not yet: uuid_avatar_image: user.avatarId
+    twitter: user.twitter,
+    
+    // Additional columns
+    
+    // The entity type responsible for the lead entering the system
+    // Values:
+    // eventOrganizer
+    // salesPerson
+    // webSearch
+    source_type: user.sourceType,
 
-    // Adding 9/2/2013 to support password changing
-    // password: user.password
-
+    // The id of the entity responsible for the lead entering the system.  Depends on source_type
+    // Values:
+    // if “eventOrganizer”
+    //  eventId
+    // if "salesPerson"
+    //  user_uuid
+    // if "adCampaign"
+    //  "Google Adwords/[campaign_id]" or "Facebook Ads/[campaign_id]"
+    source_id: user.sourceId
 };
   
   if (!user.uuid) {

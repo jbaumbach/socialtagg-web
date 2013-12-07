@@ -4144,6 +4144,14 @@ div.field.event-datetime {
   margin-top: 20px;
 }
 
+.my-events .event-new-user input {
+  width: 140px;
+}
+
+.my-events .event-new-user a.button {
+  margin-top: 22px;
+}
+
 /****************** Login box *****************/
 .other-login-options {
   margin-top: 15px;

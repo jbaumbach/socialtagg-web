@@ -44,15 +44,13 @@ block content
               .desc Description
               .value #{ event.description }  
 
-        //- If events are enabled
-        if true
-          .twelve.columns.register(ng-show="userCanRegister", style="display:none;")
-            a.button.color(href='#', ng-click='register()', no-click) Register
-            i.icon-spinner.icon-spin.icon-2x(style="display:none;", ng-show="isRegistering")
+        .twelve.columns.register(ng-show="userCanRegister", style="display:none;")
+          a.button.color(href='#', ng-click='register()', no-click) Register
+          i.icon-spinner.icon-spin.icon-2x(style="display:none;", ng-show="isRegistering")
 
-          .twelve.columns.register(ng-show="userIsRegistered", style="display:none;")
-            .notification.success
-              p You are {{ userStatus }} for this event.
+        .twelve.columns.register(ng-show="userIsRegistered", style="display:none;")
+          .notification.success
+            p You are {{ userStatus }} for this event.
         
         .twelve.columns
           .headline
@@ -74,6 +72,51 @@ block content
               .twelve.columns
                 p No one has checked in yet!
 
+        if locals.isEventOwner
+          .twelve.columns.event-new-user#manual-entry
+            .headline
+              h4 Manual User Entry
+
+            //- Error message, set style explicitly so it won't flash on page refresh
+            // Huh, this might be a good place for a directive!
+            .notification(ng-show='notifyMsg', style='display: none;', ng-class='notifyClass')
+              p
+                span {{ notifyMsg }}
+                a.close(href='#', ng-click='clearMsg()', no-click)
+
+            form.form-horizontal
+              
+              .three.columns
+                .field
+                  label(for='firstName') First Name
+                  input.text.event-datetime(type='text', id='firstName', ng-model='newUser.firstName')
+
+              .three.columns
+                .field
+                  label(for='lastName') Last Name
+                  input.text(type='text', id='lastName', ng-model='newUser.lastName')
+
+              .three.columns
+                .field
+                  label(for='email') Email
+                  input.text(type='text', id='email', ng-model='newUser.email')
+              
+              .three.columns
+                .field
+                  label(for='company') Company
+                  input.text(type='text', id='company', ng-model='newUser.company')
+              
+              .three.columns
+                .field
+                  label(for='title') Job Title
+                  input.text(type='text', id='title', ng-model='newUser.title')
+
+
+              .two.columns
+                a.button.color(href='#', ng-click='addUser()', no-click) Save
+                i.icon-spinner.icon-spin.icon-2x.spinnerleftmargin(ng-show='savingNewUser')
+
+
         .twelve.columns
           .headline
             h4 Who's Registered
@@ -93,7 +136,7 @@ block content
                     ul
                       li {{ registeredUser.lastName + ', ' + registeredUser.firstName }}
                       li 
-                        a(href='{{ registeredUser.email }}')
+                        a(href='mailto:{{ registeredUser.email }}')
                           {{ registeredUser.email }}
                   .two.column
                     a.button.color(href='#', ng-click='checkinUser(registeredUser)', no-click) Check In
