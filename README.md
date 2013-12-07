@@ -24,15 +24,15 @@
    * Download the source code.
    * Install dependencies
    
-    $ npm install
+      $ npm install
 
    * Make sure Redis is set up and the server is started:
    
-    $ /Applications/My\ Applications/redis-2.6.7/src/redis-server
+      $ /Applications/My\ Applications/redis-2.6.7/src/redis-server
     
    * Fire up the application server:
 
-    $ node app
+      $ node app
 
    If all goes well, the startup message will show the url to copy to your browser to see the app in action.
 
