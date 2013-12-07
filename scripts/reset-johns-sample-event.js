@@ -70,10 +70,10 @@ async.waterfall([
     console.log('3. adding sample users...');
 
     var newUsers = [
-      'c238c31a-2d6a-11e3-898d-85fbe15c5ce8',
-      '3d86497b-66c4-11e2-8b37-02e81ac5a17b',
-      'd31fb37f-7428-11e2-a3b3-02e81adcf3d0',
-      'c6911a5a-ce2b-11e2-9420-ef5ce7c13f4c'
+      'c238c31a-2d6a-11e3-898d-85fbe15c5ce8',  //joe
+      '3d86497b-66c4-11e2-8b37-02e81ac5a17b',  //jeff
+      'd31fb37f-7428-11e2-a3b3-02e81adcf3d0'  //jade
+//      'c6911a5a-ce2b-11e2-9420-ef5ce7c13f4c'  // melissa
     ];
     
     async.each(newUsers, function(newUserId, acb) {

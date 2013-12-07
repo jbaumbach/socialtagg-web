@@ -13,6 +13,20 @@
         //-
           .twitter
             a.btn_2(href='#') Login with Twitter
+      
+      p.privacy 
+        a(href='#', no-click, ng-click='showPrivacyDetail = !showPrivacyDetail')
+          | We'll never post anything to Facebook.  
+          i.mini-ico-info-sign
+      
+        div(ng-show='showPrivacyDetail', ng-cloak)
+          p
+            strong We take your privacy seriously.
+            ul
+              li We will never post anything to your social network(s) without your explicit permissions.
+              li Other users can't contact you unless you have become Contaggs.
+      
+        
       // Login Fields 
       #login(ng-class='{error:loginError}')
 

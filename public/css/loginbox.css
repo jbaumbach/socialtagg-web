@@ -3,7 +3,7 @@
 #loginbox {
   /* display: none; */
   color:#838383; font:13px "Droid Sans", Arial, Helvetica, sans-serif;
-  width: 350px; 
+  /*width: 350px; */
 }
 
 #loginbox input, #loginbox textarea { font-family:tahoma, arial; font-size:12px; color:#57595d;}
@@ -38,7 +38,7 @@
   font-family: "Droid Sans";
   padding: 11px 15px 10px 50px;
   background-color: #fdfdfd;
-  width: 255px;
+  width: 225px;
   display: block;
   border:1px solid #d8d8d8;
   margin: 13px 0 -3px 0;
