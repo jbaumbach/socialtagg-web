@@ -266,3 +266,15 @@ exports.getContaggsCreatedBetweenStartAndEndDates = function(startDate, endDate,
 exports.getEventCounts = function(options, callback) {
   db.getEventCounts(options, callback);
 }
+
+/**
+ * Gets an array of events based on what options you specify
+ *
+ * @param options
+ * @param callback - function with sig
+ *  err - you know what this is
+ *  events - array of events objects
+ */
+exports.getEvents = function(options, callback) {
+  db.getEvents(options, callback);
+}

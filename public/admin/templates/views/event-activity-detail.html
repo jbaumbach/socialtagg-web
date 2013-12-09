@@ -1,0 +1,22 @@
+
+<h2>Events Activity Period Detail - {{ pageDesc }}</h2>
+
+<table class="table table-striped">
+
+  <thead>
+  <tr>
+    <th>Date</th>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Owner</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr ng-repeat="item in summary.data">
+    <td>{{ item.created | date:'shortDate' }}</td>
+    <td>{{ item.name }}</td>
+    <td>{{ item.description }}</td>
+    <td><a href="{{ '/users/' + item.owner }}">{{ item.owner }}</a></td>
+  </tr>
+  </tbody>
+</table>

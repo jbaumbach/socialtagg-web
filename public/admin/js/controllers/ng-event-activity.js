@@ -1,9 +1,12 @@
 
 app.controller("EventActivity", function ($scope, $route, EventActivity) {
   
+  $scope.detailUrl = function(item) {
+    return "/admin/#/event-activity/" + item.year + "/week/" + item.week;
+  }
+  
   $scope.summary = EventActivity.get(
     function success(dataSummary) {
-      // loading = false
 
       var data = {
         labels: [],
@@ -18,18 +21,12 @@ app.controller("EventActivity", function ($scope, $route, EventActivity) {
         ]
       };
 
-      //console.log(dataSummary);
-
       _.each(dataSummary.data, function(value, key) {
-        //console.log();
         if (value instanceof Object) {
-          //console.log('pushing key: ' + key);
           data.labels.push(value.week);
           data.datasets[0].data.push(value.count);
         }
       });
-
-      console.log(data);
 
       //
       // Extra computation to workaround floats on y-axis bug

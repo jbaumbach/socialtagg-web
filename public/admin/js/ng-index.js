@@ -23,6 +23,11 @@ app.config(function ($routeProvider, $locationProvider) {
       templateUrl:"templates/views/event-activity.html",
       controller:"EventActivity"
     })
+    .when("/event-activity/:year/:type/:id",
+    {
+      templateUrl:"templates/views/event-activity-detail.html",
+      controller:"EventActivityDetail"
+    })
     .when('/user-activity',
     {
       templateUrl:"templates/views/user-activity.html",
@@ -57,4 +62,9 @@ function st_getMaxValueOfChartData(data) {
   }
 
   return result;
+}
+
+function st_toTitleCase(str)
+{
+  return str.replace(/\w*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }

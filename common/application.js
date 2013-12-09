@@ -557,6 +557,7 @@ exports.getDataSummary = function(options, dataItems) {
     dataItem.dayOfYear = m.dayOfYear();
     dataItem.week = m.week();
     dataItem.month = m.month();
+    
     return dataItem;
   }
 
@@ -591,6 +592,7 @@ exports.getDataSummary = function(options, dataItems) {
       var weekNumber = dateCounter.week();
       memo[weekNumber] = {
         week: weekNumber,
+        year: dateCounter.year(),
         desc:'Week of ' + dateCounter.format('dddd, MMMM Do YYYY'),
         count: 0
       }

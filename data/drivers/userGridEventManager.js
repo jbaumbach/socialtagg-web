@@ -13,6 +13,7 @@ var util = require('util')
   , async = require('async')
   , userGridUtilities = require('./userGridUtilities')
   , thisModule = this
+  , _ = require('underscore')
   ;
 
 /**
@@ -44,12 +45,13 @@ exports.surveyAnswersFromUserGridSurveyAnswers = function(ugSurveyAnswers) {
   return result;
 }
 
+
 /**
  * Takes an event from usergrid and returns a SocialTagg Event
  * 
  * @param userGridEvent
  */
-exports.eventFromUserGridEvent = function(userGridEvent) {
+var eventFromUserGridEvent = exports.eventFromUserGridEvent = function(userGridEvent) {
 
   var constructionData = {
     uuid: userGridEvent.get('uuid'),
@@ -632,19 +634,13 @@ exports.getEventSurveyAnswers = function(surveyId, callback) {
 
 }
 
-/**
- * Grabs the usergrid contagg objects that were created between the passed dates
- * @param startDate - the start date
- * @param endDate - the end date
- * @param callback - function with sig
- *  err - you know what this is
- *  contaggs - array of *usergrid* contagg objects - not normal objects!
- */
-exports.getContaggsCreatedBetweenStartAndEndDates = function(startDate, endDate, callback) {
-  
+function getRecordsBetweenDates(table, startDate, endDate, callback) {
+
+  var result = [];
+
   var options = {
     queryOptions: {
-      type: 'contaggs',
+      type: table,
       qs: {
         // Note: you have to use '*' - specifying individual columns causes '.hasNextEntity()' on the 
         // collection to fail
@@ -662,13 +658,60 @@ exports.getContaggsCreatedBetweenStartAndEndDates = function(startDate, endDate,
     }
   }
 
-  var result = []
-
   console.log('gccbsaed: ' + util.inspect(options));
-  
-  userGridUtilities.counterFunction(options, function(err) {
+
+  userGridUtilities.counterFunction(options, function (err) {
     callback(err, result);
   });
+  
+}
+/**
+ * Grabs the usergrid contagg objects that were created between the passed dates
+ * 
+ * @param startDate - the start date
+ * @param endDate - the end date
+ * @param callback - function with sig
+ *  err - you know what this is
+ *  contaggs - array of *usergrid* contagg objects - not normal objects!
+ */
+exports.getContaggsCreatedBetweenStartAndEndDates = function(startDate, endDate, callback) {
+  var table = 'contaggs';
+  getRecordsBetweenDates(table, startDate, endDate, callback);
+}
+
+/**
+ * Gets an array of events based on what options you specify
+ * 
+ * @param options
+ * @param callback - function with sig
+ *  err - you know what this is
+ *  events - array of events objects
+ */
+exports.getEvents = function(options, callback) {
+  var table = 'events-sts';
+  
+  switch (options.queryType) {
+    case 'byStartEndDate':
+      getRecordsBetweenDates(table, options.startDate, options.endDate, function (err, ugEvents) {
+        if (err) {
+          callback(err);
+        } else {
+          var result = _.
+            chain(ugEvents).
+            map(function(ugEvent) {
+              return eventFromUserGridEvent(ugEvent);
+            }).
+            reject(function(event) {
+              return !event.owner || _.contains(options.excludeUserIds, event.owner); 
+            }).
+            value();
+          callback(null, result);
+        }
+      });
+      break;
+    default:
+      throw 'Type: ' + options.queryType + ' is not implemented';
+  }
 }
 
 exports.getEventCounts = function(options, callback) {

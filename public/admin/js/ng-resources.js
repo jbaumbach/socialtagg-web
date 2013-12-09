@@ -7,6 +7,14 @@ angular.module("EventActivityResource", ["ngResource"]).
   });
 app.requires.push("EventActivityResource");
 
+angular.module("EventActivityDetailResource", ["ngResource"]).
+  factory("EventActivityDetail", function($resource) {
+    return $resource(
+      "/apiv1/socialtagg/events/activity/:year/:type/:id"
+    );
+  });
+app.requires.push("EventActivityDetailResource");
+
 angular.module("UserActivityResource", ["ngResource"]).
   factory("UserActivity", function($resource) {
     return $resource(

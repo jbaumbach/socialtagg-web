@@ -17,7 +17,7 @@
   <tbody>
     <tr ng-repeat="(weekNo, item) in summary.data">
       <td>{{ weekNo }}</td>
-      <td>{{ item.desc }}</td>
+      <td><a href="{{ detailUrl(item) }}">{{ item.desc }}</a></td>
       <td>{{ item.count }}</td>
     </tr>
   </tbody>

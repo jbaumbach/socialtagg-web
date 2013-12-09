@@ -16,6 +16,7 @@ var userManager = require('./../data/userManager')
   , thisModule = this
   , moment = require('moment')
   , authorization = require(process.cwd() + '/common/authorization')
+  , _ = require('underscore')
   ;
 
 //
@@ -1025,6 +1026,32 @@ var getEventSummary = exports.getEventSummary = function(options, events) {
   return application.getDataSummary(options, events);
 }
 
+exports.eventActivityDetail = function(req, res) {
+  
+  var startDate = moment([+req.params.year]);
+  startDate.week(req.params.id).weekday(0);
+  var endDate = startDate.clone().add('weeks', 1);
+  
+  var options = {
+    queryType: 'byStartEndDate', 
+    startDate: startDate.valueOf(), 
+    endDate: endDate.valueOf(),
+    excludeUserIds: _.union(
+      authorization.getAdmins(),
+      authorization.tempGetOtherExclusions()
+    )
+  }
+
+  eventManager.getEvents(options, function(err, events) {
+    if (err) {
+      res.send(500, { msg: err });
+    } else {
+      res.send(200, { data: events });
+    }
+  })
+  
+}
+
 exports.eventActivity = function(req, res) {
 
   //
@@ -1062,7 +1089,7 @@ exports.eventActivity = function(req, res) {
     } else {
       //
       // Put the results in a 'data' object.  This way, the results of .data can
-      // be processed by the client without Angular's promise '$then' etc. won't be part
+      // be processed by the client without Angular's promise '$then' etc. being part
       // of the data result set.
       //
       res.send(200, { data: summary });
