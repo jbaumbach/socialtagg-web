@@ -15,7 +15,7 @@ var util = require('util')
   Parameters:
 
  options: object with properties:
-   queryOptions: usergrid query options.  Row limit default is 500. 
+   queryOptions: usergrid query options.  Row limit default is 100. 
    aggregator: iterator function that accepts these parameters:
      collectionRow: a row from the collection that we're counting.  You are responsible
                    for accessing the data values and incrementing your counters

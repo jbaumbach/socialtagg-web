@@ -46,7 +46,7 @@ var analyticsController = app.controller('analyticsController', function ($scope
     var fillColor = '#14ABFA';    // SocialTagg blue
     var strokeColor = '#666666';  // body color (dark grey)
 
-    data.datasets.forEach(function (ds) {
+    angular.forEach(data.datasets, function (ds) {
       ds.fillColor = fillColor;
       ds.strokeColor = strokeColor;
     });
@@ -138,7 +138,7 @@ var analyticsController = app.controller('analyticsController', function ($scope
           //
           // Put in some colors.  These are used by the pie chart AND the legend.
           //
-          data.datapoints.forEach(function(datapoint, index) {
+          angular.forEach(data.datapoints, function(datapoint, index) {
             var colorIndex = index % dataColors.length;
             var color = dataColors[colorIndex];
             datapoint.color = color;
@@ -213,14 +213,14 @@ var analyticsController = app.controller('analyticsController', function ($scope
       //
       if (pageVars.surveyQuestions.chartable) {
 
-        pageVars.surveyQuestions.chartable.forEach(function(question) {
+        angular.forEach(pageVars.surveyQuestions.chartable, function(question) {
           loadChartType('sq-' + question.questionId, 'sq');
         });
       }
       
       if (pageVars.surveyQuestions.nonChartable) {
 
-        pageVars.surveyQuestions.nonChartable.forEach(function(question) {
+        angular.forEach(pageVars.surveyQuestions.nonChartable, function(question) {
           loadNonChartType('sq-' + question.questionId);
         });
       }

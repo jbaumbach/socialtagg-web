@@ -322,7 +322,7 @@ var eventController = app.controller('eventController', function($scope, Event, 
       
       var newQuestionId = 0;
       // Get the next question id.  Holes in the order are ok.
-      $scope.survey.questions.forEach(function(question) {
+      angular.forEach($scope.survey.questions, function(question) {
         newQuestionId = Math.max(newQuestionId, question.questionId);
       });
       newQuestionId++;
