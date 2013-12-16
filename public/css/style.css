@@ -4208,7 +4208,7 @@ div.field.event-datetime {
 /* Homepage */
 
 div.integrated-event-platform,
-div.whats-next,
+div.whats-next, div.our-partners,
 div.call-to-action {
   margin-bottom: 60px;
   margin-top: 80px;
@@ -4246,11 +4246,13 @@ div.call-to-action {
   margin-bottom: 25px;
 }
 
-.our-partners li {
+.our-partners li, 
+.featured-on li {
   margin-right: 45px;
 }
 
-.our-partners .extra-top-margin img {
+.our-partners .extra-top-margin img,
+.featured-on .extra-top-margin img {
   margin-top: 25px;
 }
 /**********************************
@@ -4402,6 +4404,20 @@ body.checkin-page {
 /*** Angular hiding support - works in all browsers except IE7 and below */
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
+}
+
+/* Greyscale hovers */
+img.grayscale {
+  filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale"); /* Firefox 10+ */
+  filter: gray; /* IE6-9 */
+  -webkit-filter: grayscale(100%); /* Chrome 19+ & Safari 6+ */
+  -webkit-transition: all .6s ease; /* Fade to color for Chrome and Safari */
+  -webkit-backface-visibility: hidden; /* Fix for transition flickering */
+}
+
+img.grayscale:hover {
+  filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'1 0 0 0 0, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 1 0\'/></filter></svg>#grayscale");
+  -webkit-filter: grayscale(0%);
 }
 
 /* =================================================================== */
