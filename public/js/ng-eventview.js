@@ -197,4 +197,8 @@ var eventViewController = app.controller('eventViewController', function($scope,
   // Main
   createNewUserForManualEntry();
   
+  Raven.context(function() {
+    var generateUnhandledExceptionToTestSentry = hello.there;
+  });
+  
 });

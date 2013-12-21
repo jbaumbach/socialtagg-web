@@ -1,0 +1,21 @@
+//- Raven (Sentry error handling)
+if public.sentryDsn
+  // Log page errors in case something bad happens
+  script(type='text/javascript', src="http://cdnjs.cloudflare.com/ajax/libs/raven.js/1.0.8/raven.min.js")
+
+  script.
+    var sentryDsn = "!{ public.sentryDsn }";
+    var sentryUserInfo = !{ locals.sentryUserInfo ? JSON.stringify(sentryUserInfo) : "undefined" };
+    var ravenSettings = {};
+
+    if (sentryUserInfo) {
+      Raven.config(sentryDsn, ravenSettings).
+        setUser(sentryUserInfo).
+        install();
+    } else {
+      Raven.config(sentryDsn, ravenSettings).
+        install();
+    }
+
+else
+  // Note: no Sentry DSN specified!
