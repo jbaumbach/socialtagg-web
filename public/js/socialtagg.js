@@ -23,3 +23,8 @@ function generateGuid() {
     return v.toString(16);
   });
 }
+
+// Test error handling if user requests it
+if (getQueryStringParameterByName('testerror')) {
+  var thisWillThrowUndefinedException = hello.there;
+}
