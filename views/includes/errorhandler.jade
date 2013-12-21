@@ -1,7 +1,7 @@
 //- Raven (Sentry error handling)
 if public.sentryDsn
   // Log page errors in case something bad happens
-  script(type='text/javascript', src="http://cdnjs.cloudflare.com/ajax/libs/raven.js/1.0.8/raven.min.js")
+  script(type='text/javascript', src="//cdnjs.cloudflare.com/ajax/libs/raven.js/1.0.8/raven.min.js")
 
   script.
     var sentryDsn = "!{ public.sentryDsn }";
