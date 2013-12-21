@@ -1,0 +1,20 @@
+{
+  "name": "SocialTagg",
+  "version": "1.0.0",
+  "authors": [
+    "John Baumbach <john@socialtagg.com>"
+  ],
+  "description": "The SocialTagg main website",
+  "license": "None - private code",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/js/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+  }
+}
