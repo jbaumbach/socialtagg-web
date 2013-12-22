@@ -196,5 +196,4 @@ var eventViewController = app.controller('eventViewController', function($scope,
 
   // Main
   createNewUserForManualEntry();
-  
 });

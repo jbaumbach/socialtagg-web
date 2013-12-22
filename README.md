@@ -25,6 +25,7 @@
    * Install dependencies
    
       $ npm install
+      $ bower install  # maybe optional
 
    * Make sure Redis is set up and the server is started:
    
@@ -91,6 +92,10 @@
    // See doc here: https://devcenter.heroku.com/articles/custom-domains
    
     $ heroku domains:add staging.socialtagg.com --remote staging
+    
+   * Push a special branch to Heroku:
+   
+    $ git push staging jb_sentry_integration:master   # replaces "master" with "jb_sentry_integration"
    
 ## Third-party Components
 
@@ -160,6 +165,17 @@
   
     $ heroku config:set NODE_ENV=production  --remote heroku
 
+
+## Error logging and reporting
+ 
+  Client-side javascript errors are reported using "Sentry".  This captures all unhandled javascript
+  exceptions and reports them (including stack traces) in an easy interface.
+  
+  To view the exceptions, log into Heroku, find the app settings, click on "Sentry", and viola.
+  
+  The "Raven" library does the talking to Sentry.  Read up on it here:
+   
+    http://raven-js.readthedocs.org/en/latest/install/index.html
 
 ## Misc Info
 

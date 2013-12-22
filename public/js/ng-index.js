@@ -7,7 +7,23 @@
    with "ng-" to distinguish them from your node.js codebehinds.
 */
 
-var app = angular.module('indexApp', ['ui.bootstrap']);
+var app = angular.
+  module('indexApp', ['ui.bootstrap']).
+  config(function($provide) {
+    // "Decorate" the default Angular exception handler with Sentry logging
+    $provide.decorator("$exceptionHandler", function($delegate) {
+      return function(exception, cause) {
+        $delegate(exception, cause);
+        // alert(exception.message);
+        if (Raven) {
+          Raven.captureException(exception);
+        } else {
+          console.log('(warning) Raven not found!');
+        }
+      };
+    });
+  })
+  ;
 
 //
 // Angular resources from ng-resources.js
@@ -17,6 +33,9 @@ app.requires.push('userService');
 app.requires.push('userActionsService');
 
 
+//
+// Todo: move this out to ng-login.js
+//
 var loginController = app.controller('loginController', function($scope, $http, $location, $log) {
   // Login controller
 

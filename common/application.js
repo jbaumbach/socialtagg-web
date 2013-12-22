@@ -240,6 +240,11 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   pageVars.public.secureProtocol = this.globalVariables.secureProtocol;
   
   //
+  // Misc variables that are good for Jade to know about
+  //
+  pageVars.public.sentryDsn = this.globalVariables.sentryDsn;
+  
+  //
   // loginDest tells the login page where to go after login.  It can be set in a few ways:
   //
   //  1. Automatically - the logindest is appended to the .login link if you call it from Jade
@@ -301,7 +306,8 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
     // Create a 'lite' version of the user object for the page
     //
     pageVars.public.user.id = sessionInfo.userId;
-
+    pageVars.sentryUserInfo = { id: sessionInfo.userId };
+    
     if (getUserAndCallback) {
 
       userManager.getUser(sessionInfo.userId, function(user) {
@@ -311,6 +317,7 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
         // todo: remove any insecure info or force the page to SSL
         //
         pageVars.public.user = user;
+        pageVars.sentryUserInfo.email = user.email;
 
         done();
       });
