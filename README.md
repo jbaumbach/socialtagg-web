@@ -92,6 +92,10 @@
    // See doc here: https://devcenter.heroku.com/articles/custom-domains
    
     $ heroku domains:add staging.socialtagg.com --remote staging
+    
+   * Push a special branch to Heroku:
+   
+    $ git push staging jb_sentry_integration:master   # replaces "master" with "jb_sentry_integration"
    
 ## Third-party Components
 
