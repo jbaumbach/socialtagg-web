@@ -72,11 +72,12 @@
     
    * Other commands:
    
-    $ heroku ps     # Gets status, use -- remote heroku or -- remote staging
-    $ heroku logs   # See what broke, if anything
+    $ heroku logs [-t]  # See what broke, if anything.  -t is real-time streaming
     $ heroku releases # See the release history for your site
     $ heroku rollback [release] # Rollback to most recent release or specified release (e.g. v43)
-   
+    $ heroku run bash  # open a bash shell in your environment (not an existing dyno tho - good for running migrations)
+    $ heroku run:detached [command]  # run a script from your app, like migrations
+    $ heroku ps     # Gets status of all dynos, use -- remote heroku or -- remote staging
     
    * SVN error: "SVN commit failed: Directory out of date".  This happens when you rename
     a directory in a way SVN doesn't like.  To fix:
