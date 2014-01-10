@@ -543,3 +543,29 @@ exports.viewProfile = function(req, res) {
     });
   });
 }
+
+exports.forgotPassword = function(req, res) {
+
+  continue here:
+  
+  - make "Forgot Password" link work on login page
+  - update API to send forgot password email and update UG with the validation code
+  - make ng-userpassword Angular controller work
+  
+  // Actions in this controller method:
+  
+  
+  // step 1: verify the user id and reset password code
+  
+  // step 2: display the page.  accept the new info via Angular to the API
+  
+  
+  var initialPageVars = {
+    title: 'Change Password',
+    usesAngular: true
+  };
+
+  application.buildApplicationPagevars(req, initialPageVars, function(pageVars) {
+    res.render('userpassword', pageVars);
+  });
+}
