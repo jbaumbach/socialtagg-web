@@ -28,6 +28,10 @@ block content
           .notification.success
             p You are {{ userStatus }} for this event.
 
+        .twelve.columns.register(ng-show="userCanRegister", style="display:none;")
+          a.button.color(href='#', ng-click='register()', no-click) Register For This Event
+          i.icon-spinner.icon-spin.icon-2x(style="display:none;", ng-show="isRegistering")
+
         .twelve.columns
           .headline.no-margin
             h3 When
@@ -70,10 +74,6 @@ block content
               ul
                 li
                   a(href="#{ eventOwner.path }") #{ eventOwner.name }
-
-        .twelve.columns.register(ng-show="userCanRegister", style="display:none;")
-          a.button.color(href='#', ng-click='register()', no-click) Register Me
-          i.icon-spinner.icon-spin.icon-2x(style="display:none;", ng-show="isRegistering")
 
         .twelve.columns
           .headline
