@@ -40,6 +40,7 @@ block content
           
           .headline.no-margin
             h3 What
+          //- Unescape this value with the "!" instead of "#".  Jade escapes everything by default.
           p !{ event.description.htmlize() }
           
           .headline.no-margin
