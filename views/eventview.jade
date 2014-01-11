@@ -40,7 +40,7 @@ block content
           
           .headline.no-margin
             h3 What
-          p #{ event.description }
+          p !{ event.description.htmlize() }
           
           .headline.no-margin
             h3 Where
