@@ -60,6 +60,16 @@ block content
               ]
             });
 
+          .headline.no-margin
+            h3 Event Organizer
+
+          .ten.columns.event-owner
+            .two.columns
+              img.admin-user-image(src="#{ eventOwner.pictureUrl }")
+            .four.columns
+              ul
+                li
+                  a(href="#{ eventOwner.path }") #{ eventOwner.name }
 
         .twelve.columns.register(ng-show="userCanRegister", style="display:none;")
           a.button.color(href='#', ng-click='register()', no-click) Register Me

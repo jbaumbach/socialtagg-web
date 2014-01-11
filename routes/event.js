@@ -11,6 +11,7 @@ var userManager = require('./../data/userManager')
   , application = require('../common/application')
   , eventManager = require('../data/eventManager')
   , SurveyQuestion = require('../models/SurveyQuestion')
+  , async = require('async')
   ;
 
 exports.detail = function(req, res) {
@@ -21,36 +22,54 @@ exports.detail = function(req, res) {
 
   pageVars.usesAngular = true;
 
-  function done() {
-    application.buildApplicationPagevars(req, pageVars, function(pageVars) {
-      res.render('eventview', pageVars);
-    });
-  };
 
   var eventId = req.params.id;
   var userId = application.getCurrentSessionUserId(req);
   
-  eventManager.getEvent(eventId, function(err, event) {
-    
-    if (!err) {
+  async.waterfall([
+    function getEvent(cb) {
       
-      pageVars.event = event;
-      pageVars.title = pageVars.event.name + ' - Details';
+      eventManager.getEvent(eventId, function(err, event) {
 
-      // todo: SocialTagg F2F 10/2013.  Can remove after dev complete on events page.
-      var isSpecialEvent = eventId === 'be1b65e0-3e71-11e3-a797-1399e22b12e3';
-      pageVars.isEventOwner = isSpecialEvent || (userId && event.owner === userId);
-      
-      done();
-      
-    } else {
-      
-      pageVars.title = 'Event Not Found';
-      done();
-      
+        if (!err) {
+
+          pageVars.event = event;
+          pageVars.title = pageVars.event.name + ' - Details';
+
+          // todo: SocialTagg F2F 10/2013.  Can remove after dev complete on events page.
+          var isSpecialEvent = eventId === 'be1b65e0-3e71-11e3-a797-1399e22b12e3';
+          pageVars.isEventOwner = isSpecialEvent || (userId && event.owner === userId);
+
+          cb();
+        } else {
+
+          pageVars.title = 'Event Not Found';
+          cb(err);
+        }
+      });
+    },
+    function getEventOwner(cb) {
+
+      userManager.getUser(pageVars.event.owner, function(owner) {
+        if (owner) {
+
+          pageVars.eventOwner = owner;
+          
+          cb();
+        } else {
+          cb(err);
+        }
+      });
     }
-    
-  });
+  ],
+    function done(err) {
+
+      application.buildApplicationPagevars(req, pageVars, function(finalPageVars) {
+
+        res.render('eventview', finalPageVars);
+      });
+    }
+  );
   
 };
 
