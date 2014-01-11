@@ -4124,7 +4124,8 @@ div.field.event-datetime {
   height: 125px;
 }
 
-.my-events #check-ins img.admin-user-image {
+.my-events #check-ins img.admin-user-image,
+.my-events .event-owner img {
   max-width: 65px;
 }
 
