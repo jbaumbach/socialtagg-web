@@ -16,6 +16,7 @@ var userManager = require('./../data/userManager')
 
 exports.detail = function(req, res) {
 
+  // todo: either create a 404 page or add empty event and eventOwner objects here
   var pageVars = {
     title: 'Event Detail'
   };

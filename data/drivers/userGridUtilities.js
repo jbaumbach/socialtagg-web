@@ -95,3 +95,42 @@ var counterFunction = exports.counterFunction = function(options, callback) {
     }
   })
 }
+
+/*
+  Marks an object in usergrid as deleted.  It sets the field "deletedAt" to a timestamp and 
+  adds "inactive_ind" = true
+  
+  parameters:
+    options: object with properties:
+      table: string; the table name, like: "events-sts", "users", etc.
+      id: string; the id of the object to delete (for usergrid, the uuid).
+    callback: a callback with signature:
+      err: filled in if something went wrong, with object:
+        status: integer; standard HTTP status code
+        msg: string; description of error 
+ */
+var markObjectAsDeleted = exports.markObjectAsDeleted = function(options, callback) {
+  
+  async.waterfall([
+    function getObject(cb) {
+      var ugOptions = {
+        type: options.table,
+        uuid: options.id
+      };
+      client().getEntity(ugOptions, cb);
+    }, 
+    function markAsDeleted(object, cb) {
+      object.set("deletedAt", new Date().valueOf());
+      object.set("inactive_ind", "true");
+      object.save(cb);
+    }
+  ], function done(err) {
+    if (err) {
+      console.log('(error) markObjectAsDeleted: ' + util.inspect(err));
+      err = { status: 500, msg: 'sorry, not sure if server error or entity not found' };
+    }
+    
+    callback(err);
+    
+  })
+} 
