@@ -266,34 +266,13 @@ exports.deleteOwnedEvent = function(req, res) {
 
   } else {
 
-    eventManager.getEvent(uuid, function(err, event) {
-
+    eventManager.markEventAsDeleted(uuid, function(err) {
       if (err) {
-
-        res.send(500, { msg: 'a server error has occurred!'});
-
-      } else if (!event) {
-
-        res.send(404, { msg: util.format('event id "%s" not found', uuid)});
-
+        res.send(err.status, { msg: err.msg });
       } else {
-
-        event.inactiveInd = 'true';
-        
-        eventManager.updateEvent(event, function(err, event) {
-   
-          if (!err) {
-            
-            res.send(200, { msg: 'deleted event ok'} );
-            
-          } else {
-            
-            res.send(500, { msg: 'a server error has occurred!'});
-
-          }
-        });
+        res.send(200, { msg: 'gonzo' });
       }
-    })
+    });
   }
 }
 

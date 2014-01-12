@@ -282,7 +282,7 @@ exports.getEvent = function(eventId, callback) {
 }
 
 /**
- Delete an event from the database
+ Delete an event from the database - not just marked, but actually deleted.
  
  Parameters:
     eventId - the event id
@@ -308,6 +308,26 @@ exports.deleteEvent = function(eventId, callback) {
       callback(err);
     }
   });
+}
+
+/*
+ Marks an object in usergrid as deleted.  It sets the field "deletedAt" to a timestamp and 
+ adds "inactive_ind" = true
+
+ parameters:
+  eventId: string; the id (uuid) of the event
+  callback: a callback with signature:
+   err: filled in if something went wrong, with object:
+     status: integer; standard HTTP status code
+     msg: string; description of error 
+*/
+exports.markEventAsDeleted = function(eventId, callback) {
+  var options = {
+    table: 'events-sts',
+    id: eventId
+  }
+  
+  userGridUtilities.markObjectAsDeleted(options, callback);
 }
 
 /*

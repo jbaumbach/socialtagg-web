@@ -37,6 +37,21 @@ exports.deleteEvent = function(eventId, callback) {
   db.deleteEvent(eventId, callback);
 }
 
+/*
+ Marks an object in usergrid as deleted.  It sets the field "deletedAt" to a timestamp and 
+ adds "inactive_ind" = true
+
+ parameters:
+   eventId: string; the id (uuid) of the event
+   callback: a callback with signature:
+     err: filled in if something went wrong, with object:
+       status: integer; standard HTTP status code
+       msg: string; description of error 
+*/
+exports.markEventAsDeleted = function(eventId, callback) {
+  db.markEventAsDeleted(eventId, callback);
+}
+
 /**
  Update an existing event in the usergrid database
 
