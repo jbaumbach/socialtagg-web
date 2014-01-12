@@ -27,6 +27,16 @@ exports.detail = function(req, res) {
   var userId = application.getCurrentSessionUserId(req);
   
   async.waterfall([
+    function validateEventId(cb) {
+      //
+      // There's an angular bug in the repeater that accidentally calls the server
+      // with "{{ checkedInUser.pictureUrl }}" as the event id.  Can't fix angular,
+      // but let's at least bomb out here w/o calling usergrid.
+      //
+      var isValid = (eventId && eventId.match(/^[a-zA-Z0-9\-]*$/));
+      var err = isValid ? null : 'invalid eventId: ' + eventId;
+      cb(err);
+    },
     function getEvent(cb) {
       
       eventManager.getEvent(eventId, function(err, event) {
