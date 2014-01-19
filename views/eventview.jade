@@ -13,7 +13,6 @@ block content
         h2 Event Details
         #bolded-line  
   
-  //-.container.my-events(ng-controller="eventViewController", ng-init='init({ user: { id: "' + public.user.id + '"} })')
   .container.my-events(ng-controller="eventViewController", ng-init='init(' + publicPageVars + ')')
     if !locals.event
 
@@ -22,35 +21,66 @@ block content
     
     else
 
-      .twelve.columns
-        .headline.no-margin
-          h3 Event Details
-
-        .twelve.columns
-          ul
-            li
-              .desc Name
-              .value #{ event.name }
-
-            li
-              .desc Date
-              .value #{ event.startDate }
-
-            li
-              .desc Time
-              .value #{ event.startTime }
-
-            li
-              .desc Description
-              .value #{ event.description }  
-
-        .twelve.columns.register(ng-show="userCanRegister", style="display:none;")
-          a.button.color(href='#', ng-click='register()', no-click) Register Me
-          i.icon-spinner.icon-spin.icon-2x(style="display:none;", ng-show="isRegistering")
+      .twelve.columns.event-view
+        h2 #{ event.name }
 
         .twelve.columns.register(ng-show="userIsRegistered", style="display:none;")
           .notification.success
             p You are {{ userStatus }} for this event.
+
+        .twelve.columns.register(ng-show="userCanRegister", style="display:none;")
+          a.button.color(href='#', ng-click='register()', no-click) Register For This Event
+          i.icon-spinner.icon-spin.icon-2x(style="display:none;", ng-show="isRegistering")
+
+        .twelve.columns
+          .headline.no-margin
+            h3 When
+          p #{ event.startDate } at #{ event.startTime }
+          
+          
+          .headline.no-margin
+            h3 What
+          //- Unescape this value with the "!" instead of "#".  Jade escapes everything by default.
+          p !{ event.description.htmlize() }
+          
+          .headline.no-margin
+            h3 Where
+          p #{ event.address } 
+
+          // Google Maps 
+          #googlemaps.google-map.google-map-full(style='height: 250px;margin-bottom:30px')
+          script(src='//maps.google.com/maps/api/js?sensor=true')
+          script(src='/js/jquery.gmap.min.js')
+          script(type='text/javascript')
+            jQuery('#googlemaps').gMap({
+              maptype: 'ROADMAP',
+              scrollwheel: false,
+              zoom: 13,
+              markers: [
+                {
+                  address: "#{ event.address }",
+                  html: '',
+                  popup: false
+                }
+              ]
+            });
+
+          .headline.no-margin
+            h3 Event Organizer
+
+          .ten.columns.event-owner
+            .two.columns
+              img.admin-user-image(src="#{ eventOwner.pictureUrl }")
+            .four.columns
+              ul
+                li
+                  a(href="#{ eventOwner.path }") #{ eventOwner.name }
+
+        .twelve.columns
+          .headline
+            h4 Share This Event
+          p Link: 
+            a(href=event.fullPath) !{ event.fullPath }
         
         .twelve.columns
           .headline
@@ -166,13 +196,4 @@ block content
 
   
       include includes/eventtools
-
-
-
-
-
-
-
-
-
 

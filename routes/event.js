@@ -11,46 +11,76 @@ var userManager = require('./../data/userManager')
   , application = require('../common/application')
   , eventManager = require('../data/eventManager')
   , SurveyQuestion = require('../models/SurveyQuestion')
+  , async = require('async')
   ;
 
 exports.detail = function(req, res) {
 
+  // todo: either create a 404 page or add empty event and eventOwner objects here
   var pageVars = {
     title: 'Event Detail'
   };
 
   pageVars.usesAngular = true;
 
-  function done() {
-    application.buildApplicationPagevars(req, pageVars, function(pageVars) {
-      res.render('eventview', pageVars);
-    });
-  };
 
   var eventId = req.params.id;
   var userId = application.getCurrentSessionUserId(req);
   
-  eventManager.getEvent(eventId, function(err, event) {
-    
-    if (!err) {
+  async.waterfall([
+    function validateEventId(cb) {
+      //
+      // There's an angular bug in the repeater that accidentally calls the server
+      // with "{{ checkedInUser.pictureUrl }}" as the event id.  Can't fix angular,
+      // but let's at least bomb out here w/o calling usergrid.
+      //
+      var isValid = (eventId && eventId.match(/^[a-zA-Z0-9\-]*$/));
+      var err = isValid ? null : 'invalid eventId: ' + eventId;
+      cb(err);
+    },
+    function getEvent(cb) {
       
-      pageVars.event = event;
-      pageVars.title = pageVars.event.name + ' - Details';
+      eventManager.getEvent(eventId, function(err, event) {
 
-      // todo: SocialTagg F2F 10/2013.  Can remove after dev complete on events page.
-      var isSpecialEvent = eventId === 'be1b65e0-3e71-11e3-a797-1399e22b12e3';
-      pageVars.isEventOwner = isSpecialEvent || (userId && event.owner === userId);
-      
-      done();
-      
-    } else {
-      
-      pageVars.title = 'Event Not Found';
-      done();
-      
+        if (!err) {
+
+          pageVars.event = event;
+          pageVars.title = pageVars.event.name + ' - Details';
+
+          // todo: SocialTagg F2F 10/2013.  Can remove after dev complete on events page.
+          var isSpecialEvent = eventId === 'be1b65e0-3e71-11e3-a797-1399e22b12e3';
+          pageVars.isEventOwner = isSpecialEvent || (userId && event.owner === userId);
+
+          cb();
+        } else {
+
+          pageVars.title = 'Event Not Found';
+          cb(err);
+        }
+      });
+    },
+    function getEventOwner(cb) {
+
+      userManager.getUser(pageVars.event.owner, function(owner) {
+        if (owner) {
+
+          pageVars.eventOwner = owner;
+          
+          cb();
+        } else {
+          cb(err);
+        }
+      });
     }
-    
-  });
+  ],
+    function done(err) {
+
+      application.buildApplicationPagevars(req, pageVars, function(finalPageVars) {
+
+        res.render('eventview', finalPageVars);
+      });
+    }
+  );
   
 };
 

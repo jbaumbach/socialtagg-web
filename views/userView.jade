@@ -53,7 +53,7 @@ block content
           h3 Bio
         p
           //- Unescape this value with the "!" instead of "#".  Jade escapes everything by default.
-          | !{ displayUser.bio }
+          | !{ displayUser.bio.htmlize() }
     
       
       - if (locals.showQrCode)

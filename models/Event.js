@@ -53,7 +53,8 @@ var Event = function(values) {
     this.analyticsPath = '#';
     this.printerFriendlyPath = '#';
   }
-  
+
+  this.fullPath = 'http://' + application.globalVariables.serverPath + this.path;
   this.hashtag = globalFunctions.toHashtag(this.name);
   
 };
