@@ -546,11 +546,11 @@ exports.viewProfile = function(req, res) {
 
 exports.forgotPassword = function(req, res) {
 
-  continue here:
-  
-  - make "Forgot Password" link work on login page
-  - update API to send forgot password email and update UG with the validation code
-  - make ng-userpassword Angular controller work
+//  continue here:
+//  
+//  - make "Forgot Password" link work on login page
+//  - update API to send forgot password email and update UG with the validation code
+//  - make ng-userpassword Angular controller work
   
   // Actions in this controller method:
   

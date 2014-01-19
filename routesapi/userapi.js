@@ -108,6 +108,41 @@ exports.sendForgotPasswordEmail = function(emailAddr, verificationCode, resultCa
 }
 
 //
+// Similar version of the 'sendForgotPasswordEmail' function, but this one is generated
+// from the website, not the apps.
+//
+var sendForgotPasswordEmailFromWebsite = exports.sendForgotPasswordEmailFromWebsite = 
+  function(options, resultCallback) {
+
+    throw 'not done here yet!';
+
+    var emailAddr = options.emailAddr;
+    var verificationCode = options.verificationCode; 
+      
+    var message = think about calling the html convertor below and just having one message
+    
+    var params = {
+    subject : "Reset SocialTagg Password",
+    plainTextBody : util.format("Hello %s,\r\n\r\nA reset password request has been made for " +
+      "this email address.\r\nPlease " +
+      "verification code is %s. Please enter this code on the forgot password screen " +
+      "in the mobile app to reset your password.\r\n\r\nSincerely,\r\nSocialTagg Team",
+      emailAddr, verificationCode),
+    toEmail : emailAddr,
+    fromEmail : fromEmail,
+    fromName: fromName,
+
+    htmlBody : util.format("<body>Hello %s,<br \/><br \/>A reset password request has been made for<br \/>" +
+      "this email address. Your verification code is %s. Please enter this code on the " +
+      "forgot password screen in the mobile app to reset your password.<br \/>" +
+      "<br \/>Sincerely,<br \/>SocialTagg Team<\/body>", emailAddr, verificationCode)
+
+  };
+
+  email.sendGenericEmail(params, resultCallback);
+}
+
+//
 // Send the update profile email to a user
 //
 exports.sendUpdateProfileEmail = function(user, resultCallback) {
@@ -217,7 +252,9 @@ exports.handleUserVerificationEmailRequest = function(options, res) {
   }
 }
 
-
+//
+// This function applies to the request that comes from the mobile apps.
+//
 exports.handleForgotPasswordEmailRequest = function(options, res) {
 
   var userEmail = options.useremail;
@@ -573,6 +610,9 @@ var handleUserCreateAndCheckin = exports.handleUserCreateAndCheckin = function(o
     },
     function sendWelcomeEmail(cb) {
       if (options.sourceType == 'eventOwner') {
+        //
+        // This happens if the event owner is manually entering users into an event
+        //
         console.log('todo: sending welcome email');
         cb();
       } else {
@@ -593,6 +633,89 @@ var handleUserCreateAndCheckin = exports.handleUserCreateAndCheckin = function(o
       res.send(201, newUser);
     }
   })
+}
+
+//
+// This is a POSTed request from the login page.  Just enough was different from
+// usersPost.resetPassword (comes from the apps) that it got it's own function.
+//
+exports.resetPasswordWebsite = function(req, res) {
+  
+  console.log('weesa heresa!!!');
+  
+//  res.send(202, { msg: 'Yup, the email is on the way' });
+
+  var options = req.body;
+  var userEmail = options.useremail;
+  
+  async.waterfall([
+    function validateParams(cb) {
+      if (!userEmail) {
+        cb({ status: 400, msg: 'The \'useremail\' parameter is missing' });
+      } else {
+        cb();
+      }
+    },
+    function generateCode(cb) {
+      var code = globalfunctions.generateGuid();
+      cb(null, code);
+    },
+    function updateUserWithCode(code, cb) {
+      userManager.setUserVerificationCodeByEmail(code, userEmail, function(err) {
+        if (!err) {
+          cb({ status: 202, msg: 'Yup, the email is on the way' });
+        } else if (err === 1) {
+          cb({ status: 404, msg: 'User not found for email: ' + userEmail });
+        } else {
+          cb({ status: 500, msg: 'Oops, server error.  Please try again later.' });
+        }
+      });
+    },
+    function getUser(cb) {
+      userManager.getUserByEmail(userEmail, function(user) {
+        if (user) {
+          cb(null, user);
+        } else {
+          cb({ status: 500, msg: 'Oops, server error.  Can\'t retreive user from db.' });
+        }
+      })
+    },
+    function sendEmail(user, cb) {
+      //emailAddr, verificationCode, resultCallback
+      var options = {
+        
+      }
+      sendForgotPasswordEmailFromWebsite(options, function(err) {
+        cb({ status: 500, msg: 'Not even close to implemented yet' })
+      })
+    }
+  ], 
+  function outtaHere(result) {
+    res.send(result.status, { msg: result.msg });
+  });
+  
+//    application.getAndSetVerificationCodeForUserByEmail(userEmail, function(err, code) {
+//
+//      switch (err) {
+//        case 0:
+//          thisModule.sendForgotPasswordEmail(userEmail, code, function (err, response) {
+//            if (err) {
+//              thisModule.respond(res, 500, 'There was an error sending the email.  Please check the logs at this date/time.');
+//            } else {
+//              thisModule.respond(res, 200, response);
+//            }
+//          });
+//          break;
+//        case 1:
+//          thisModule.respond(res, 404, util.format('The email addr \'%s\' was not found', userEmail));
+//          break;
+//        case 2:
+//          thisModule.respond(res, 500, 'Internal server error, please try again laterl')
+//          break;
+//      }
+//
+//    });
+
 }
 
 exports.usersPost = function(req, res) {
@@ -630,7 +753,7 @@ exports.usersPost = function(req, res) {
   } else {
     
     //
-    // We're inserting a user.  At this point, we should have a temporary login on the site
+    // We're inserting a new user.  At this point, we should have a temporary login on the site
     // which authorized us to get at least to this point.
     //
 
