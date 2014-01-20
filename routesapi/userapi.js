@@ -112,31 +112,40 @@ exports.sendForgotPasswordEmail = function(emailAddr, verificationCode, resultCa
 // from the website, not the apps.
 //
 var sendForgotPasswordEmailFromWebsite = exports.sendForgotPasswordEmailFromWebsite = 
-  function(options, resultCallback) {
+function(options, resultCallback) {
 
-    throw 'not done here yet!';
-
-    var emailAddr = options.emailAddr;
-    var verificationCode = options.verificationCode; 
-      
-    var message = think about calling the html convertor below and just having one message
+  var emailAddr = options.emailAddr;
+  var verificationCode = options.verificationCode;
+  var userId = options.userId;
+  
+  var returnLink = options.returnLink;
+  
+  if (!returnLink) {
+    returnLink = util.format("%s://%s%s?v=%s",
+      application.globalVariables.secureProtocol,
+      application.globalVariables.serverPath,
+      application.links().forgotpassword.replace(/:id/, userId),
+      verificationCode
+    );
+  }
     
-    var params = {
+  var message = util.format(
+      "Hello %s,\r\n\r\n" +
+        "A reset password request has been made for this email address.  Please click (or paste into your browser) " +
+        "the following link to go to the reset password page on SocialTagg.\r\n\r\n" +
+        "%s\r\n\r\n" +
+        "If this request was not made by you, no further action is required and your existing password will continue " +
+        "to work normally.\r\n\r\n" +
+        "Sincerely,\r\nSocialTagg Team",
+    emailAddr, returnLink);
+  
+  var params = {
     subject : "Reset SocialTagg Password",
-    plainTextBody : util.format("Hello %s,\r\n\r\nA reset password request has been made for " +
-      "this email address.\r\nPlease " +
-      "verification code is %s. Please enter this code on the forgot password screen " +
-      "in the mobile app to reset your password.\r\n\r\nSincerely,\r\nSocialTagg Team",
-      emailAddr, verificationCode),
+    plainTextBody : message,
     toEmail : emailAddr,
     fromEmail : fromEmail,
     fromName: fromName,
-
-    htmlBody : util.format("<body>Hello %s,<br \/><br \/>A reset password request has been made for<br \/>" +
-      "this email address. Your verification code is %s. Please enter this code on the " +
-      "forgot password screen in the mobile app to reset your password.<br \/>" +
-      "<br \/>Sincerely,<br \/>SocialTagg Team<\/body>", emailAddr, verificationCode)
-
+    htmlBody : message.htmlize()
   };
 
   email.sendGenericEmail(params, resultCallback);
@@ -636,17 +645,15 @@ var handleUserCreateAndCheckin = exports.handleUserCreateAndCheckin = function(o
 }
 
 //
-// This is a POSTed request from the login page.  Just enough was different from
-// usersPost.resetPassword (comes from the apps) that it got it's own function.
+// This is a POSTed request from the login page.  No authentication required.
+// This function is just enough different from usersPost.resetPassword() 
+// (comes from the apps) that it got it's own function.
 //
 exports.resetPasswordWebsite = function(req, res) {
   
-  console.log('weesa heresa!!!');
-  
-//  res.send(202, { msg: 'Yup, the email is on the way' });
-
   var options = req.body;
   var userEmail = options.useremail;
+  var validationCode;
   
   async.waterfall([
     function validateParams(cb) {
@@ -656,14 +663,11 @@ exports.resetPasswordWebsite = function(req, res) {
         cb();
       }
     },
-    function generateCode(cb) {
-      var code = globalfunctions.generateGuid();
-      cb(null, code);
-    },
-    function updateUserWithCode(code, cb) {
-      userManager.setUserVerificationCodeByEmail(code, userEmail, function(err) {
+    function updateUserWithCode(cb) {
+      validationCode = globalfunctions.generateGuid();
+      userManager.setUserVerificationCodeByEmail(validationCode, userEmail, function(err) {
         if (!err) {
-          cb({ status: 202, msg: 'Yup, the email is on the way' });
+          cb();
         } else if (err === 1) {
           cb({ status: 404, msg: 'User not found for email: ' + userEmail });
         } else {
@@ -681,41 +685,25 @@ exports.resetPasswordWebsite = function(req, res) {
       })
     },
     function sendEmail(user, cb) {
-      //emailAddr, verificationCode, resultCallback
       var options = {
-        
+        emailAddr: user.email,
+        verificationCode: validationCode,
+        userId: user.id
       }
-      sendForgotPasswordEmailFromWebsite(options, function(err) {
-        cb({ status: 500, msg: 'Not even close to implemented yet' })
+      sendForgotPasswordEmailFromWebsite(options, function(err, response) {
+        // Check console/logs for info
+        if (err) {
+          cb({ status: 500, msg: err });
+        } else {
+          cb({ status: 200, msg: 'Boom! Mail sent!' });
+        }
       })
     }
   ], 
   function outtaHere(result) {
+    next step: verify the email came in, and the link works.
     res.send(result.status, { msg: result.msg });
   });
-  
-//    application.getAndSetVerificationCodeForUserByEmail(userEmail, function(err, code) {
-//
-//      switch (err) {
-//        case 0:
-//          thisModule.sendForgotPasswordEmail(userEmail, code, function (err, response) {
-//            if (err) {
-//              thisModule.respond(res, 500, 'There was an error sending the email.  Please check the logs at this date/time.');
-//            } else {
-//              thisModule.respond(res, 200, response);
-//            }
-//          });
-//          break;
-//        case 1:
-//          thisModule.respond(res, 404, util.format('The email addr \'%s\' was not found', userEmail));
-//          break;
-//        case 2:
-//          thisModule.respond(res, 500, 'Internal server error, please try again laterl')
-//          break;
-//      }
-//
-//    });
-
 }
 
 exports.usersPost = function(req, res) {

@@ -11,6 +11,8 @@ var request = require('supertest')
   , globalFunctions = require('../../common/globalfunctions')
   , assert = require('assert')
   , userManager = require('../../data/userManager')
+  , sinon = require('sinon')
+  , email = require(process.cwd() + '/common/email.js');
 ;
 
 var app = myApp.app();
@@ -33,7 +35,7 @@ var changeableUserUuid = 'ea10dde9-8a1b-11e2-b0a7-02e81ac5a17b';
 var changeableUserName = 'John\'s Test User - Dont Modify';
 var changeablePw = 'yodayoda';  // util.format('%d', new Date());
 var verificationCode = '343434';
-
+var nonexistantEmail = 'ugga98756@bugga123.com';
 
 //**********************************************************************************************
 var skipActualEmailSending = false;
@@ -354,5 +356,58 @@ describe('api - user functions', function() {
 
   }
   
+  describe('resetPasswordWebsite() endpoint', function() {
+    
+    it('should reject request without useremail in body', function(done) {
+      request(app)
+        .post('/apiv1/resetpassword')
+        .set('Content-Type', 'application/json')
+        .send(JSON.stringify({
+          ugga: 'bugga'
+        }))
+        .expect(/parameter is missing/)
+        .expect(400, done);
+    });
+
+    it('should not find a user with a bad useremail', function(done) {
+      request(app)
+        .post('/apiv1/resetpassword')
+        .set('Content-Type', 'application/json')
+        .send(JSON.stringify({
+          useremail: nonexistantEmail 
+        }))
+        .expect(/user not found/i)
+        .expect(404, done);
+    });
+
+    it('should properly call the email send function', function(done) {
+      
+      var emailStub = sinon.stub(email, 'sendGenericEmail', function(params, cb) {
+        // test stuff
+        assert.equal(params.toEmail, changeableUserEmail, 'didn\'t send to right email addr');
+        assert.ok(params.plainTextBody.match(new RegExp(changeableUserUuid)), 'dind\'t find user id');
+        assert.ok(params.plainTextBody.match(/\?v=[0-9A-Za-z\-]{36}/), 'didn\'t get 36 char guid for verification code');
+        
+        console.log('plainTextBody: ' + params.plainTextBody);
+        console.log('htmlBody: ' + params.htmlBody);
+        
+        cb();
+      })
+      
+      request(app)
+        .post('/apiv1/resetpassword')
+        .set('Content-Type', 'application/json')
+        .send(JSON.stringify({
+          useremail: changeableUserEmail 
+        }))
+        .expect(/boom/i)
+        .expect(200, function() {
+          sinon.assert.callCount(emailStub, 1);
+          emailStub.restore();
+          done();
+        });
+    });
+
+  });
   
 });

@@ -317,6 +317,7 @@ String.prototype.removeScheme = function() {
 //
 String.prototype.htmlize = function() {
   var result = this.replace(/\n/g, '<br>');
+  result = result.replace(/\r/g, '');
   return result;
 };
 
