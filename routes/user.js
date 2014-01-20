@@ -10,6 +10,7 @@ var userManager = require('./../data/userManager')
   , ApiUser = require('../models/ApiUser')
   , application = require('../common/application')
   , userapi = require('../routesapi/userapi')
+  , async = require('async')
   ;
 
 exports.loginForm = function(req, res) {
@@ -544,6 +545,53 @@ exports.viewProfile = function(req, res) {
   });
 }
 
+/**
+ * Look up the user and verify the validation code is ok
+ * 
+ * @options: object with properties:
+ *  userId: the user id to look up
+ *  validationCode: the supplied validation code to verify
+ *  resetTheCode: (boolean) if true, remove the validation code from the user
+ *  
+ * @callback: function with signature:
+ *  err: filled in if something went wrong, with properties:
+ *    status: a standard HTTP status code
+ *    msg: a descriptive message
+ */
+var validateResetPasswordCode = exports.validateResetPasswordCode = function(options, callback) {
+  
+  async.waterfall([
+    function getUser(cb) {
+      userManager.getUser(options.userId, function(user) {
+        if (user) {
+          cb(null, user);
+        } else {
+          cb({ status: 404, msg: 'User not found.' });
+        }
+      });
+    },
+    function validateCode(user, cb) {
+      if (user.forgotPasswordValidationCode) {
+        if (user.forgotPasswordValidationCode === options.validationCode) {
+          cb(null, user);
+        } else {
+          cb({ status: 400, msg: 'The validation code does not match our records.  Please reset your password again. '});
+        }
+      } else {
+        cb({ status: 400, msg: 'This user has not requested a password reset' });
+      }
+    },
+    function resetTheCode(user, cb) {
+      if (options.resetTheCode) {
+        throw 'not implemented yet!';
+        // todo: create usermanager function to zap arbitrary values from usergrid (may already exist)
+      } else {
+        cb();
+      }
+    }
+  ], callback);
+};
+
 exports.forgotPassword = function(req, res) {
 
 //  continue here:
@@ -565,7 +613,25 @@ exports.forgotPassword = function(req, res) {
     usesAngular: true
   };
 
-  application.buildApplicationPagevars(req, initialPageVars, function(pageVars) {
-    res.render('userpassword', pageVars);
-  });
+  async.waterfall([
+    function validateCode(cb) {
+      var options = {
+        userId: req.params.id,
+        validationCode: req.query.v
+      }
+
+      validateResetPasswordCode(options, cb);
+    }
+  ], function(err) {
+    //
+    // Pass result to Angular, if any
+    //
+    initialPageVars.public = { err: err };
+    
+    application.buildApplicationPagevars(req, initialPageVars, function(pageVars) {
+      console.log('sanity pageVars: ' + util.inspect(pageVars));
+      res.render('userpassword', pageVars);
+    });
+
+  })
 }

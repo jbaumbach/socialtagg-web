@@ -701,7 +701,6 @@ exports.resetPasswordWebsite = function(req, res) {
     }
   ], 
   function outtaHere(result) {
-    next step: verify the email came in, and the link works.
     res.send(result.status, { msg: result.msg });
   });
 }

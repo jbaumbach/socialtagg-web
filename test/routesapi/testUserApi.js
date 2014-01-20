@@ -380,17 +380,18 @@ describe('api - user functions', function() {
         .expect(404, done);
     });
 
-    it('should properly call the email send function', function(done) {
+    it('should properly set a code and call the email send function', function(done) {
       
       var emailStub = sinon.stub(email, 'sendGenericEmail', function(params, cb) {
         // test stuff
         assert.equal(params.toEmail, changeableUserEmail, 'didn\'t send to right email addr');
         assert.ok(params.plainTextBody.match(new RegExp(changeableUserUuid)), 'dind\'t find user id');
-        assert.ok(params.plainTextBody.match(/\?v=[0-9A-Za-z\-]{36}/), 'didn\'t get 36 char guid for verification code');
+        assert.ok(params.plainTextBody.match(/\?v=[0-9A-Fa-f\-]{36}/), 'didn\'t get 36 char guid for verification code');
         
+        // Display a test link
         console.log('plainTextBody: ' + params.plainTextBody);
-        console.log('htmlBody: ' + params.htmlBody);
-        
+//        console.log('htmlBody: ' + params.htmlBody);
+//        
         cb();
       })
       
