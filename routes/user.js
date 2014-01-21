@@ -557,6 +557,7 @@ exports.viewProfile = function(req, res) {
  *  err: filled in if something went wrong, with properties:
  *    status: a standard HTTP status code
  *    msg: a descriptive message
+ *  user: the user requested
  */
 var validateResetPasswordCode = exports.validateResetPasswordCode = function(options, callback) {
   
@@ -575,10 +576,10 @@ var validateResetPasswordCode = exports.validateResetPasswordCode = function(opt
         if (user.forgotPasswordValidationCode === options.validationCode) {
           cb(null, user);
         } else {
-          cb({ status: 400, msg: 'The validation code does not match our records.  Please reset your password again. '});
+          cb({ status: 400, msg: 'We\'re having a little trouble validating this request.  Please reset your password again.'});
         }
       } else {
-        cb({ status: 400, msg: 'This user has not requested a password reset' });
+        cb({ status: 400, msg: 'Huh, it looks like you have not requested a password reset.  Please reset your password again.' });
       }
     },
     function resetTheCode(user, cb) {
@@ -586,7 +587,7 @@ var validateResetPasswordCode = exports.validateResetPasswordCode = function(opt
         throw 'not implemented yet!';
         // todo: create usermanager function to zap arbitrary values from usergrid (may already exist)
       } else {
-        cb();
+        cb(null, user);
       }
     }
   ], callback);
@@ -622,11 +623,21 @@ exports.forgotPassword = function(req, res) {
 
       validateResetPasswordCode(options, cb);
     }
-  ], function(err) {
+  ], function(err, user) {
     //
     // Pass result to Angular, if any
     //
-    initialPageVars.public = { err: err };
+    initialPageVars.public = { 
+      err: err,
+      user: user
+    };
+
+    //
+    // The userapi call requires some authentication.
+    //
+    if (user) {
+      globalfunctions.loginTempUser(req, user.email);
+    }
     
     application.buildApplicationPagevars(req, initialPageVars, function(pageVars) {
       console.log('sanity pageVars: ' + util.inspect(pageVars));

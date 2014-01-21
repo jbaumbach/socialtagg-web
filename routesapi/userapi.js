@@ -644,6 +644,10 @@ var handleUserCreateAndCheckin = exports.handleUserCreateAndCheckin = function(o
   })
 }
 
+exports.setNewPassword = function(req, res) {
+  
+}
+
 //
 // This is a POSTed request from the login page.  No authentication required.
 // This function is just enough different from usersPost.resetPassword() 
@@ -706,6 +710,7 @@ exports.resetPasswordWebsite = function(req, res) {
 }
 
 exports.usersPost = function(req, res) {
+  console.log('hello');
   //
   // todo: understand how Express parses the JSON post (asynchronously?)  
   //
