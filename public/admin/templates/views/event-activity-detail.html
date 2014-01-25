@@ -14,7 +14,7 @@
   <tbody>
   <tr ng-repeat="item in summary.data">
     <td>{{ item.created | date:'shortDate' }}</td>
-    <td>{{ item.name }}</td>
+    <td><a href="{{ '/events/' + item.uuid }}">{{ item.name }}</a></td>
     <td>{{ item.description }}</td>
     <td><a href="{{ '/users/' + item.owner }}">{{ item.owner }}</a></td>
   </tr>
