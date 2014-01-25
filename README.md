@@ -72,7 +72,7 @@
     
    * Other commands:
    
-    $ heroku logs [-t]  # See what broke, if anything.  -t is real-time streaming
+    $ heroku logs [-t] [--remote staging/heroku]  # See what broke, if anything.  -t is real-time streaming
     $ heroku releases # See the release history for your site
     $ heroku rollback [release] # Rollback to most recent release or specified release (e.g. v43)
     $ heroku run bash  # open a bash shell in your environment (not an existing dyno tho - good for running migrations)
