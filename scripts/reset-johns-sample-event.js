@@ -6,7 +6,15 @@ var myApp = require(process.cwd() + '/app.js')
   ;
 
 /*
-  Run with the command:
+
+  This resets a sample/demo event owned by JB.  You can register youself, and there are a few
+  attendees registered by default.  You can see it in a browser here:
+
+  https://www.socialtagg.com/events/d295e83a-0f8a-11e3-a682-2346c22487a2
+  https://staging.socialtagg.com/events/d295e83a-0f8a-11e3-a682-2346c22487a2
+  https://development.socialtagg.com:3000/events/d295e83a-0f8a-11e3-a682-2346c22487a2
+
+  Run the script with the command:
 
   $ node scripts/reset-johns-sample-event.js
 
