@@ -7,8 +7,8 @@ var myApp = require(process.cwd() + '/app.js')
 
 /*
 
-  This resets a sample/demo event owned by JB.  You can register youself, and there are a few
-  attendees registered by default.  You can see it in a browser here:
+  This resets a sample/demo event owned by JB.  After it runs, you can register yourself, and there 
+  are a few attendees registered by default.  You can see it in a browser here:
 
   https://www.socialtagg.com/events/d295e83a-0f8a-11e3-a682-2346c22487a2
   https://staging.socialtagg.com/events/d295e83a-0f8a-11e3-a682-2346c22487a2
@@ -28,8 +28,7 @@ var myApp = require(process.cwd() + '/app.js')
 var app = myApp.app();
 
 // 'b9a9138a-4296-11e3-af47-51a116293e74';  // JBs unit test event - don't change 
-// 
-//'be1b65e0-3e71-11e3-a797-1399e22b12e3';   // ST F2F
+// 'be1b65e0-3e71-11e3-a797-1399e22b12e3';  // ST F2F
 
 var eventId = 'd295e83a-0f8a-11e3-a682-2346c22487a2';  // JB's test event
 
