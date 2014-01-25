@@ -640,7 +640,7 @@ exports.forgotPassword = function(req, res) {
     }
     
     application.buildApplicationPagevars(req, initialPageVars, function(pageVars) {
-      console.log('sanity pageVars: ' + util.inspect(pageVars));
+//      console.log('sanity pageVars: ' + util.inspect(pageVars));
       res.render('userpassword', pageVars);
     });
 

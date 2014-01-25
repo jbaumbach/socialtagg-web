@@ -26,10 +26,10 @@ var userPasswordController = app.controller('userPasswordController', function($
 
     $http({
       url: postUrl,
-      method: 'POST',
+      method: 'PUT',
       data: postData,
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
         'Content-Length': postData.length
       }
     }).success(function (data, status, headers, config) {
@@ -54,9 +54,7 @@ var userPasswordController = app.controller('userPasswordController', function($
   // Load user data into our model
   //
   $scope.init = function(pageVars) {
-    console.log('init!');
-    console.log(pageVars);
-    
+
     if (pageVars.err) {
       setMsg('error', pageVars.err.msg);
     } else {
@@ -69,52 +67,31 @@ var userPasswordController = app.controller('userPasswordController', function($
 
       $scope.serverPath = pageVars.serverPath;
       $scope.secureProtocol = pageVars.secureProtocol;
+      $scope.loginDest = pageVars.loginDest;
+
     }
   }
 
   $scope.save = function() {
-    console.log('saving');
+
     $scope.isWorking = true;
 
-//    function handleResponseErrors(arguments) {
-//      // Error
-//      var msg = 'Unknown error, please try again later!';
-//      if (arguments.length > 0 && arguments[0].data && arguments[0].data.errors) {
-//        msg = 'Please correct these validation errors: ' + arguments[0].data.errors.join(', ');
-//      }
-//
-//      setMsg('error', msg);
-//
-//    }
+    var postUrl = $scope.secureProtocol + '://' + $scope.serverPath + '/apiv1/users/' + 
+      $scope.user.id + '/newpassword';
+    var successUrl = $scope.secureProtocol + '://' + $scope.serverPath + ($scope.loginDest || '');
 
-    // Save
-//    $scope.user.update(function success() {
-//
-//      $scope.isWorking = false;
-//
-//      // Success
-//      setMsg('success', 'Your information was updated successfully');
-//
-//    }, function error() {
-//      $scope.isWorking = false;
-//
-//      handleResponseErrors(arguments);
-//    });
-    
-    //   function trySubmitUserInfo(postData, postUrl, successFunction, failFunction) {
-
-    var postUrl = $scope.secureProtocol + '://' + $scope.serverPath + '/apiv1/setnewpassword';
-
-    console.log('posturl: ' + postUrl);
-    
     trySubmitUserInfo($scope.user, postUrl, function success() {
+      $scope.isWorking = false;
+
       //
       // Success
       //
-      console.log('success');
+      window.location = successUrl;
+
     }, function error(data) {
-      console.log('error!');
-      console.log(data);
+      $scope.isWorking = false;
+
+      setMsg('error', data.msg);
     });
 
   }
@@ -130,8 +107,3 @@ userPasswordController.directive('noClick', function() {
     });
   }
 });
-
-// drag and drop option: 
-//  http://buildinternet.com/2013/08/drag-and-drop-file-upload-with-angularjs/
-//  http://jsfiddle.net/lsiv568/fsfPe/10/
-

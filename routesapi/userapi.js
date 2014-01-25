@@ -455,6 +455,17 @@ exports.detail = function(req, res) {
   });
 };
 
+//
+// Validate the "password" and "password2" fields on the passed "user" object.
+//
+function validatePasswords(errorCollectingValidator, user) {
+  errorCollectingValidator.check(user.password, 'password should be between 6 and 15 chars').len(6, 15);
+
+  if (user.password != user.password2) {
+    errorCollectingValidator.error('the passwords should match');
+  }
+}
+
 exports.validateRawUser = function(userRaw, options) {
   
   var v = application.ErrorCollectingValidator();
@@ -472,12 +483,7 @@ exports.validateRawUser = function(userRaw, options) {
   
   // Only check password if this is an insert
   if (!userRaw.id) {
-
-    v.check(userRaw.password, 'password should be between 6 and 15 chars').len(6, 15);
-
-    if (userRaw.password != userRaw.password2) {
-      v.error('the passwords should match');
-    }
+    validatePasswords(v, userRaw);
   }
   
   if (userRaw.website) {
@@ -644,8 +650,80 @@ var handleUserCreateAndCheckin = exports.handleUserCreateAndCheckin = function(o
   })
 }
 
+// 
+// The user is setting a new password.  The user is not authenticated at this point, the
+// validation code will serve as the user authentication since it could only have come
+// from the email.
+//
 exports.setNewPassword = function(req, res) {
-  
+  var userRaw = req.body;
+
+  async.waterfall([
+    function validateUserPasswords(cb) {
+      var v = application.ErrorCollectingValidator();
+
+      validatePasswords(v, userRaw);
+      var invalidDataMsgs = v.getErrors();
+
+      if (invalidDataMsgs.length > 0) {
+        cb({ status: 400, msg: invalidDataMsgs.join() });
+      } else {
+        cb();
+      }
+    },
+    function getUser(cb) {
+      userManager.getUser(userRaw.id, function(user) {
+        if (user) {
+          cb(null, user);
+        } else {
+          cb({status: 404, msg: 'Cant find user for id: ' + userRaw.id });
+        }
+      });
+    },
+    function tryUpdatePassword(user, cb) {
+      userManager.setUserPasswordWithVerificationCodeByEmail(user.email, userRaw.v, userRaw.password, function(status) {
+        if (status == 0) {
+          cb(null, user);
+        } else if (status == 1) {
+          // Should never happen, but included here for completeness
+          cb({ status: 404, msg: 'User not found' });
+        } else if (status == 2) {
+          cb({ status: 500, msg: 'Server error: 2' });
+        } else if (status == 3) {
+          cb({ status: 400, msg: 'Nope, validation code doesn\'t match' });
+        } else {
+          throw 'Unsupported status code recieved from data manager: ' + status;
+        }
+      })
+    },
+    function loginUser(user, cb) {
+      globalfunctions.loginUser(req, user.id);
+      cb(null, user);
+    },
+    function removeValidationCode(user, cb) {
+      // As of now we can't delete the field, it's permanent.  Let's put something
+      // totally unguessable there.
+      var silly = 
+        globalfunctions.sha256Encode(new Date().valueOf().toString()) +
+        globalfunctions.sha256Encode(globalfunctions.generateGuid());
+      userManager.setUserVerificationCodeByEmail(silly, user.email, function(status) {
+        if (status != 0) {
+          cb({ status: 500, msg: 'Password reset ok but unable to remove verification code' });
+        } else {
+          cb(null, user);
+        }
+      })
+    }
+  ], 
+  function(err, user) {
+    if (err) {
+      var responseBody = { msg: err.msg };
+      console.log('sending back error: ' + util.inspect(responseBody));
+      res.send(err.status, responseBody);
+    } else {
+      res.send(200, { msg: 'Done and logged in' });
+    }
+  })
 }
 
 //

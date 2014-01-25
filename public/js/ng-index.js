@@ -168,7 +168,7 @@ var loginController = app.controller('loginController', function($scope, $http, 
       var postUrl = $scope.secureProtocol + '://' + $scope.serverPath + '/apiv1/resetpassword';
 
       trySubmitUserInfo(postData, postUrl, function success() {
-        setMsg('success', 'An email has been sent to the email address.  This email has instructions on ' +
+        setMsg('success', 'An email has been sent to the email address containing instructions on ' +
           'how to reset your password.  Please allow a few minutes for the email to arrive in your' +
           'inbox!  And be sure to check your spam or marketing folder(s) before trying again.')
       }, function error(data) {
