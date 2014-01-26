@@ -12,6 +12,21 @@ var thisModule = this
 //  http://memcached.org/
 //  https://devcenter.heroku.com/articles/memcachier#node-js
 
+exports.removeObjectFromCache = function(object, callback) {
+  
+  var key = object && object.cacheKey;
+
+  if (!key) {
+    callback('(error) no cache key specified');
+  } else {
+    // Store it
+    localCache.del(key);
+    console.log('(info) removeObjectFromCache: zapped ' + key);
+
+    callback(null);
+  }
+}
+
 /*
   Cache an object with properties .key and .ttl.
   

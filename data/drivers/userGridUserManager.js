@@ -63,7 +63,8 @@ exports.userFromUserGridUser = function(userGridUser) {
     twitter: userGridUser.get('twitter'),
     avatarId: userGridUser.get('uuid_avatar_image'),
     sourceType: userGridUser.get('source_type'),
-    sourceId: userGridUser.get('source_id')
+    sourceId: userGridUser.get('source_id'),
+    forgotPasswordValidationCode: userGridUser.get('forgotPasswordValidationCode')
   });
 }
 

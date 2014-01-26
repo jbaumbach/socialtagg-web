@@ -158,6 +158,28 @@ var loginController = app.controller('loginController', function($scope, $http, 
   $scope.loginMode = function(newMode) {
     $scope.mode = newMode;
   }
+  
+  $scope.forgotPw = function() {
+    if (!$scope.email || $scope.email.length < 5) {
+      setMsg('error', 'Please enter your email address');
+    } else {
+
+      var postData = 'useremail=' + $scope.email;
+      var postUrl = $scope.secureProtocol + '://' + $scope.serverPath + '/apiv1/resetpassword';
+
+      trySubmitUserInfo(postData, postUrl, function success() {
+        setMsg('success', 'An email has been sent to the email address containing instructions on ' +
+          'how to reset your password.  Please allow a few minutes for the email to arrive in your ' +
+          'inbox!  And be sure to check your spam or marketing folder(s) before trying again.')
+      }, function error(data) {
+        
+        console.log('Error!');
+        console.log(data);
+        setMsg('error', 'Oops, there\'s been a problem.')
+      });
+    }
+  }
+  
 })
 
 // Directive to prevent the default html action for following # anchors

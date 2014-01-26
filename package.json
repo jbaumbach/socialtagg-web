@@ -1,7 +1,7 @@
 {
-  "name": "scaffolding",
-  "description": "A full-stack node.js sample application",
-  "version": "0.1.1",
+  "name": "socialtagg",
+  "description": "A contacts and events application",
+  "version": "0.4.0",
   "private": true,
   "scripts": {
     "start": "node app",

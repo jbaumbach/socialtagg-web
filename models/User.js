@@ -57,6 +57,11 @@ var User = function(values) {
   this.title = values.title || '';
   this.twitter = values.twitter || '';
   this.avatarId = values.avatarId || '';
+  
+  // todo: move this to separate table someday
+  if (values.forgotPasswordValidationCode) {
+    this.forgotPasswordValidationCode = values.forgotPasswordValidationCode;
+  }
 }
 
 
