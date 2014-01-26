@@ -11,6 +11,9 @@ var request = require('supertest')
   , globalFunctions = require('../../common/globalfunctions')
   , assert = require('assert')
   , userManager = require('../../data/userManager')
+  , sinon = require('sinon')
+  , email = require(process.cwd() + '/common/email.js')
+  , _ = require('underscore')
 ;
 
 var app = myApp.app();
@@ -32,8 +35,9 @@ var changeableUserEmail = 'blah@blah.com';
 var changeableUserUuid = 'ea10dde9-8a1b-11e2-b0a7-02e81ac5a17b';
 var changeableUserName = 'John\'s Test User - Dont Modify';
 var changeablePw = 'yodayoda';  // util.format('%d', new Date());
+var newChangedPw = 'thepassword';
 var verificationCode = '343434';
-
+var nonexistantEmail = 'ugga98756@bugga123.com';
 
 //**********************************************************************************************
 var skipActualEmailSending = false;
@@ -354,5 +358,145 @@ describe('api - user functions', function() {
 
   }
   
+  describe('resetPasswordWebsite() endpoint', function() {
+    
+    var userRaw;
+    var setNewPasswordUrl = '/apiv1/users/' + changeableUserUuid + '/newpassword';
+
+    it('should reject request without useremail in body', function(done) {
+      request(app)
+        .post('/apiv1/resetpassword')
+        .set('Content-Type', 'application/json')
+        .send(JSON.stringify({
+          ugga: 'bugga'
+        }))
+        .expect(/parameter is missing/)
+        .expect(400, done);
+    });
+
+    it('should not find a user with a bad useremail', function(done) {
+      request(app)
+        .post('/apiv1/resetpassword')
+        .set('Content-Type', 'application/json')
+        .send(JSON.stringify({
+          useremail: nonexistantEmail 
+        }))
+        .expect(/user not found/i)
+        .expect(404, done);
+    });
+
+    it('should properly set a code and call the email send function', function(done) {
+      
+      var emailStub = sinon.stub(email, 'sendGenericEmail', function(params, cb) {
+        // test stuff
+        assert.equal(params.toEmail, changeableUserEmail, 'didn\'t send to right email addr');
+
+        assert.ok(params.plainTextBody.match(new RegExp(changeableUserUuid)), 'dind\'t find user id');
+
+        var valCodeMatch = params.plainTextBody.match(/\?v=([0-9A-Fa-f\-]{36})/);
+        var validationCode = (valCodeMatch && valCodeMatch.length > 1 && typeof valCodeMatch[1] == 'string') ? valCodeMatch[1] : null;
+        
+        assert.ok(validationCode, 'didn\'t get 36 char guid for verification code');
+        
+        // Display a test link
+        console.log('plainTextBody: ' + params.plainTextBody);
+//        console.log('htmlBody: ' + params.htmlBody);
+//        
+        userRaw = {
+          id: changeableUserUuid,
+          firstName: 'dontreallymatter',
+          v: validationCode
+        }
+
+        cb();
+      })
+      
+      request(app)
+        .post('/apiv1/resetpassword')
+        .set('Content-Type', 'application/json')
+        .send(JSON.stringify({
+          useremail: changeableUserEmail 
+        }))
+        .expect(/boom/i)
+        .expect(200, function() {
+          sinon.assert.callCount(emailStub, 1);
+          emailStub.restore();
+          done();
+        });
+    });
+
+    it('should not reset password if passwords don\'t match', function(done) {
+      assert.ok(userRaw, 'huh, don\'t have a good user (should have come from the email stub)');
+      
+      var passwordsNotMatchingUser = _.extend({},
+        userRaw, 
+        { password: 'ugga', password2: 'bugga'});
+
+//      console.log('passwordsNotMatchingUser: ' + util.inspect(passwordsNotMatchingUser));
+      
+      request(app)
+        .put(setNewPasswordUrl)
+        .set('Content-Type', 'application/json')
+        .send(JSON.stringify(passwordsNotMatchingUser))
+        .expect(/the passwords should match/i)
+        .expect(400, done);
+
+    })
+
+    it('should not reset password if user doesn\'t exist', function(done) {
+      assert.ok(userRaw, 'huh, don\'t have a good user (should have come from the email stub)');
+
+      var goodPasswordsButNonexistantUser = _.extend({},
+        userRaw, 
+        { id: badSampleUserId, password: newChangedPw, password2: newChangedPw});
+      
+//      console.log('goodPasswordsButNonexistantUser: ' + util.inspect(goodPasswordsButNonexistantUser));
+
+      request(app)
+        .put(setNewPasswordUrl)
+        .set('Content-Type', 'application/json')
+        .send(JSON.stringify(goodPasswordsButNonexistantUser))
+        .expect(/Cant find user for id/i)
+        .expect(404, done);
+
+    })
+
+    it('should not reset password if bad validation code', function(done) {
+      assert.ok(userRaw, 'huh, don\'t have a good user (should have come from the email stub)');
+
+      var goodPasswordsButBadCodeUser = _.extend({},
+        userRaw, 
+        { v: '42343232fdfdsf3424', password: newChangedPw, password2: newChangedPw});
+      
+//      console.log('goodPasswordsButBadCodeUser: ' + util.inspect(goodPasswordsButBadCodeUser));
+
+      request(app)
+        .put(setNewPasswordUrl)
+        .set('Content-Type', 'application/json')
+        .send(JSON.stringify(goodPasswordsButBadCodeUser))
+        .expect(/Nope, validation code doesn/i)
+        .expect(400, done);
+
+    })
+
+    // To test this feature in a browser, skip this test and use the link from the email printed above.
+    it.skip('should reset password if good validation code', function(done) {
+      assert.ok(userRaw, 'huh, don\'t have a good user (should have come from the email stub)');
+
+      var goodUser = _.extend({},
+        userRaw, 
+        { password: newChangedPw, password2: newChangedPw});
+      
+//      console.log('goodUser: ' + util.inspect(goodUser));
+
+      request(app)
+        .put(setNewPasswordUrl)
+        .set('Content-Type', 'application/json')
+        .send(JSON.stringify(goodUser))
+        .expect(200, done);
+
+    })
+
+  });
   
 });

@@ -24,8 +24,6 @@
             strong We take your privacy seriously.
             ul
               li We will never post anything to your social network(s) without your explicit permissions.
-              li Other users can't contact you unless you have become Contaggs.
-      
         
       // Login Fields 
       #login(ng-class='{error:loginError}')
@@ -51,8 +49,8 @@
           p.other-login-options Don't have an account? 
             a(href='#', ng-click='loginMode(loginModes.create)', no-click)  Create one
           
-            //- todo: implement this: p.other-login-options Forgot your password? 
-              a(href='#', ng-click='forgotPw()', no-click)  Reset it 
+          p.other-login-options Forgot your password? 
+            a(href='#', ng-click='forgotPw()', no-click) Reset it 
 
         div(ng-show='mode == loginModes.create', style='display: none;')
           span Or, create an account:

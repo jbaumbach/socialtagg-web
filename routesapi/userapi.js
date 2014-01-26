@@ -14,6 +14,7 @@ var userManager = require('./../data/userManager')
   , _ = require('underscore')
   , async = require('async')
   , thisModule = this
+  , cache = require('../common/cache')
   ;
 
 var fromEmail = 'support@socialtagg.com';
@@ -102,6 +103,50 @@ exports.sendForgotPasswordEmail = function(emailAddr, verificationCode, resultCa
       "forgot password screen in the mobile app to reset your password.<br \/>" +
       "<br \/>Sincerely,<br \/>SocialTagg Team<\/body>", emailAddr, verificationCode)
 
+  };
+
+  email.sendGenericEmail(params, resultCallback);
+}
+
+//
+// Similar version of the 'sendForgotPasswordEmail' function, but this one is generated
+// from the website, not the apps.
+//
+var sendForgotPasswordEmailFromWebsite = exports.sendForgotPasswordEmailFromWebsite = 
+function(options, resultCallback) {
+
+  var emailAddr = options.emailAddr;
+  var verificationCode = options.verificationCode;
+  var userId = options.userId;
+  
+  var returnLink = options.returnLink;
+  
+  if (!returnLink) {
+    returnLink = util.format("%s://%s%s?v=%s",
+      application.globalVariables.secureProtocol,
+      application.globalVariables.serverPath,
+      application.links().forgotpassword.replace(/:id/, userId),
+      verificationCode
+    );
+  }
+    
+  var message = util.format(
+      "Hello %s,\r\n\r\n" +
+        "A reset password request has been made for this email address.  Please click (or paste into your browser) " +
+        "the following link to go to the reset password page on SocialTagg.\r\n\r\n" +
+        "%s\r\n\r\n" +
+        "If this request was not made by you, no further action is required and your existing password will continue " +
+        "to work normally.\r\n\r\n" +
+        "Sincerely,\r\nSocialTagg Team",
+    emailAddr, returnLink);
+  
+  var params = {
+    subject : "Reset SocialTagg Password",
+    plainTextBody : message,
+    toEmail : emailAddr,
+    fromEmail : fromEmail,
+    fromName: fromName,
+    htmlBody : message.htmlize()
   };
 
   email.sendGenericEmail(params, resultCallback);
@@ -217,7 +262,9 @@ exports.handleUserVerificationEmailRequest = function(options, res) {
   }
 }
 
-
+//
+// This function applies to the request that comes from the mobile apps.
+//
 exports.handleForgotPasswordEmailRequest = function(options, res) {
 
   var userEmail = options.useremail;
@@ -409,6 +456,17 @@ exports.detail = function(req, res) {
   });
 };
 
+//
+// Validate the "password" and "password2" fields on the passed "user" object.
+//
+function validatePasswords(errorCollectingValidator, user) {
+  errorCollectingValidator.check(user.password, 'password should be between 6 and 15 chars').len(6, 15);
+
+  if (user.password != user.password2) {
+    errorCollectingValidator.error('the passwords should match');
+  }
+}
+
 exports.validateRawUser = function(userRaw, options) {
   
   var v = application.ErrorCollectingValidator();
@@ -426,12 +484,7 @@ exports.validateRawUser = function(userRaw, options) {
   
   // Only check password if this is an insert
   if (!userRaw.id) {
-
-    v.check(userRaw.password, 'password should be between 6 and 15 chars').len(6, 15);
-
-    if (userRaw.password != userRaw.password2) {
-      v.error('the passwords should match');
-    }
+    validatePasswords(v, userRaw);
   }
   
   if (userRaw.website) {
@@ -573,6 +626,9 @@ var handleUserCreateAndCheckin = exports.handleUserCreateAndCheckin = function(o
     },
     function sendWelcomeEmail(cb) {
       if (options.sourceType == 'eventOwner') {
+        //
+        // This happens if the event owner is manually entering users into an event
+        //
         console.log('todo: sending welcome email');
         cb();
       } else {
@@ -595,7 +651,153 @@ var handleUserCreateAndCheckin = exports.handleUserCreateAndCheckin = function(o
   })
 }
 
+// 
+// The user is setting a new password.  The user is not authenticated at this point, the
+// validation code will serve as the user authentication since it could only have come
+// from the email.
+//
+exports.setNewPassword = function(req, res) {
+  var userRaw = req.body;
+
+  async.waterfall([
+    function validateUserPasswords(cb) {
+      var v = application.ErrorCollectingValidator();
+
+      validatePasswords(v, userRaw);
+      var invalidDataMsgs = v.getErrors();
+
+      if (invalidDataMsgs.length > 0) {
+        cb({ status: 400, msg: invalidDataMsgs.join() });
+      } else {
+        cb();
+      }
+    },
+    function getUser(cb) {
+      userManager.getUser(userRaw.id, function(user) {
+        if (user) {
+          cb(null, user);
+        } else {
+          cb({status: 404, msg: 'Cant find user for id: ' + userRaw.id });
+        }
+      });
+    },
+    function tryUpdatePassword(user, cb) {
+      userManager.setUserPasswordWithVerificationCodeByEmail(user.email, userRaw.v, userRaw.password, function(status) {
+        if (status == 0) {
+          cb(null, user);
+        } else if (status == 1) {
+          // Should never happen, but included here for completeness
+          cb({ status: 404, msg: 'User not found' });
+        } else if (status == 2) {
+          cb({ status: 500, msg: 'Server error: 2' });
+        } else if (status == 3) {
+          cb({ status: 400, msg: 'Nope, validation code doesn\'t match' });
+        } else {
+          throw 'Unsupported status code recieved from data manager: ' + status;
+        }
+      })
+    },
+    function loginUser(user, cb) {
+      globalfunctions.loginUser(req, user.id);
+      cb(null, user);
+    },
+    function removeValidationCode(user, cb) {
+      // As of now we can't delete the field, it's permanent.  Let's put something
+      // totally unguessable there.
+      var silly = 
+        globalfunctions.sha256Encode(new Date().valueOf().toString()) +
+        globalfunctions.sha256Encode(globalfunctions.generateGuid());
+      userManager.setUserVerificationCodeByEmail(silly, user.email, function(status) {
+        if (status != 0) {
+          cb({ status: 500, msg: 'Password reset ok but unable to remove verification code' });
+        } else {
+          cb(null, user);
+        }
+      })
+    }
+  ], 
+  function(err, user) {
+    if (err) {
+      var responseBody = { msg: err.msg };
+      console.log('sending back error: ' + util.inspect(responseBody));
+      res.send(err.status, responseBody);
+    } else {
+      res.send(200, { msg: 'Done and logged in' });
+    }
+  })
+}
+
+//
+// This is a POSTed request from the login page.  No authentication required.
+// This function is just enough different from usersPost.resetPassword() 
+// (comes from the apps) that it got it's own function.
+//
+exports.resetPasswordWebsite = function(req, res) {
+  
+  var options = req.body;
+  var userEmail = options.useremail;
+  var validationCode;
+  
+  async.waterfall([
+    function validateParams(cb) {
+      if (!userEmail) {
+        cb({ status: 400, msg: 'The \'useremail\' parameter is missing' });
+      } else {
+        cb();
+      }
+    },
+    function updateUserWithCode(cb) {
+      validationCode = globalfunctions.generateGuid();
+      userManager.setUserVerificationCodeByEmail(validationCode, userEmail, function(err) {
+        if (!err) {
+          cb();
+        } else if (err === 1) {
+          cb({ status: 404, msg: 'User not found for email: ' + userEmail });
+        } else {
+          cb({ status: 500, msg: 'Oops, server error.  Please try again later.' });
+        }
+      });
+    },
+    function getUser(cb) {
+      userManager.getUserByEmail(userEmail, function(user) {
+        if (user) {
+          cb(null, user);
+        } else {
+          cb({ status: 500, msg: 'Oops, server error.  Can\'t retreive user from db.' });
+        }
+      })
+    },
+    function clearCache(user, cb) {
+      cache.removeObjectFromCache(user, function(err) {
+        //
+        // Swallow any errors
+        //
+        cb(null, user);
+      });
+    },
+    function sendEmail(user, cb) {
+      var options = {
+        emailAddr: user.email,
+        verificationCode: validationCode,
+        userId: user.id
+      }
+      sendForgotPasswordEmailFromWebsite(options, function(err, response) {
+        // Check console/logs for info
+        if (err) {
+          cb({ status: 500, msg: err });
+        } else {
+          cb({ status: 200, msg: 'Boom! Mail sent!' });
+        }
+      })
+    }
+  ], 
+  function outtaHere(result) {
+    res.send(result.status, { msg: result.msg });
+  });
+}
+
 exports.usersPost = function(req, res) {
+  console.log('hello');
   //
   // todo: understand how Express parses the JSON post (asynchronously?)  
   //
@@ -630,7 +832,7 @@ exports.usersPost = function(req, res) {
   } else {
     
     //
-    // We're inserting a user.  At this point, we should have a temporary login on the site
+    // We're inserting a new user.  At this point, we should have a temporary login on the site
     // which authorized us to get at least to this point.
     //
 

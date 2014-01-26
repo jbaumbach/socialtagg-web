@@ -180,7 +180,8 @@ exports.links = function(options) {
     myattendedevents: '/myattendedevents',
     myownedevents: '/myownedevents',
     editprofile: '/editprofile',
-    viewprofile: '/viewprofile'
+    viewprofile: '/viewprofile',
+    forgotpassword: '/users/:id/forgotpassword'
   }
 };
 

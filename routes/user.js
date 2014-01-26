@@ -10,6 +10,7 @@ var userManager = require('./../data/userManager')
   , ApiUser = require('../models/ApiUser')
   , application = require('../common/application')
   , userapi = require('../routesapi/userapi')
+  , async = require('async')
   ;
 
 exports.loginForm = function(req, res) {
@@ -542,4 +543,107 @@ exports.viewProfile = function(req, res) {
       res.render('userView', pageVars);
     });
   });
+}
+
+/**
+ * Look up the user and verify the validation code is ok
+ * 
+ * @options: object with properties:
+ *  userId: the user id to look up
+ *  validationCode: the supplied validation code to verify
+ *  resetTheCode: (boolean) if true, remove the validation code from the user
+ *  
+ * @callback: function with signature:
+ *  err: filled in if something went wrong, with properties:
+ *    status: a standard HTTP status code
+ *    msg: a descriptive message
+ *  user: the user requested
+ */
+var validateResetPasswordCode = exports.validateResetPasswordCode = function(options, callback) {
+  
+  async.waterfall([
+    function getUser(cb) {
+      userManager.getUser(options.userId, function(user) {
+        if (user) {
+          cb(null, user);
+        } else {
+          cb({ status: 404, msg: 'User not found.' });
+        }
+      });
+    },
+    function validateCode(user, cb) {
+      if (user.forgotPasswordValidationCode) {
+        if (user.forgotPasswordValidationCode === options.validationCode) {
+          cb(null, user);
+        } else {
+          cb({ status: 400, msg: 'We\'re having a little trouble validating this request.  Please reset your password again.'});
+        }
+      } else {
+        cb({ status: 400, msg: 'Huh, it looks like you have not requested a password reset.  Please reset your password again.' });
+      }
+    },
+    function resetTheCode(user, cb) {
+      if (options.resetTheCode) {
+        throw 'not implemented yet!';
+        // todo: create usermanager function to zap arbitrary values from usergrid (may already exist)
+      } else {
+        cb(null, user);
+      }
+    }
+  ], callback);
+};
+
+exports.forgotPassword = function(req, res) {
+
+//  continue here:
+//  
+//  - make "Forgot Password" link work on login page
+//  - update API to send forgot password email and update UG with the validation code
+//  - make ng-userpassword Angular controller work
+  
+  // Actions in this controller method:
+  
+  
+  // step 1: verify the user id and reset password code
+  
+  // step 2: display the page.  accept the new info via Angular to the API
+  
+  
+  var initialPageVars = {
+    title: 'Change Password',
+    usesAngular: true
+  };
+
+  async.waterfall([
+    function validateCode(cb) {
+      var options = {
+        userId: req.params.id,
+        validationCode: req.query.v
+      }
+
+      validateResetPasswordCode(options, cb);
+    }
+  ], function(err, user) {
+    //
+    // Pass result to Angular, if any
+    //
+    initialPageVars.public = { 
+      err: err,
+      user: user
+    };
+
+    //
+    // The userapi call requires some authentication.
+    //
+    if (user) {
+      globalfunctions.logoutUser(req);
+      globalfunctions.loginTempUser(req, user.email);
+    }
+    
+    application.buildApplicationPagevars(req, initialPageVars, function(pageVars) {
+//      console.log('sanity pageVars: ' + util.inspect(pageVars));
+      res.render('userpassword', pageVars);
+    });
+
+  })
 }

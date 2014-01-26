@@ -117,6 +117,10 @@ var markObjectAsDeleted = exports.markObjectAsDeleted = function(options, callba
         type: options.table,
         uuid: options.id
       };
+      //
+      // This just craps out with a non specific error message.  Can't tell if the object
+      // really exists or not.  :(
+      //
       client().getEntity(ugOptions, cb);
     }, 
     function markAsDeleted(object, cb) {

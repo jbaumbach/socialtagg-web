@@ -188,6 +188,10 @@ exports.addUserContagg = function(user, userIdToAdd, resultCallback) {
   db.addUserContagg(user, userIdToAdd, resultCallback);
 };
 
+//
+// Callback params: err  (0 = no error, 1 = user not found, 2 = db error)
+//                  code (the verification code)
+//
 exports.setUserVerificationCodeByEmail = function(code, email, resultCallback) {
   db.setUserVerificationCodeByEmail(code, email, resultCallback)  
 };
