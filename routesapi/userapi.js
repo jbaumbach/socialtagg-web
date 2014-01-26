@@ -14,6 +14,7 @@ var userManager = require('./../data/userManager')
   , _ = require('underscore')
   , async = require('async')
   , thisModule = this
+  , cache = require('../common/cache')
   ;
 
 var fromEmail = 'support@socialtagg.com';
@@ -765,6 +766,14 @@ exports.resetPasswordWebsite = function(req, res) {
           cb({ status: 500, msg: 'Oops, server error.  Can\'t retreive user from db.' });
         }
       })
+    },
+    function clearCache(user, cb) {
+      cache.removeObjectFromCache(user, function(err) {
+        //
+        // Swallow any errors
+        //
+        cb(null, user);
+      });
     },
     function sendEmail(user, cb) {
       var options = {

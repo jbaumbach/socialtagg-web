@@ -636,6 +636,7 @@ exports.forgotPassword = function(req, res) {
     // The userapi call requires some authentication.
     //
     if (user) {
+      globalfunctions.logoutUser(req);
       globalfunctions.loginTempUser(req, user.email);
     }
     
