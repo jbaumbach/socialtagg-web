@@ -96,7 +96,7 @@ block content
               .user-image(ng-repeat="checkedInUser in checkedInUsers")
                 a(href="//www.socialtagg.com/users/{{ checkedInUser.id }}")
                   img(src="{{ checkedInUser.pictureUrl }}")
-                  p {{ checkedInUser.firstName }}
+                  p(style="line-height:15px; margin-top:3px") {{ checkedInUser.firstName }} {{ checkedInUser.lastName }}
               .clear
             
             div(ng-show="!checkedInUsers || checkedInUsers.length == 0")
@@ -179,7 +179,8 @@ block content
                 .user-image(ng-repeat="registeredUser in registeredUsers")
                   a(href="//www.socialtagg.com/users/{{ registerdUser.id }}")
                     img(src="{{ registeredUser.pictureUrl }}")
-                    p {{ registeredUser.firstName }}
+                    p(style="line-height:15px; margin-top:3px") {{ registeredUser.firstName }} {{ checkedInUser.lastName }}
+
                 .clear
             
             div(ng-show="!registeredUsers || registeredUsers.length == 0", ng-cloak)
