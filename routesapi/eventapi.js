@@ -939,7 +939,8 @@ exports.usersList = function(req, res) {
       var users = _.map(result, function(user) {
         var result
         
-        if (isEventOwner) {
+        // HACK!!! hard coded event id
+        if (isEventOwner || eventId === '0f0ed20a-8780-11e3-abc1-a9d216d8a4e4') {
           result = user.user;
         } else {
           result = {

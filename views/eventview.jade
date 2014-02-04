@@ -94,8 +94,9 @@ block content
             div#check-ins(ng-show="checkedInUsers.length > 0")
               //- Display the event's contaggs if we have any
               .user-image(ng-repeat="checkedInUser in checkedInUsers")
-                img(src="{{ checkedInUser.pictureUrl }}")
-                p {{ checkedInUser.firstName }}
+                a(href="//www.socialtagg.com/users/{{ checkedInUser.id }}")
+                  img(src="{{ checkedInUser.pictureUrl }}")
+                  p {{ checkedInUser.firstName }}
               .clear
             
             div(ng-show="!checkedInUsers || checkedInUsers.length == 0")
@@ -176,8 +177,9 @@ block content
               else
                 //- Public view: display the event's contaggs if we have any
                 .user-image(ng-repeat="registeredUser in registeredUsers")
-                  img(src="{{ registeredUser.pictureUrl }}")
-                  p {{ registeredUser.firstName }}
+                  a(href="//www.socialtagg.com/users/{{ registerdUser.id }}")
+                    img(src="{{ registeredUser.pictureUrl }}")
+                    p {{ registeredUser.firstName }}
                 .clear
             
             div(ng-show="!registeredUsers || registeredUsers.length == 0", ng-cloak)
