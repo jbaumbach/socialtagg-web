@@ -202,7 +202,8 @@ exports.checkInPage = function(req, res) {
 
     if (!err) {
 
-      if (userId && event.owner === userId) {
+      if (userId) { // 2014-02-09 JB: everyone with the link can print the page 
+                    // was: && event.owner === userId) {
 
         console.log('event: ' + util.inspect(event));
         
