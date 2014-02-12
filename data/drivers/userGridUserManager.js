@@ -1133,16 +1133,20 @@ exports.getEventUsers = function(eventId, type, callback) {
         // registered users response.
         //
         var userId = contagg.get('user_uuid');
-        var checkedInTime = contagg.get('checkin_date');
         
-        var addIt = type != 'registered' ||
-          (type === 'registered' && !checkedInTime); 
-          
-        if (addIt) {
-          result.push({ userId: userId });
+        if (userId) {
+          var checkedInTime = contagg.get('checkin_date');
+
+          var addIt = type != 'registered' ||
+            (type === 'registered' && !checkedInTime);
+
+          if (addIt) {
+            result.push({ userId: userId });
+          } else {
+            console.log('excluding checked in user from regs: ' + userId);
+          }
         } else {
-          console.log('excluding checked in user from regs: ' + userId);
-          
+          console.log('(warning) found event user with no user id!  This is impossible! ' + contagg.get('uuid'));
         }
       }
     }

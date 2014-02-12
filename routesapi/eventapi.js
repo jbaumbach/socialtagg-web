@@ -899,14 +899,20 @@ exports.usersList = function(req, res) {
             } else {
               
               //
-              // Let's build a list of users
+              // Let's build a list of users.  Sometimes other developers will screw with the data directly
+              // in Usergrid, requiring a bunch of checks for valid data basically everywhere.
               //
+              var validUsers = [];
+              
               var iterator = function(item, callback) {
                 
                 userManager.getUser(item.userId, function(user) {
                   
                   if (user) {
                     item.user = user;
+                    validUsers.push(item);
+                  } else {
+                    console.log('(warning) can\'t get user for id: ' + item.userId);
                   }
                   callback();
                 })
@@ -916,7 +922,7 @@ exports.usersList = function(req, res) {
                 if (err) {
                   cb(err);
                 } else {
-                  cb(null, result, type);
+                  cb(null, validUsers, type);
                 } 
               });
             }
@@ -926,7 +932,8 @@ exports.usersList = function(req, res) {
           cb({ status: 400, msg: 'Unknown type: ' + type });
       }
     }
-  ], function(err, result, type) {
+  ], 
+  function(err, result, type) {
     
     if (err) {
       res.send(err.status, { msg: err.msg });
@@ -937,6 +944,14 @@ exports.usersList = function(req, res) {
       // pass the usual object back.
       //
       var users = _.map(result, function(user) {
+        
+        // 
+        // In some weird cases, the user id is no longer available from Usergrid.  Let's just bail
+        //
+        if (!user.user) {
+          return;
+        }
+        
         var result
         
         // HACK!!! hard coded event id
