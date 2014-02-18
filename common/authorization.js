@@ -152,7 +152,8 @@ var getAdmins = exports.getAdmins = function() {
     '532cc7a6-7679-11e2-96f4-02e81ac5a17b',   // Jade Shyu
     'd31fb37f-7428-11e2-a3b3-02e81adcf3d0',   // jade@socialtagg.com
     'c238c31a-2d6a-11e3-898d-85fbe15c5ce8',   // Joseph Mirandi
-    '3d86497b-66c4-11e2-8b37-02e81ac5a17b'    // Jeff Mock'
+    '3d86497b-66c4-11e2-8b37-02e81ac5a17b',   // Jeff Mock
+    '3dc6bd5a-563f-11e3-bf6e-7dcb156cd05b'    // Diana Cheung
   ];
 
   return admins;
