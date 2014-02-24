@@ -187,6 +187,10 @@
     $ heroku accounts
     $ heroku accounts:set tagg
 
+  Then follow the instructions here:
+  
+    http://stackoverflow.com/questions/4663103/multiple-heroku-accounts
+  
   svn will occasionally stop working through Webstorm.  The symptom is the error
   "The resource can only be on one place" or some such nonsense.  Then you have
   to commit manually:
