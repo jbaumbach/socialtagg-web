@@ -242,7 +242,9 @@ exports.login = function(req, res) {
 
         res.format({
           json: function() { res.json(401, { msg: 'Incorrect email or pw' }); },
-          html: function() { throw 'HTML login not yet supported'; }
+//          html: function() { throw 'HTML login not yet supported'; }
+          // 2014/02/26 JB: how are requests getting here????
+          html: function() { res.send(400, 'Sorry, you\'ve accessed an unsupported function.'); }
         });
       }
 
