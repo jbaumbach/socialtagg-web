@@ -94,9 +94,9 @@ block content
             div#check-ins(ng-show="checkedInUsers.length > 0")
               //- Display the event's contaggs if we have any
               .user-image(ng-repeat="checkedInUser in checkedInUsers")
-                a(href="//www.socialtagg.com/users/{{ checkedInUser.id }}")
-                  img(src="{{ checkedInUser.pictureUrl }}")
-                  p(style="line-height:15px; margin-top:3px") {{ checkedInUser.firstName }} {{ checkedInUser.lastName }}
+                //a(href="//www.socialtagg.com/users/{{ checkedInUser.id }}") // link to profiles
+                img(src="{{ checkedInUser.pictureUrl }}")
+                p(style="line-height:15px; margin-top:3px") {{ checkedInUser.firstName }} {{ checkedInUser.lastName }}
               .clear
             
             div(ng-show="!checkedInUsers || checkedInUsers.length == 0")
@@ -177,9 +177,9 @@ block content
               else
                 //- Public view: display the event's contaggs if we have any
                 .user-image(ng-repeat="registeredUser in registeredUsers")
-                  a(href="//www.socialtagg.com/users/{{ registerdUser.id }}")
-                    img(src="{{ registeredUser.pictureUrl }}")
-                    p(style="line-height:15px; margin-top:3px") {{ registeredUser.firstName }} {{ checkedInUser.lastName }}
+                  //a(href="//www.socialtagg.com/users/{{ registerdUser.id }}") // link to profiles
+                  img(src="{{ registeredUser.pictureUrl }}")
+                  p(style="line-height:15px; margin-top:3px") {{ registeredUser.firstName }} {{ checkedInUser.lastName }}
 
                 .clear
             
