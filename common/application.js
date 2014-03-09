@@ -177,6 +177,7 @@ exports.links = function(options) {
     mycontaggs: '/mycontaggs',
     appiphone: 'http://itunes.apple.com/app/id649747318',
     appandroid: 'https://play.google.com/store/apps/details?id=com.socialtagg&feature=search_result#?t=W251bGwsMSwyLDEsImNvbS5zb2NpYWx0YWdnIl0',
+    appwindows: 'http://www.windowsphone.com/en-us/store/app/socialtagg/047af900-02d7-4e3d-b77b-89de81c589c1',
     myattendedevents: '/myattendedevents',
     myownedevents: '/myownedevents',
     editprofile: '/editprofile',
