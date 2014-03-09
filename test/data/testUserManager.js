@@ -86,7 +86,7 @@ describe('userManager', function() {
         //
         assert.equal(resultUser.firstName, 'Jeff', 'didn\'t get firstname property');
         assert.equal(resultUser.lastName, 'Mock', 'didn\'t get lastName property');
-        assert.equal(resultUser.company, 'SocialTagg LLC', 'didn\'t get company property');
+        assert.equal(resultUser.company, 'SocialTagg', 'didn\'t get company property');
         assert.equal(resultUser.address, 'Redondo Beach, CA', 'didn\'t get address property');
         assert.equal(resultUser.twitter, '@jmock77', 'didn\'t get twitter property');
         assert.equal(resultUser.title, 'VP Engineering', 'didn\'t get title property');
