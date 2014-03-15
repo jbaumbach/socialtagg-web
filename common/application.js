@@ -629,6 +629,6 @@ exports.getDataSummary = function(options, dataItems) {
  
  *****************************************************************************/
 
-exports.userFindOrCreateFromPassportResponse = function(response, callback) {
+exports.loginUserFromPassportResponse = function(passportResponse, callback) {
   
 } 

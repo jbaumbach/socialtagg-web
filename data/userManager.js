@@ -77,12 +77,78 @@ exports.getUserByEmail = function(emailAddr, resultCallback) {
 }
 
 exports.findOrCreateFromProvider = function(passportResponse, callback) {
-  // Look up user in connections table.
+
+  var accountPassword;
   
-  // If there, get the user from the users table
+  //
+  // As of this writing, only linkedin is supported
+  //
+  if (passportResponse.provider !== 'linkedin') {
+    callback({ status: 500, msg: 'provider ' + passportResponse.provider + ' is not supported!' });
+    return;
+  } else {
+    accountPassword = globalFunctions.sha256Encode(passportResponse.id + '_5eDrU2RuprUp2Cub');
+  }
+
+
+  //
+  // As of this writing, we're using email address as the primary key.  
+  //
+  var email = (passportResponse.emails && passportResponse.emails.length > 0) ? passportResponse.emails[0] : null;
   
-  // If not there, create the user and insert the appropriate values
-  
+  async.waterfall([
+    function findEmailInPassportResponse(cb) {
+      if (email) {
+        cb(null, email);
+      } else {
+        cb({ status: 401, msg: 'no email address supplied '});
+      }
+    },
+    function findUser(cb) {
+      exports.getUserByEmail(email, function(user) {
+        cb(null, user);
+      });
+    },
+    function createUserIfNecessary(user, cb) {
+      if (!user) {
+        //
+        // Create user object and store in database
+        //
+        var user = new User({
+          userName: email,
+          firstName: passportResponse.name.givenName,
+          lastName: passportResponse.name.familyName,
+          email: email,
+          pictureUrl: passportResponse._json.pictureUrl,
+          website: passportResponse._json.publicProfileUrl,
+          bio: passportResponse._json.headline,
+          // Must be this to enable use by mobile apps.  Note this is for linkedin only
+          password: accountPassword
+        })
+        
+        exports.upsertUser(user, function(err, user) {
+          if (err) {
+            cb({ status: 500, msg: err });
+          } else {
+            cb(null, user);
+          }
+        });
+        
+      } else {
+        //
+        // We have a user, let's see if the id from the provider matches the email.  This 
+        // extra step prevents someone from spoofing an account with someone else's email
+        //
+        exports.validateCredentials(email, accountPassword, function(validatedUser) {
+          if (validatedUser) {
+            cb(null, user);
+          } else {
+            cb({ status: 403, msg: 'sorry, that email address is already in use by another account '});
+          }
+        })
+      }
+    }
+  ], callback);
 } 
 
 /*
