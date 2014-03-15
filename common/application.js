@@ -622,3 +622,13 @@ exports.getDataSummary = function(options, dataItems) {
   return summary;
 }
 
+
+/****************************************************************************
+
+ Functions that could probably go into models if we were so inclined
+ 
+ *****************************************************************************/
+
+exports.userFindOrCreateFromPassportResponse = function(response, callback) {
+  
+} 

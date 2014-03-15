@@ -76,6 +76,15 @@ exports.getUserByEmail = function(emailAddr, resultCallback) {
   db.getUserByEmail(emailAddr, resultCallback);
 }
 
+exports.findOrCreateFromProvider = function(passportResponse, callback) {
+  // Look up user in connections table.
+  
+  // If there, get the user from the users table
+  
+  // If not there, create the user and insert the appropriate values
+  
+} 
+
 /*
  Upsert the passed user in the data store.
  Parameters:

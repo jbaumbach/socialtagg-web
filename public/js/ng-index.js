@@ -179,7 +179,11 @@ var loginController = app.controller('loginController', function($scope, $http, 
       });
     }
   }
-  
+
+  $scope.socialTaggProviderLogin = function(provider) {
+    var navigateTo = '/loginpp/' + provider;
+    window.location = navigateTo;
+  }
 })
 
 // Directive to prevent the default html action for following # anchors
