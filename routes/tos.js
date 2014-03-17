@@ -19,7 +19,7 @@ exports.main = function(req, res) {
   };
 
   // Read the file and print its contents.
-  var tosFilename = application.globalVariables.serverPhysicalPath + '/misc/tos.txt';
+  var tosFilename = globalVariables.serverPhysicalPath + '/misc/tos.txt';
   
   fs.readFile(tosFilename, 'utf8', function(err, data) {
     

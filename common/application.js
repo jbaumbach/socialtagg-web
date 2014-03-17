@@ -1,11 +1,3 @@
-/**
- * User: jbaumbach
- * Date: 2/10/13
- * Time: 1:50 PM
- * 
- * Application-specific functions
- * 
- */
 
 var util = require('util')
   , userManager = require('../data/userManager')
@@ -18,8 +10,8 @@ var util = require('util')
   , Validator = require('validator').Validator
   , _ = require('underscore')
   , thisModule = this
-  , async = require('async')
   , User = require(process.cwd() + '/models/User')
+  , async = require('async')
   ;
 
 //*** Note: do not reference any /models directly from this class.  Models include this
@@ -29,10 +21,8 @@ var util = require('util')
 // Global variables accessible throughout the application.
 // Some are set in app.js, like so:
 //
-// application.globalVariables.serverPhysicalPath = [path];
+// globalVariables.serverPhysicalPath = [path];
 //
-exports.globalVariables = {
-};
 
 
 /*
@@ -163,12 +153,12 @@ exports.getSanitizedUser = function(rawUser) {
 //
 exports.links = function(options) {
   return {
-    home: thisModule.globalVariables.applicationHomepage,
+    home: globalVariables.applicationHomepage,
     features: '/features',
     pricing: '/pricing',
     developers: '/developers',
     contact: '/contactus',
-    login: thisModule.globalVariables.secureProtocol + '://' + thisModule.globalVariables.serverPath + '/login' + 
+    login: globalVariables.secureProtocol + '://' + globalVariables.serverPath + '/login' + 
       ((options && options.logindest) ? '?logindest=' + options.logindest : ''),
     logout: '/logout',
     facebook: '//www.facebook.com/socialtagg',
@@ -240,13 +230,13 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   // These are required for the login module so it can post the user info securely
   // in production but not bother in dev
   //
-  pageVars.public.serverPath = this.globalVariables.serverPath;
-  pageVars.public.secureProtocol = this.globalVariables.secureProtocol;
+  pageVars.public.serverPath = globalVariables.serverPath;
+  pageVars.public.secureProtocol = globalVariables.secureProtocol;
   
   //
   // Misc variables that are good for Jade to know about
   //
-  pageVars.public.sentryDsn = this.globalVariables.sentryDsn;
+  pageVars.public.sentryDsn = globalVariables.sentryDsn;
   
   //
   // loginDest tells the login page where to go after login.  It can be set in a few ways:
@@ -285,7 +275,7 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   //
   // Use these in Jade like:   if locals.showsocial ...
   //
-  pageVars.showpricing = this.globalVariables.showpricing || req.query.showpricing;
+  pageVars.showpricing = globalVariables.showpricing || req.query.showpricing;
   
 
   function done() {
@@ -530,8 +520,8 @@ exports.ErrorCollectingValidator = function () {
 exports.registrationValidationUrl = function(email, verificationCode) {
   
   var result = util.format('%s://%s/registration/verify?email=%s&code=%s',
-    this.globalVariables.secureProtocol,
-    this.globalVariables.serverPath,
+    globalVariables.secureProtocol,
+    globalVariables.serverPath,
     encodeURIComponent(email),
     verificationCode
   );
@@ -624,7 +614,6 @@ exports.getDataSummary = function(options, dataItems) {
   return summary;
 }
 
-
 /****************************************************************************
 
  Functions that could probably go into models if we were so inclined
@@ -648,7 +637,7 @@ exports.findOrCreateFromProvider = function(passportResponse, callback) {
         // The same method is used in the other clients - hashing linkedin id with ST's linkedin secret key
         //
         accountPassword = globalFunctions.sha256Encode(passportResponse.id + '_5eDrU2RuprUp2Cub');
-
+        
         //
         // As of this writing, we're using email address as the primary key.  
         //
@@ -656,7 +645,6 @@ exports.findOrCreateFromProvider = function(passportResponse, callback) {
       }
     },
     function findEmailInPassportResponse(cb) {
-      console.log('~~~~ 1: ' + email);
       if (email) {
         cb();
       } else {
@@ -664,32 +652,29 @@ exports.findOrCreateFromProvider = function(passportResponse, callback) {
       }
     },
     function findUser(cb) {
-      console.log('~~~~ 2');
       userManager.getUserByEmail(email, function(user) {
         cb(null, user);
       });
     },
     function createUserIfNecessary(user, cb) {
       if (!user) {
-        console.log('~~~~ 3: User: ' + util.inspect(User));
-        
+
         //
         // Create user object and store in database
         //
-        todo: figure out why node doesn't know what User is
-        user = new User({
+        var newUser = new User({
           userName: email,
           firstName: passportResponse.name.givenName,
           lastName: passportResponse.name.familyName,
           email: email,
           pictureUrl: passportResponse._json.pictureUrl,
           website: passportResponse._json.publicProfileUrl,
-          bio: passportResponse._json.headline,
-          // Must be this to enable use by mobile apps.  Note this is for linkedin only
-          password: accountPassword
+          bio: passportResponse._json.headline
         });
 
-        userManager.upsertUser(user, function(err, newUser) {
+        newUser.password = accountPassword; 
+
+        userManager.upsertUser(newUser, function(err, newUser) {
           if (err) {
             cb({ err: err });
           } else {
@@ -698,17 +683,14 @@ exports.findOrCreateFromProvider = function(passportResponse, callback) {
         });
 
       } else {
-        console.log('~~~~ 4');
         //
         // We have a user, let's see if the id from the provider matches the email.  This 
         // extra step prevents someone from spoofing an account with someone else's email
         //
         userManager.validateCredentials(email, accountPassword, function(validatedUser) {
           if (validatedUser) {
-            console.log('~~~~ 5');
             cb(null, user);
           } else {
-            console.log('~~~~ 6');
             cb({ msg: 'sorry, that email address is already in use by another account '});
           }
         })
@@ -716,4 +698,4 @@ exports.findOrCreateFromProvider = function(passportResponse, callback) {
     }
   ], callback);
 
-} 
+}

@@ -146,8 +146,8 @@ describe('User model', function() {
       id: 'yoda'
     }
 
-    application.globalVariables.productionServerPath = 'www.socialtagg.com';
-    application.globalVariables.productionSecureProtocol = 'https';
+    globalVariables.productionServerPath = 'www.socialtagg.com';
+    globalVariables.productionSecureProtocol = 'https';
 
     var user = new User(initData);
     var e = 'http://chart.apis.google.com/chart?cht=qr&chs=500x500&chl=https%3A%2F%2Fwww.socialtagg.com%2Fusers%2Fyoda';

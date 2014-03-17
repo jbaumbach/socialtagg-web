@@ -77,7 +77,7 @@ describe('application class', function() {
   
   //
   // Note: this should be moved to a new place outside of application.  User now uses the \
-  // global variables in application.globalVariables.  This causes a circular reference problem.
+  // global variables in globalVariables.  This causes a circular reference problem.
   // The application class shouldn't reference the User class directly (although is does user stuff)
   //
   it.skip('should return a sanitized user from bad values', function() {
@@ -383,9 +383,9 @@ describe('application class', function() {
     var o = { logindest: p};
     var l = application.links(o);
 
-    var e = application.globalVariables.secureProtocol + 
+    var e = globalVariables.secureProtocol + 
       '://' + 
-      application.globalVariables.serverPath + 
+      globalVariables.serverPath + 
       '/login?logindest=' + 
       p;
 

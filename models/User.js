@@ -22,7 +22,7 @@
 
 var util = require('util')
   , globalFunctions = require('../common/globalfunctions')
-  , application = require('../common/application')
+  , async = require('async')
   ;
 
 //
@@ -110,8 +110,8 @@ Object.defineProperty(User.prototype, "qrCodeUrl", {
     // The mobile apps only know what the production server is
     //
      */
-    var fullProductionPath = application.globalVariables.productionSecureProtocol + '://' +
-      application.globalVariables.productionServerPath +
+    var fullProductionPath = globalVariables.productionSecureProtocol + '://' +
+      globalVariables.productionServerPath +
       this.path;
     
     // var fullProductionPath = this.path;
@@ -178,7 +178,6 @@ User.cacheKey = function(id) {
 //
 // End cache support
 //
-
 
 
 
