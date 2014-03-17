@@ -9,6 +9,7 @@ var util = require('util')
   , http = require('http')
   , https = require('https')
   , thisModule = this
+  , _ = require('underscore')
   ;
 
 //
@@ -40,6 +41,33 @@ exports.getSessionInfo = function(req) {
 
   return sessionInfo;
 };
+
+exports.setSessionValue = function(req, key, value) {
+  var sessionInfo = exports.getSessionInfo(req);
+  sessionInfo[key] = value;
+  exports.setSessionInfo(req, sessionInfo);
+}
+
+exports.getSessionValue = function(req, key) {
+  var sessionInfo = exports.getSessionInfo(req);
+  return sessionInfo[key];
+}
+
+exports.deleteSessionValue = function(req, key) {
+  var sessionInfo = exports.getSessionInfo(req);
+  if (sessionInfo[key]) {
+    delete sessionInfo[key];
+  }
+  exports.setSessionInfo(req, sessionInfo);
+}
+
+exports.getAndDeleteSessionValue = function(req, key) {
+  var result = exports.getSessionValue(req, key);
+  if (result) {
+    exports.deleteSessionValue(req, key);
+  }
+  return result;
+}
 
 //
 // Set the current session info object

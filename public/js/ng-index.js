@@ -81,6 +81,10 @@ var loginController = app.controller('loginController', function($scope, $http, 
     $scope.secureProtocol = pageVars.secureProtocol;
     $scope.loginDest = pageVars.loginDest;
     $scope.newAcctUrl = pageVars.newAcctUrl;
+    
+    if (pageVars.displayErrorMessage) {
+      setMsg('error', pageVars.displayErrorMessage);
+    }
   }
 
   function trySubmitUserInfo(postData, postUrl, successFunction, failFunction) {

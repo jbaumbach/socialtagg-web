@@ -9,7 +9,7 @@
 
 var util = require('util')
   , userManager = require('../data/userManager')
-  , globalfunctions = require('./globalfunctions')
+  , globalFunctions = require('./globalfunctions')
   , check = require('validator').check
   , sanitize = require('validator').sanitize
   , CSV = require('csv-string')
@@ -18,6 +18,8 @@ var util = require('util')
   , Validator = require('validator').Validator
   , _ = require('underscore')
   , thisModule = this
+  , async = require('async')
+  , User = require(process.cwd() + '/models/User')
   ;
 
 //*** Note: do not reference any /models directly from this class.  Models include this
@@ -42,7 +44,7 @@ exports.globalVariables = {
       user: the user retrieved, or null if something went wrong
 */
 exports.getCurrentSessionUser = function(req, callback) {
-  var sessionInfo = globalfunctions.getSessionInfo(req);
+  var sessionInfo = globalFunctions.getSessionInfo(req);
 
   var returnResult = function(user) {
     callback(user);
@@ -66,7 +68,7 @@ exports.getCurrentSessionUserId = function(req) {
   var loginStatus = thisModule.loginStatus(req);
   
   if (loginStatus == 2) {
-    var sessionInfo = globalfunctions.getSessionInfo(req);
+    var sessionInfo = globalFunctions.getSessionInfo(req);
     result = sessionInfo.userId;
   }
   
@@ -81,7 +83,7 @@ exports.getCurrentSessionUserId = function(req) {
 // 2: logged in user
 //
 exports.loginStatus = function(req) {
-  var sessionInfo = globalfunctions.getSessionInfo(req);
+  var sessionInfo = globalFunctions.getSessionInfo(req);
   
   if (!(sessionInfo && sessionInfo.userId)) {
     // 
@@ -298,7 +300,7 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
     }
   }
 
-  var sessionInfo = globalfunctions.getSessionInfo(req);
+  var sessionInfo = globalFunctions.getSessionInfo(req);
 
   if (sessionInfo.userId) {
 
@@ -629,6 +631,89 @@ exports.getDataSummary = function(options, dataItems) {
  
  *****************************************************************************/
 
-exports.loginUserFromPassportResponse = function(passportResponse, callback) {
-  
+exports.findOrCreateFromProvider = function(passportResponse, callback) {
+
+  var accountPassword;
+  var email;
+
+  async.waterfall([
+    function validateProvider(cb) {
+      //
+      // As of this writing, only linkedin is supported
+      //
+      if (passportResponse.provider !== 'linkedin') {
+        cb({ err: 'provider ' + passportResponse.provider + ' is not supported!' });
+      } else {
+        //
+        // The same method is used in the other clients - hashing linkedin id with ST's linkedin secret key
+        //
+        accountPassword = globalFunctions.sha256Encode(passportResponse.id + '_5eDrU2RuprUp2Cub');
+
+        //
+        // As of this writing, we're using email address as the primary key.  
+        //
+        email = (passportResponse.emails && passportResponse.emails.length > 0) ? passportResponse.emails[0].value : null;        cb();
+      }
+    },
+    function findEmailInPassportResponse(cb) {
+      console.log('~~~~ 1: ' + email);
+      if (email) {
+        cb();
+      } else {
+        cb({ msg: 'no email address supplied '});
+      }
+    },
+    function findUser(cb) {
+      console.log('~~~~ 2');
+      userManager.getUserByEmail(email, function(user) {
+        cb(null, user);
+      });
+    },
+    function createUserIfNecessary(user, cb) {
+      if (!user) {
+        console.log('~~~~ 3: User: ' + util.inspect(User));
+        
+        //
+        // Create user object and store in database
+        //
+        todo: figure out why node doesn't know what User is
+        user = new User({
+          userName: email,
+          firstName: passportResponse.name.givenName,
+          lastName: passportResponse.name.familyName,
+          email: email,
+          pictureUrl: passportResponse._json.pictureUrl,
+          website: passportResponse._json.publicProfileUrl,
+          bio: passportResponse._json.headline,
+          // Must be this to enable use by mobile apps.  Note this is for linkedin only
+          password: accountPassword
+        });
+
+        userManager.upsertUser(user, function(err, newUser) {
+          if (err) {
+            cb({ err: err });
+          } else {
+            cb(null, newUser);
+          }
+        });
+
+      } else {
+        console.log('~~~~ 4');
+        //
+        // We have a user, let's see if the id from the provider matches the email.  This 
+        // extra step prevents someone from spoofing an account with someone else's email
+        //
+        userManager.validateCredentials(email, accountPassword, function(validatedUser) {
+          if (validatedUser) {
+            console.log('~~~~ 5');
+            cb(null, user);
+          } else {
+            console.log('~~~~ 6');
+            cb({ msg: 'sorry, that email address is already in use by another account '});
+          }
+        })
+      }
+    }
+  ], callback);
+
 } 
