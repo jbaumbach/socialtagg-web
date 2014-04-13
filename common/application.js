@@ -276,6 +276,7 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   // Use these in Jade like:   if locals.showsocial ...
   //
   pageVars.showpricing = globalVariables.showpricing || req.query.showpricing;
+  pageVars.enablelinkedin = globalVariables.enablelinkedin || req.query.enablelinkedin;
   
 
   function done() {

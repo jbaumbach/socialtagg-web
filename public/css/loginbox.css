@@ -16,12 +16,18 @@
 
 
 #loginbox .social {padding: 13px 0 0 0; height: 75px;}
+#loginbox .social div { padding-right: 5px; }
 #loginbox .blue {color: #2b83b6;}
 
 /** Buttons **/
 #loginbox .twitter {background: url(../images/loginbox/twitter_btn.png) no-repeat; height: 32px; width: 157px; display: block; float: left; margin-top: 10px;}
 #loginbox .twitter:hover {background: url(../images/loginbox/twitter_btn.png) no-repeat; background-position: 0 -32px;}
 #loginbox .twitter:active {margin-top: 11px}
+
+#loginbox .linkedin {background: url(../images/loginbox/linkedin_btn.png) no-repeat; height: 32px; width: 157px; display: block; float: left; margin-top: 10px;}
+#loginbox .linkedin:hover {background: url(../images/loginbox/linkedin_btn.png) no-repeat; background-position: 0 -32px;}
+#loginbox .linkedin:active {margin-top: 11px}
+
 #loginbox .btn_1 {padding: 8px 0 0 32px; text-shadow: -1px -1px 0px #0083b3; color:#fff; font-weight: bold; font-size: 12px; height: 32px; display: block;}
 
 #loginbox .fb {background: url(../images/loginbox/fb_btn.png) no-repeat; height: 32px; width: 157px; display: block; float: left; margin-top: 10px;}

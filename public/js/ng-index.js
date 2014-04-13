@@ -184,8 +184,12 @@ var loginController = app.controller('loginController', function($scope, $http, 
     }
   }
 
+  //
+  // Log in with passport
+  //
   $scope.socialTaggProviderLogin = function(provider) {
     var navigateTo = '/loginpp/' + provider;
+    $('#social-spinner').css('display', 'inline-block');
     window.location = navigateTo;
   }
 })

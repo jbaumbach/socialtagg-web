@@ -8,7 +8,7 @@ var myApp = require(process.cwd() + '/app.js')
 
 /*
 
- This resets John's test LinkedIn account
+ This deletes John's test LinkedIn account from usergrid.
  
  * Be sure to stop your dev website first or this will bomb out.
 
