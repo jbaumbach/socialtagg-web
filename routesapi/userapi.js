@@ -123,8 +123,8 @@ function(options, resultCallback) {
   
   if (!returnLink) {
     returnLink = util.format("%s://%s%s?v=%s",
-      application.globalVariables.secureProtocol,
-      application.globalVariables.serverPath,
+      globalVariables.secureProtocol,
+      globalVariables.serverPath,
       application.links().forgotpassword.replace(/:id/, userId),
       verificationCode
     );

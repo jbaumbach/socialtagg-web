@@ -7,18 +7,23 @@ var userManager = require('./../data/userManager')
   , util = require('util')
   , globalfunctions = require('./../common/globalfunctions')
   , User = require('../models/User')
-  , ApiUser = require('../models/ApiUser')
   , application = require('../common/application')
   , userapi = require('../routesapi/userapi')
   , async = require('async')
   ;
 
 exports.loginForm = function(req, res) {
-  
+
+  var passportError = globalfunctions.getAndDeleteSessionValue(req, 'passportError');
+  console.log('have passportError? ' + passportError);
+
   var pageVars = { 
     title: 'User Login', 
     usesAngular: true,
-    public: { newAcctUrl: application.links().editprofile } // pass this on to Angular
+    public: { 
+      newAcctUrl: application.links().editprofile,
+      displayErrorMessage: passportError 
+    } // pass this on to Angular
   };
   
   application.buildApplicationPagevars(req, pageVars, function(pageVars) {
@@ -202,7 +207,7 @@ exports.registrationVerify = function(req, res) {
 // The site has posted login info
 //
 exports.login = function(req, res) {
-  console.log('(info) in login func');
+  console.log('(info) in login func - might have some failureFlash stuff: ' + util.inspect(req));
   
   var email = req.body.email;
 
@@ -259,7 +264,7 @@ exports.login = function(req, res) {
  */
 exports.logout = function(req, res) {
   globalfunctions.logoutUser(req);
-  res.redirect(application.globalVariables.applicationHomepage);
+  res.redirect(globalVariables.applicationHomepage);
 }
 
 exports.new = function(req, res) {

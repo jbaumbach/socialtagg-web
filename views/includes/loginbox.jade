@@ -9,14 +9,15 @@
         br
         .fb
           a.btn_1(href='#', onclick='socialTaggFbLogin(true)', no-click) Login with Facebook
+        if (enablelinkedin)
+          .linkedin
+            a.btn_2(href='#', ng-click='socialTaggProviderLogin("linkedin")', no-click) Login with LinkedIn
         i.icon-spinner.icon-spin.icon-2x#social-spinner
-        //-
-          .twitter
-            a.btn_2(href='#') Login with Twitter
+
       
       p.privacy 
         a(href='#', no-click, ng-click='showPrivacyDetail = !showPrivacyDetail')
-          | We'll never post anything to Facebook.  
+          | We'll never post anything to any social networks you use as a login.  
           i.mini-ico-info-sign
       
         div(ng-show='showPrivacyDetail', ng-cloak)

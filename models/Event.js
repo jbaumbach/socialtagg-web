@@ -54,7 +54,7 @@ var Event = function(values) {
     this.printerFriendlyPath = '#';
   }
 
-  this.fullPath = 'http://' + application.globalVariables.serverPath + this.path;
+  this.fullPath = 'http://' + globalVariables.serverPath + this.path;
   this.hashtag = globalFunctions.toHashtag(this.name);
   
 };
@@ -67,8 +67,8 @@ Object.defineProperty(Event.prototype, "qrCodeUrl", {
     //
     // The mobile apps only know what the production server is
     //
-    var fullProductionPath = application.globalVariables.productionSecureProtocol + '://' + 
-      application.globalVariables.productionServerPath +
+    var fullProductionPath = globalVariables.productionSecureProtocol + '://' + 
+      globalVariables.productionServerPath +
       this.path;
     
     return globalFunctions.qrCodeUrl(fullProductionPath, { size: 500 });

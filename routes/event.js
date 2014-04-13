@@ -7,7 +7,6 @@
 var userManager = require('./../data/userManager')
   , util = require('util')
   , globalfunctions = require('./../common/globalfunctions')
-  , User = require('../models/User')
   , application = require('../common/application')
   , eventManager = require('../data/eventManager')
   , SurveyQuestion = require('../models/SurveyQuestion')

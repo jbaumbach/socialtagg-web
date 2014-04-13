@@ -81,6 +81,10 @@ var loginController = app.controller('loginController', function($scope, $http, 
     $scope.secureProtocol = pageVars.secureProtocol;
     $scope.loginDest = pageVars.loginDest;
     $scope.newAcctUrl = pageVars.newAcctUrl;
+    
+    if (pageVars.displayErrorMessage) {
+      setMsg('error', pageVars.displayErrorMessage);
+    }
   }
 
   function trySubmitUserInfo(postData, postUrl, successFunction, failFunction) {
@@ -179,7 +183,15 @@ var loginController = app.controller('loginController', function($scope, $http, 
       });
     }
   }
-  
+
+  //
+  // Log in with passport
+  //
+  $scope.socialTaggProviderLogin = function(provider) {
+    var navigateTo = '/loginpp/' + provider;
+    $('#social-spinner').css('display', 'inline-block');
+    window.location = navigateTo;
+  }
 })
 
 // Directive to prevent the default html action for following # anchors

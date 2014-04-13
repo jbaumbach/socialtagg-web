@@ -1,15 +1,7 @@
-/**
- * User: jbaumbach
- * Date: 2/10/13
- * Time: 1:50 PM
- * 
- * Application-specific functions
- * 
- */
 
 var util = require('util')
   , userManager = require('../data/userManager')
-  , globalfunctions = require('./globalfunctions')
+  , globalFunctions = require('./globalfunctions')
   , check = require('validator').check
   , sanitize = require('validator').sanitize
   , CSV = require('csv-string')
@@ -18,6 +10,8 @@ var util = require('util')
   , Validator = require('validator').Validator
   , _ = require('underscore')
   , thisModule = this
+  , User = require(process.cwd() + '/models/User')
+  , async = require('async')
   ;
 
 //*** Note: do not reference any /models directly from this class.  Models include this
@@ -27,10 +21,8 @@ var util = require('util')
 // Global variables accessible throughout the application.
 // Some are set in app.js, like so:
 //
-// application.globalVariables.serverPhysicalPath = [path];
+// globalVariables.serverPhysicalPath = [path];
 //
-exports.globalVariables = {
-};
 
 
 /*
@@ -42,7 +34,7 @@ exports.globalVariables = {
       user: the user retrieved, or null if something went wrong
 */
 exports.getCurrentSessionUser = function(req, callback) {
-  var sessionInfo = globalfunctions.getSessionInfo(req);
+  var sessionInfo = globalFunctions.getSessionInfo(req);
 
   var returnResult = function(user) {
     callback(user);
@@ -66,7 +58,7 @@ exports.getCurrentSessionUserId = function(req) {
   var loginStatus = thisModule.loginStatus(req);
   
   if (loginStatus == 2) {
-    var sessionInfo = globalfunctions.getSessionInfo(req);
+    var sessionInfo = globalFunctions.getSessionInfo(req);
     result = sessionInfo.userId;
   }
   
@@ -81,7 +73,7 @@ exports.getCurrentSessionUserId = function(req) {
 // 2: logged in user
 //
 exports.loginStatus = function(req) {
-  var sessionInfo = globalfunctions.getSessionInfo(req);
+  var sessionInfo = globalFunctions.getSessionInfo(req);
   
   if (!(sessionInfo && sessionInfo.userId)) {
     // 
@@ -161,12 +153,12 @@ exports.getSanitizedUser = function(rawUser) {
 //
 exports.links = function(options) {
   return {
-    home: thisModule.globalVariables.applicationHomepage,
+    home: globalVariables.applicationHomepage,
     features: '/features',
     pricing: '/pricing',
     developers: '/developers',
     contact: '/contactus',
-    login: thisModule.globalVariables.secureProtocol + '://' + thisModule.globalVariables.serverPath + '/login' + 
+    login: globalVariables.secureProtocol + '://' + globalVariables.serverPath + '/login' + 
       ((options && options.logindest) ? '?logindest=' + options.logindest : ''),
     logout: '/logout',
     facebook: '//www.facebook.com/socialtagg',
@@ -238,13 +230,13 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   // These are required for the login module so it can post the user info securely
   // in production but not bother in dev
   //
-  pageVars.public.serverPath = this.globalVariables.serverPath;
-  pageVars.public.secureProtocol = this.globalVariables.secureProtocol;
+  pageVars.public.serverPath = globalVariables.serverPath;
+  pageVars.public.secureProtocol = globalVariables.secureProtocol;
   
   //
   // Misc variables that are good for Jade to know about
   //
-  pageVars.public.sentryDsn = this.globalVariables.sentryDsn;
+  pageVars.public.sentryDsn = globalVariables.sentryDsn;
   
   //
   // loginDest tells the login page where to go after login.  It can be set in a few ways:
@@ -283,7 +275,8 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
   //
   // Use these in Jade like:   if locals.showsocial ...
   //
-  pageVars.showpricing = this.globalVariables.showpricing || req.query.showpricing;
+  pageVars.showpricing = globalVariables.showpricing || req.query.showpricing;
+  pageVars.enablelinkedin = globalVariables.enablelinkedin || req.query.enablelinkedin;
   
 
   function done() {
@@ -298,7 +291,7 @@ exports.buildApplicationPagevars = function(req, pageVars, getUserAndCallback) {
     }
   }
 
-  var sessionInfo = globalfunctions.getSessionInfo(req);
+  var sessionInfo = globalFunctions.getSessionInfo(req);
 
   if (sessionInfo.userId) {
 
@@ -528,8 +521,8 @@ exports.ErrorCollectingValidator = function () {
 exports.registrationValidationUrl = function(email, verificationCode) {
   
   var result = util.format('%s://%s/registration/verify?email=%s&code=%s',
-    this.globalVariables.secureProtocol,
-    this.globalVariables.serverPath,
+    globalVariables.secureProtocol,
+    globalVariables.serverPath,
     encodeURIComponent(email),
     verificationCode
   );
@@ -622,3 +615,88 @@ exports.getDataSummary = function(options, dataItems) {
   return summary;
 }
 
+/****************************************************************************
+
+ Functions that could probably go into models if we were so inclined
+ 
+ *****************************************************************************/
+
+exports.findOrCreateFromProvider = function(passportResponse, callback) {
+
+  var accountPassword;
+  var email;
+
+  async.waterfall([
+    function validateProvider(cb) {
+      //
+      // As of this writing, only linkedin is supported
+      //
+      if (passportResponse.provider !== 'linkedin') {
+        cb({ err: 'provider ' + passportResponse.provider + ' is not supported!' });
+      } else {
+        //
+        // The same method is used in the other clients - hashing linkedin id with ST's linkedin secret key
+        //
+        accountPassword = globalFunctions.sha256Encode(passportResponse.id + '_5eDrU2RuprUp2Cub');
+        
+        //
+        // As of this writing, we're using email address as the primary key.  
+        //
+        email = (passportResponse.emails && passportResponse.emails.length > 0) ? passportResponse.emails[0].value : null;        cb();
+      }
+    },
+    function findEmailInPassportResponse(cb) {
+      if (email) {
+        cb();
+      } else {
+        cb({ msg: 'no email address supplied '});
+      }
+    },
+    function findUser(cb) {
+      userManager.getUserByEmail(email, function(user) {
+        cb(null, user);
+      });
+    },
+    function createUserIfNecessary(user, cb) {
+      if (!user) {
+
+        //
+        // Create user object and store in database
+        //
+        var newUser = new User({
+          userName: email,
+          firstName: passportResponse.name.givenName,
+          lastName: passportResponse.name.familyName,
+          email: email,
+          pictureUrl: passportResponse._json.pictureUrl,
+          website: passportResponse._json.publicProfileUrl,
+          bio: passportResponse._json.headline
+        });
+
+        newUser.password = accountPassword; 
+
+        userManager.upsertUser(newUser, function(err, newUser) {
+          if (err) {
+            cb({ err: err });
+          } else {
+            cb(null, newUser);
+          }
+        });
+
+      } else {
+        //
+        // We have a user, let's see if the id from the provider matches the email.  This 
+        // extra step prevents someone from spoofing an account with someone else's email
+        //
+        userManager.validateCredentials(email, accountPassword, function(validatedUser) {
+          if (validatedUser) {
+            cb(null, user);
+          } else {
+            cb({ msg: 'sorry, that email address is already in use by another account '});
+          }
+        })
+      }
+    }
+  ], callback);
+
+}

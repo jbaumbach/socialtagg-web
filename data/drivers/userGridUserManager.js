@@ -606,6 +606,7 @@ exports.upsertUser = function(user, resultCallback) {
           setUserGridUserPassword(ugUser, user.password, callback);
           
         } else {
+          console.log('(info) no password to set');
           callback();
         }
       } 

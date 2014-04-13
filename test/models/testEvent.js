@@ -77,8 +77,8 @@ describe('Event model', function() {
       uuid: 'yoda'
     }
 
-    application.globalVariables.productionServerPath = 'www.socialtagg.com';
-    application.globalVariables.productionSecureProtocol = 'https';
+    globalVariables.productionServerPath = 'www.socialtagg.com';
+    globalVariables.productionSecureProtocol = 'https';
 
     var event = new Event(initData);
     var e = 'http://chart.apis.google.com/chart?cht=qr&chs=500x500&chl=https%3A%2F%2Fwww.socialtagg.com%2Fevents%2Fyoda';
