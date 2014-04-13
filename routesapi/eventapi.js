@@ -854,8 +854,36 @@ exports.usersList = function(req, res) {
   //
   var eventId = req.params.id;
   var isEventOwner = false;
+  var returnFullUser = false;
   var currentUserId = application.getCurrentSessionUserId(req);
-  
+
+  //
+  // Special events where we can pass back all user info publicly.  Add any new events
+  // here.
+  // todo: make "isPublic" a property of the event in usergrid.
+  //
+  function isPublicEvent(event) {
+    
+    //
+    // to turn this on for ALL events - just return true; here and comment out the rest
+    //
+    
+    var nameSubstrings = [
+      'Youth Ministry'  
+    ];
+
+    var n2 = event.name && event.name.toLowerCase();
+    var result = _.find(nameSubstrings, function(subName) {
+      var result = false;
+      var n1 = subName && subName.toLowerCase();
+
+      if (n1 && n2) {
+        return n2.indexOf(n1) != -1;
+      }
+    });
+    return !!result;
+  }
+
   async.waterfall([
     function(cb) {
       if (!req.query.type) {
@@ -876,10 +904,18 @@ exports.usersList = function(req, res) {
           cb({ status: 500, msg: err});
           
         } else {
-          
+          //
           // todo: SocialTagg F2F 10/2013.  Can remove after dev complete on events page.
+          // This makes everyone an owner of the event - good for demos and such
+          //
           var isSpecialEvent = eventId === 'be1b65e0-3e71-11e3-a797-1399e22b12e3';
           isEventOwner = isSpecialEvent || event.owner === currentUserId;
+
+          //
+          // Determine 
+          //
+          returnFullUser = isEventOwner || isPublicEvent(event);
+          console.log('returnFullUser: ' + returnFullUser);
           
           // http://development.socialtagg.com:3000/events/be1b65e0-3e71-11e3-a797-1399e22b12e3
           
@@ -939,6 +975,7 @@ exports.usersList = function(req, res) {
       res.send(err.status, { msg: err.msg });
       
     } else {
+
       //
       // need to filter our user objects for privacy if it's not an event owner.  Otherwise,
       // pass the usual object back.
@@ -952,10 +989,7 @@ exports.usersList = function(req, res) {
           return;
         }
         
-        var result
-        
-        // HACK!!! hard coded event id
-        if (isEventOwner || eventId === '0f0ed20a-8780-11e3-abc1-a9d216d8a4e4') {
+        if (returnFullUser) { //  eventId === '0f0ed20a-8780-11e3-abc1-a9d216d8a4e4') {
           result = user.user;
         } else {
           result = {

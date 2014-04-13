@@ -94,10 +94,16 @@ block content
             div#check-ins(ng-show="checkedInUsers.length > 0")
               //- Display the event's contaggs if we have any
               .user-image(ng-repeat="checkedInUser in checkedInUsers")
-                //a(href="//www.socialtagg.com/users/{{ checkedInUser.id }}") // link to profiles
-                img(src="{{ checkedInUser.pictureUrl }}")
-                p(style="line-height:15px; margin-top:3px") {{ checkedInUser.firstName }} {{ checkedInUser.lastName }}
-              .clear
+                // Public view
+                div(ng-show="checkedInUser.id")
+                  a(href="//www.socialtagg.com/users/{{ checkedInUser.id }}")
+                    img(src="{{ checkedInUser.pictureUrl }}")
+                    p(style="line-height:15px; margin-top:3px") {{ checkedInUser.firstName }} {{ checkedInUser.lastName }}
+                // Privacy view
+                div(ng-show="!checkedInUser.id")
+                  img(src="{{ checkedInUser.pictureUrl }}")
+                  p(style="line-height:15px; margin-top:3px") {{ checkedInUser.firstName }}
+                .clear
             
             div(ng-show="!checkedInUsers || checkedInUsers.length == 0")
               .twelve.columns
@@ -177,9 +183,16 @@ block content
               else
                 //- Public view: display the event's contaggs if we have any
                 .user-image(ng-repeat="registeredUser in registeredUsers")
-                  //a(href="//www.socialtagg.com/users/{{ registerdUser.id }}") // link to profiles
-                  img(src="{{ registeredUser.pictureUrl }}")
-                  p(style="line-height:15px; margin-top:3px") {{ registeredUser.firstName }} {{ checkedInUser.lastName }}
+                  
+                  // Public view
+                  div(ng-show="registeredUser.id")
+                    a(href="//www.socialtagg.com/users/{{ registeredUser.id }}")
+                      img(src="{{ registeredUser.pictureUrl }}")
+                      p(style="line-height:15px; margin-top:3px") {{ registeredUser.firstName }} {{ registeredUser.lastName }}
+                  // Privacy view
+                  div(ng-show="!registeredUser.id")
+                    img(src="{{ registeredUser.pictureUrl }}")
+                    p(style="line-height:15px; margin-top:3px") {{ registeredUser.firstName }}
 
                 .clear
             
