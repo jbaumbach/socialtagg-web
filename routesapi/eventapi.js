@@ -868,6 +868,12 @@ exports.usersList = function(req, res) {
     // to turn this on for ALL events - just return true; here and comment out the rest
     //
     
+    return true;
+    
+    //
+    // To apply more specific logic - modify the code below.
+    //
+/*
     var nameSubstrings = [
       'Youth Ministry'  
     ];
@@ -882,6 +888,7 @@ exports.usersList = function(req, res) {
       }
     });
     return !!result;
+*/
   }
 
   async.waterfall([
