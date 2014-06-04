@@ -67,7 +67,7 @@ exports.detail = function(req, res) {
           
           cb();
         } else {
-          cb(err);
+          cb('not found');
         }
       });
     }

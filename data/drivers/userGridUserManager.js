@@ -343,7 +343,8 @@ exports.validateFacebookLogin = function(accessToken, resultCallback) {
   //
   var url = util.format('https://api.usergrid.com/tagg/tagg/auth/facebook?fb_access_token=%s', accessToken);
  
-  console.log('(info) validateFacebookLogin: calling: ' + url);
+  // don't dump access token to log in production:  
+  // console.log('(info) validateFacebookLogin: calling: ' + url);
   
   globalFunctions.getDocumentAtUrl(url, function(err, ugResponse) {
   
