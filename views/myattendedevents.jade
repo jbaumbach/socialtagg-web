@@ -27,8 +27,8 @@ block content
           each eventUser in eventUsers
             .twelve.columns.event-container
               p 
-                a(href=eventUser.event.path) #{ eventUser.event.name }
-          
+                if eventUser.event
+                  a(href=eventUser.event.path) #{ eventUser.event.name }
         else
           .twelve.columns
             p You have not attended any events at this time.
