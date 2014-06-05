@@ -859,7 +859,11 @@ exports.populateEvents = function(eventUserList, resultCallback) {
       // Yes, we are ignoring errors in the list.  If one bombs, we can still
       // show the rest, right?
       //
-      item.event = event;
+      if (event) {
+        item.event = event;
+      } else {
+        console.log('(warning) eventId doesn\'t exist: ' + item.eventUuid);
+      }
       callBack();
     });
   }
