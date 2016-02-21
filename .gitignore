@@ -19,3 +19,4 @@ projectFilesBackup*
 *.rdb
 bower_components
 *.iml
+app-with-account-nos.js
