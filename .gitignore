@@ -20,3 +20,4 @@ projectFilesBackup*
 bower_components
 *.iml
 app-with-account-nos.js
+# zap all the account-nos: git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch app.js' --prune-empty --tag-name-filter cat -- --all
