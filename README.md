@@ -25,7 +25,7 @@ Users can register for events
 ![Screenshot](Screenshots/st-event-register.jpg "User Registration Page Screenshot")
 
 #### Event Analytics Page
-Event planners can guage the success of their events
+Event planners can gauge the success of their events
 ![Screenshot](Screenshots/st-analytics-1.jpg "Event Analytics Page Screenshot")
 
 #### System Analytics Page
@@ -61,11 +61,14 @@ This is the source code of the SocialTagg website.  It includes these general fe
     $ npm install
     $ bower install
     ```
+
 * Make sure Redis is set up and the server is started:
+
     ```
     $ redis-server
     ```
 * Fire up the application server:
+
     ```
     $ node app
     ```
