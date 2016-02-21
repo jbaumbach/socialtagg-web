@@ -18,3 +18,4 @@ node_modules
 projectFilesBackup*
 *.rdb
 bower_components
+*.iml
