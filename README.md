@@ -5,8 +5,6 @@ Social Tagg was started by some friends from Fandango where I worked at the time
 something cool using Node from scratch, the red-hot New Thing™ at the time.  I've since grown to love Node and Angular, and Social Tagg
 has long since ceased operations, so here's my code.
 
-The source control system was SVN so there's not much Git history, but it's just as I left it when the startup ceased operations.
-
 Here are some screenshots.
 
 #### Home Page
