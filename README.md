@@ -10,6 +10,7 @@ The source control system was SVN so there's not much Git history, but it's just
 Here are some screenshots.
 
 ![Screenshot](Screenshots/st-main.png "Homepage Screenshot")
+<p style="text-align:center">Home Page</p>
 
 ## -- Original Readme --
 This is the source code of the SocialTagg website.  It includes these general features:
