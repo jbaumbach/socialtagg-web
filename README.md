@@ -32,6 +32,10 @@ Event planners can gauge the success of their events
 So we could have insight into how our business was performing
 ![Screenshot](Screenshots/st-admin-new-signups.jpg "System Analytics Page Screenshot")
 
+#### API Documentation Page
+Before I discovered Swagger, I created my own docs page.  The API used HMAC authentication.
+![Screenshot](Screenshots/st-api-documentation.png "API Documentation Page Screenshot")
+
 
 ## -- Original Readme --
 This is the source code of the SocialTagg website.  It includes these general features:
@@ -72,6 +76,11 @@ This is the source code of the SocialTagg website.  It includes these general fe
     $ node app
     ```
 
+1. Add entry to hosts file (I forgot why)
+    ```
+    # Socialtagg dev
+    127.0.0.1	development.socialtagg.com
+    ```
 If all goes well, the startup message will show the url to copy to your browser to see the app in action.
 
 ## Running Tests
