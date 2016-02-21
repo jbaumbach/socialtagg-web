@@ -61,10 +61,12 @@ This is the source code of the SocialTagg website.  It includes these general fe
     $ npm install
     $ bower install
     ```
+
 1. Make sure Redis is set up and the server is started:
     ```
     $ redis-server
     ```
+
 1. Fire up the application server:
     ```
     $ node app
