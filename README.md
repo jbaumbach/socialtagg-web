@@ -9,8 +9,29 @@ The source control system was SVN so there's not much Git history, but it's just
 
 Here are some screenshots.
 
-![Screenshot](Screenshots/st-main.png "Homepage Screenshot")
-<p style="text-align:center">Home Page</p>
+#### Home Page
+![Screenshot](Screenshots/st-main.jpg "Homepage Screenshot")
+
+#### Login Page
+Log in with Facebook or system credentials
+![Screenshot](Screenshots/st-login.jpg "Login Page Screenshot")
+
+#### Event Index Page
+Event planners can create events
+![Screenshot](Screenshots/st-event-own-index.jpg "Event Index Page Screenshot")
+
+#### User Registration Page
+Users can register for events
+![Screenshot](Screenshots/st-event-register.jpg "User Registration Page Screenshot")
+
+#### Event Analytics Page
+Event planners can guage the success of their events
+![Screenshot](Screenshots/st-analytics-1.jpg "Event Analytics Page Screenshot")
+
+#### System Analytics Page
+So we could have insight into how our business was performing
+![Screenshot](Screenshots/st-admin-new-signups.jpg "System Analytics Page Screenshot")
+
 
 ## -- Original Readme --
 This is the source code of the SocialTagg website.  It includes these general features:
