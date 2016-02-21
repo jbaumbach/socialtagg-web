@@ -54,24 +54,22 @@ This is the source code of the SocialTagg website.  It includes these general fe
 
 ## Quick Start
 
-* Install node.js on your system.
-* Clone this repo.
-* Install dependencies
+1. Install node.js on your system.
+1. Clone this repo.
+1. Install dependencies
     ```
     $ npm install
     $ bower install
     ```
-
-* Make sure Redis is set up and the server is started:
-
+1. Make sure Redis is set up and the server is started:
     ```
     $ redis-server
     ```
-* Fire up the application server:
-
+1. Fire up the application server:
     ```
     $ node app
     ```
+
 If all goes well, the startup message will show the url to copy to your browser to see the app in action.
 
 ## Running Tests
